@@ -9,7 +9,7 @@ import { I18nProps } from './types';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext, withCalls, withMulti } from '@polkadot/react-api';
 import BaseIdentityIcon from '@polkadot/react-identicon';
-import uiSettings from '@polkadot/ui-settings';
+import uiSettings from '@plasm/ui-settings';
 
 import StatusContext from './Status/Context';
 import translate from './translate';

@@ -58,7 +58,8 @@
       "@polkadot/react-query": [ "packages/react-query/src" ],
       "@polkadot/react-query/*": [ "packages/react-query/src/*" ],
       "@polkadot/react-signer": [ "packages/react-signer/src" ],
-      "@polkadot/react-signer/*": [ "packages/react-signer/src/*" ]
+      "@polkadot/react-signer/*": [ "packages/react-signer/src/*" ],
+      "@plasm/ui-settings/*": [ "packages/ui-settings/src/*" ]
     },
     "skipLibCheck": true,
     "typeRoots": [

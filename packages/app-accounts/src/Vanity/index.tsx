@@ -10,7 +10,7 @@ import { ComponentProps } from '../types';
 import React from 'react';
 import styled from 'styled-components';
 import { Button, Dropdown, Input, TxComponent } from '@polkadot/react-components';
-import uiSettings from '@polkadot/ui-settings';
+import uiSettings from '@plasm/ui-settings';
 
 import CreateModal from '../modals/Create';
 import generator from '../vanitygen';
