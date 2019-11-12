@@ -4,11 +4,11 @@
 
 import { Option } from '../types';
 
-import { isPolkadot } from './type';
+import { isPlasm } from './type';
 
 const LANGUAGE_DEFAULT = 'default';
 
-const UIMODE_DEFAULT = !isPolkadot && typeof window !== 'undefined' && window.location.host.includes('ui-light')
+const UIMODE_DEFAULT = !isPlasm && typeof window !== 'undefined' && window.location.host.includes('ui-light')
   ? 'light'
   : 'full';
 
@@ -25,8 +25,8 @@ const UIMODES: Option[] = [
   }
 ];
 
-const UITHEME_DEFAULT = isPolkadot
-  ? 'polkadot'
+const UITHEME_DEFAULT = isPlasm
+  ? 'plasm'
   : 'substrate';
 
 const UITHEMES: Option[] = [
@@ -39,13 +39,18 @@ const UITHEMES: Option[] = [
     info: 'substrate',
     text: 'Substrate',
     value: 'substrate'
+  },
+  {
+    info: 'plasm',
+    text: 'Plasm',
+    value: 'plasm'
   }
 ];
 
 const ICON_DEFAULT = 'default';
 
-const ICON_DEFAULT_HOST = isPolkadot
-  ? 'polkadot'
+const ICON_DEFAULT_HOST = isPlasm
+  ? 'plasm'
   : 'substrate';
 
 const ICONS: Option[] = [
@@ -53,6 +58,11 @@ const ICONS: Option[] = [
     info: 'default',
     text: 'Default for the connected node',
     value: 'default'
+  },
+  {
+    info: 'plasm',
+    text: 'Plasm',
+    value: 'plasm'
   },
   {
     info: 'polkadot',

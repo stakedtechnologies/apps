@@ -25,7 +25,8 @@ const NODES: Record<string, string> = {
   'node-template': 'substrate',
   'parity-polkadot': 'polkadot',
   'polkadot-js': 'polkadot',
-  'substrate-node': 'substrate'
+  'substrate-node': 'substrate',
+  'plasm-node': 'plasm'
 };
 
 export function getIdentityTheme (systemName: string): 'empty' {

@@ -2193,7 +2193,7 @@
   integrity sha512-Z/UgoNKnrPc7dIGJlXRQZswa0f9cQ/FhF1kfH5x+pTz27Xo/iMRqZpCaHP09mqDc80CtVkSazfrBOeRCYIqw8w==
   dependencies:
     "@babel/runtime" "^7.7.1"
-    "@plasm/ui-settings" "^0.47.0-beta.5"
+    "@polkadot/ui-settings" "^0.47.0-beta.5"
     "@polkadot/ui-shared" "^0.47.0-beta.5"
     "@types/color" "^3.0.0"
     "@types/react-copy-to-clipboard" "^4.3.0"
@@ -2255,13 +2255,6 @@
     "@types/memoizee" "^0.4.3"
     memoizee "^0.4.14"
 
-"@polkadot/ui-assets@^0.47.0-beta.5":
-  version "0.47.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@polkadot/ui-assets/-/ui-assets-0.47.0-beta.5.tgz#57daba00e887cdd3cb9bdec4661cb49d6a9f33a8"
-  integrity sha512-ThE6Y+22pEKKxcs+iuagFIl+xnHn2IVUsw/1Wa7MnfNGAJXhYd9UzRbsOFBxXxhuLOUKjVm+tbPuZQwm/d68Bg==
-  dependencies:
-    "@babel/runtime" "^7.7.1"
-
 "@polkadot/ui-keyring@^0.47.0-beta.5":
   version "0.47.0-beta.5"
   resolved "https://registry.yarnpkg.com/@polkadot/ui-keyring/-/ui-keyring-0.47.0-beta.5.tgz#30a660657239071115f22fbfcaee248950531f72"
@@ -2281,9 +2274,9 @@
   optionalDependencies:
     "@ledgerhq/hw-transport-node-hid" "^4.73.4"
 
-"@plasm/ui-settings@^0.47.0-beta.5":
+"@polkadot/ui-settings@^0.47.0-beta.5":
   version "0.47.0-beta.5"
-  resolved "https://registry.yarnpkg.com/@plasm/ui-settings/-/ui-settings-0.47.0-beta.5.tgz#4b0290fc97863a0839c4ca28592204c5af25268e"
+  resolved "https://registry.yarnpkg.com/@polkadot/ui-settings/-/ui-settings-0.47.0-beta.5.tgz#4b0290fc97863a0839c4ca28592204c5af25268e"
   integrity sha512-AZesUl5G4OXjcwlQfMBlF1gJXLZr0Uu8V/Sxplk+c1kA/c5mB+U6XU+T2+zkwi/Z6boUEd8vvvpy8BiwASmU9w==
   dependencies:
     "@babel/runtime" "^7.7.1"
