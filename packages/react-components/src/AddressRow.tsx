@@ -3,6 +3,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { DeriveAccountInfo, DerivedStaking } from '@polkadot/api-derive/types';
 import { ApiProps } from '@polkadot/react-api/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
@@ -14,7 +15,7 @@ import { withCalls, withMulti } from '@polkadot/react-api';
 import BaseIdentityIcon from '@polkadot/react-identicon';
 import keyring from '@polkadot/ui-keyring';
 
-import AddressInfo, { BalanceActiveType } from './AddressInfo';
+import AddressInfo, { BalanceActiveType, ValidatorPrefsType } from './AddressInfo';
 import { classes, getAddressName, getAddressTags, toShortAddress } from './util';
 import CopyButton from './CopyButton';
 import IdentityIcon, { getIdentityTheme } from './IdentityIcon';
@@ -23,13 +24,20 @@ import translate from './translate';
 
 export interface Props extends I18nProps, RowProps {
   bonded?: BN | BN[];
+  extraInfo?: [React.ReactNode, React.ReactNode][];
   isContract?: boolean;
+  isDisabled?: boolean;
   isValid?: boolean;
   label?: string;
+  accounts_info?: DeriveAccountInfo;
+  noDefaultNameOpacity?: boolean;
+  stakingInfo?: DerivedStaking;
   value: AccountId | AccountIndex | Address | string | null;
   withAddressOrName?: boolean;
   withBalance?: boolean | BalanceActiveType;
   withIndex?: boolean;
+  withIndexOrAddress?: boolean;
+  withValidatorPrefs?: boolean | ValidatorPrefsType;
 }
 
 const DEFAULT_ADDR = '5'.padEnd(16, 'x');
@@ -38,19 +46,23 @@ const ICON_SIZE = 48;
 class AddressRow extends Row<ApiProps & Props, State> {
   public state: State;
 
-  public constructor (props: ApiProps & Props) {
+  constructor (props: ApiProps & Props) {
     super(props);
 
     this.state = this.createState();
   }
 
-  public static getDerivedStateFromProps ({ accounts_idAndIndex = [], defaultName, type, value }: Props, prevState: State): State | null {
-    const [_accountId] = accounts_idAndIndex;
-    const accountId = _accountId || value;
+  public static getDerivedStateFromProps ({ accounts_info = {}, defaultName, isEditable, noDefaultNameOpacity, type, value }: Props, prevState: State): State | null {
+    const accountId = accounts_info.accountId || value;
     const address = accountId
       ? accountId.toString()
       : DEFAULT_ADDR;
-    const name = getAddressName(address, type, false, defaultName || '<unknown>') || '';
+    const [, isDefault, nameInner] = accounts_info.nickname
+      ? [true, false, accounts_info.nickname.toUpperCase()]
+      : getAddressName(address, type, defaultName || '<unknown>');
+    const name = isDefault && !noDefaultNameOpacity && !isEditable
+      ? <div className='ui--Row-placeholder'>{nameInner}</div>
+      : nameInner;
     const tags = getAddressTags(address, type);
     const state: Partial<State> = { tags };
     let hasChanged = false;
@@ -61,7 +73,7 @@ class AddressRow extends Row<ApiProps & Props, State> {
     }
 
     if (!prevState.isEditingName && name !== prevState.name) {
-      state.name = name;
+      state.name = name as string;
       hasChanged = true;
     }
 
@@ -71,19 +83,19 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   public render (): React.ReactNode {
-    const { accounts_idAndIndex = [], className, isContract, isInline, style } = this.props;
-    const [accountId, accountIndex] = accounts_idAndIndex;
+    const { accounts_info = {}, className, isContract, isDisabled, isInline, label, style } = this.props;
+    const { accountId, accountIndex } = accounts_info;
     const isValid = this.props.isValid || accountId || accountIndex;
 
     return (
       <div
-        className={classes('ui--Row', !isValid && 'invalid', isInline && 'inline', className)}
+        className={classes('ui--Row', isDisabled && 'disabled', !isValid && 'invalid', isInline && 'inline', className)}
         style={style}
       >
         <div className='ui--Row-base'>
           {this.renderIcon()}
           <div className='ui--Row-details'>
-            {this.renderLabel()}
+            {label && <label className='account-label'>{label}</label>}
             {this.renderAddressAndName()}
             {this.renderAccountIndex()}
             {!isContract && this.renderBalances()}
@@ -97,13 +109,12 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private createState (): State {
-    const { accounts_idAndIndex = [], defaultName, type, value } = this.props;
-    const [_accountId] = accounts_idAndIndex;
-    const accountId = _accountId || value;
+    const { accounts_info = {}, defaultName, type, value } = this.props;
+    const accountId = accounts_info.accountId || value;
     const address = accountId
       ? accountId.toString()
       : DEFAULT_ADDR;
-    const name = getAddressName(address, type, false, defaultName || '<unknown>') || '';
+    const [, , name] = getAddressName(address, type, defaultName || '<unknown>');
     const tags = getAddressTags(address, type);
 
     return {
@@ -130,7 +141,13 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private renderAddress (): React.ReactNode {
+    const { accounts_info = {}, withIndexOrAddress = true } = this.props;
     const { address } = this.state;
+    const { accountIndex } = accounts_info;
+
+    if (accountIndex && withIndexOrAddress) {
+      return null;
+    }
 
     return (
       <div className='ui--Row-accountId'>
@@ -145,10 +162,10 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private renderAccountIndex (): React.ReactNode {
-    const { accounts_idAndIndex = [], withIndex } = this.props;
-    const [, accountIndex] = accounts_idAndIndex;
+    const { accounts_info = {}, withIndex = true, withIndexOrAddress = true } = this.props;
+    const { accountIndex } = accounts_info;
 
-    if (!accountIndex || !withIndex) {
+    if (!accountIndex || !(withIndex || withIndexOrAddress)) {
       return null;
     }
 
@@ -160,10 +177,10 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private renderBalances (): React.ReactNode {
-    const { accounts_idAndIndex = [], withBalance } = this.props;
-    const [accountId] = accounts_idAndIndex;
+    const { accounts_info = {}, extraInfo, stakingInfo, withBalance, withValidatorPrefs } = this.props;
+    const { accountId } = accounts_info;
 
-    if (!withBalance || !accountId) {
+    if (!(withBalance || withValidatorPrefs) || !accountId) {
       return null;
     }
 
@@ -171,16 +188,19 @@ class AddressRow extends Row<ApiProps & Props, State> {
       <div className='ui--Row-balances'>
         <AddressInfo
           address={accountId}
+          extraInfo={extraInfo}
+          stakingInfo={stakingInfo}
           withBalance={withBalance}
+          withValidatorPrefs={withValidatorPrefs}
         />
       </div>
     );
   }
 
   private renderIcon (): React.ReactNode {
-    const { accounts_idAndIndex = [], iconInfo, systemName, withIcon = true } = this.props;
+    const { accounts_info = {}, iconInfo, systemName, withIcon = true } = this.props;
     const { address } = this.state;
-    const [accountId] = accounts_idAndIndex;
+    const { accountId } = accounts_info;
 
     if (!withIcon) {
       return null;
@@ -209,18 +229,6 @@ class AddressRow extends Row<ApiProps & Props, State> {
     );
   }
 
-  private renderLabel (): React.ReactNode {
-    const { label } = this.props;
-
-    if (!label) {
-      return null;
-    }
-
-    return (
-      <label className='account-label'>{label}</label>
-    );
-  }
-
   protected saveName = (): void => {
     const { address, name } = this.state;
     const trimmedName = name.trim();
@@ -238,9 +246,9 @@ class AddressRow extends Row<ApiProps & Props, State> {
       } catch (error) {
         keyring.saveAddress(address, meta);
       }
-
-      this.setState({ isEditingName: false });
     }
+
+    this.setState({ isEditingName: false });
   }
 
   protected saveTags = (): void => {
@@ -272,9 +280,13 @@ export {
 export default withMulti(
   styled(AddressRow as React.ComponentClass<Props & ApiProps, State>)`
     ${styles}
+
+    .ui--Row-placeholder {
+      opacity: 0.5;
+    }
   `,
   translate,
   withCalls<Props>(
-    ['derive.accounts.idAndIndex', { paramName: 'value' }]
+    ['derive.accounts.info', { paramName: 'value' }]
   )
 );

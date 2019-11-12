@@ -2,17 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AccountId, AuthorityId, BlockNumber, EventRecord } from '@polkadot/types/interfaces';
+import { DerivedHeartbeats, DerivedStakingOverview } from '@polkadot/api-derive/types';
 import { AppProps, I18nProps } from '@polkadot/react-components/types';
 import { ApiProps } from '@polkadot/react-api/types';
+import { AccountId, BlockNumber } from '@polkadot/types/interfaces';
 import { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import { ComponentProps } from './types';
 
-import BN from 'bn.js';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router';
 import styled from 'styled-components';
-import { createType, Option } from '@polkadot/types';
+import { Option } from '@polkadot/types';
 import { HelpOverlay } from '@polkadot/react-components';
 import Tabs from '@polkadot/react-components/Tabs';
 import { withCalls, withMulti, withObservable } from '@polkadot/react-api';
@@ -21,60 +21,21 @@ import accountObservable from '@polkadot/ui-keyring/observable/accounts';
 import Accounts from './Actions/Accounts';
 import basicMd from './md/basic.md';
 import Overview from './Overview';
+import Query from './Query';
 import translate from './translate';
 
 interface Props extends AppProps, ApiProps, I18nProps {
   allAccounts?: SubjectInfo;
-  allStashesAndControllers?: [AccountId[], Option<AccountId>[]];
+  allStashesAndControllers?: [string[], string[]];
   bestNumber?: BlockNumber;
-  currentValidatorsControllersV1OrStashesV2?: AccountId[];
-  recentlyOnline?: AuthorityId[];
+  recentlyOnline?: DerivedHeartbeats;
+  stakingOverview?: DerivedStakingOverview;
 }
 
-interface State {
-  allControllers: string[];
-  allStashes: string[];
-  currentValidators: string[];
-}
+const EMPY_ACCOUNTS: string[] = [];
+const EMPTY_ALL: [string[], string[]] = [EMPY_ACCOUNTS, EMPY_ACCOUNTS];
 
-function App ({ allAccounts, allStashesAndControllers, bestNumber, className, currentValidatorsControllersV1OrStashesV2, basePath, recentlyOnline: propsRecentlyOnline, t }: Props): React.ReactElement<Props> {
-  const [{ allControllers, allStashes, currentValidators }, setState] = useState<State>({
-    allControllers: [],
-    allStashes: [],
-    currentValidators: []
-  });
-  const [recentlyOnline, setRecentlyOnline] = useState<Record<string, BlockNumber>>({});
-
-  useEffect((): void => {
-    const [_stashes, _controllers] = (allStashesAndControllers || [[], []]);
-    const _validators = currentValidatorsControllersV1OrStashesV2 || [];
-
-    setState({
-      allControllers: _controllers
-        .filter((optId): boolean => optId.isSome)
-        .map((accountId): string => accountId.unwrap().toString()),
-      allStashes: _stashes
-        .filter((): boolean => true)
-        .map((accountId): string => accountId.toString()),
-      currentValidators: _validators.map((authorityId): string =>
-        authorityId.toString()
-      )
-    });
-  }, [allStashesAndControllers, currentValidatorsControllersV1OrStashesV2]);
-
-  useEffect((): void => {
-    setRecentlyOnline({
-      ...(recentlyOnline || {}),
-      ...(propsRecentlyOnline || []).reduce(
-        (result: Record<string, BlockNumber>, authorityId): Record<string, BlockNumber> => ({
-          ...result,
-          [authorityId.toString()]: bestNumber || createType('BlockNumber', new BN(0))
-        }),
-        {}
-      )
-    });
-  }, [bestNumber, propsRecentlyOnline]);
-
+function App ({ allAccounts, allStashesAndControllers: [allStashes, allControllers] = EMPTY_ALL, basePath, className, recentlyOnline, stakingOverview, t }: Props): React.ReactElement<Props> {
   const _renderComponent = (Component: React.ComponentType<ComponentProps>): () => React.ReactNode => {
     // eslint-disable-next-line react/display-name
     return (): React.ReactNode => {
@@ -87,8 +48,8 @@ function App ({ allAccounts, allStashesAndControllers, bestNumber, className, cu
           allAccounts={allAccounts}
           allControllers={allControllers}
           allStashes={allStashes}
-          currentValidators={currentValidators}
           recentlyOnline={recentlyOnline}
+          stakingOverview={stakingOverview}
         />
       );
     };
@@ -120,6 +81,7 @@ function App ({ allAccounts, allStashesAndControllers, bestNumber, className, cu
       </header>
       <Switch>
         <Route path={`${basePath}/actions`} render={_renderComponent(Accounts)} />
+        <Route path={`${basePath}/query/:value`} render={_renderComponent(Query)} />
         <Route render={_renderComponent(Overview)} />
       </Switch>
     </main>
@@ -134,20 +96,17 @@ export default withMulti(
   `,
   translate,
   withCalls<Props>(
-    ['derive.chain.bestNumber', { propName: 'bestNumber' }],
-    ['derive.staking.controllers', { propName: 'allStashesAndControllers' }],
-    ['query.session.validators', { propName: 'currentValidatorsControllersV1OrStashesV2' }],
-    ['query.system.events', {
-      propName: 'recentlyOnline',
-      transform: (value?: EventRecord[]): AuthorityId[] =>
-        (value || [])
-          .filter(({ event: { method, section } }): boolean =>
-            section === 'imOnline' && method === 'HeartbeatReceived'
-          )
-          .map(({ event: { data: [authorityId] } }): AuthorityId =>
-            authorityId as AuthorityId
-          )
-    }]
+    ['derive.imOnline.receivedHeartbeats', { propName: 'recentlyOnline' }],
+    ['derive.staking.controllers', {
+      propName: 'allStashesAndControllers',
+      transform: ([stashes, controllers]: [AccountId[], Option<AccountId>[]]): [string[], string[]] => [
+        stashes.map((accountId): string => accountId.toString()),
+        controllers
+          .filter((optId): boolean => optId.isSome)
+          .map((accountId): string => accountId.unwrap().toString())
+      ]
+    }],
+    ['derive.staking.overview', { propName: 'stakingOverview' }]
   ),
   withObservable(accountObservable.subject, { propName: 'allAccounts' })
 );

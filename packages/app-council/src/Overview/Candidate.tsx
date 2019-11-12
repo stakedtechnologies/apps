@@ -6,20 +6,36 @@ import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId } from '@polkadot/types/interfaces';
 
 import React from 'react';
-import { AddressCard } from '@polkadot/react-components';
+import { AddressCard, Badge, Icon } from '@polkadot/react-components';
 
 import translate from '../translate';
+import Voters from './Voters';
 
 interface Props extends I18nProps {
   address: AccountId;
+  isRunnerUp?: boolean;
+  voters?: AccountId[];
 }
 
-function Candidate ({ address, t }: Props): React.ReactElement<Props> {
+function Candidate ({ address, isRunnerUp, t, voters }: Props): React.ReactElement<Props> {
   return (
     <AddressCard
-      defaultName={t('candidate')}
+      defaultName={isRunnerUp ? t('runner up') : t('candidate')}
+      iconInfo={isRunnerUp && (
+        <Badge
+          hover={t('Runner up')}
+          info={<Icon name='chevron down' />}
+          isTooltip
+          type='runnerup'
+        />
+      )}
       value={address}
-    />
+      withIndexOrAddress
+    >
+      {voters && voters.length !== 0 && (
+        <Voters voters={voters} />
+      )}
+    </AddressCard>
   );
 }
 
