@@ -10,31 +10,10 @@ pub struct DefaultParameters {
 
 const types = {
     Parameters: {
-      can
-      id: 'Hash'
+      canBeNominated: 'bool',
+      optionExpired: 'u128',
+      optionP: 'u128'
     },
-    Book: {
-      id: 'Hash',
-      title: 'Vec<u8>',
-      author: 'Author<Hash>'
-    },
-    Publisher: {
-      id: 'Hash'
-    },
-    Seller: {
-      id: 'Hash'
-    },
-    PublishingContract: {
-      id: 'Hash',
-      publisher: 'Publisher<Hash>',
-      author: 'Author<Hash>',
-      book: 'Book<Hash>'
-    },
-    SalesContract: {
-      id: 'Hash',
-      seller: 'Seller<Hash>',
-      publishingContract: 'PublishingContract<Hash>'
-    }
   };
   
   export default types;
