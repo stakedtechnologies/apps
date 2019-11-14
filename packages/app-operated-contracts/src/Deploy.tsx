@@ -160,6 +160,8 @@ class Deploy extends ContractModal<Props, State> {
       ? codeOptions[codeOptions.length - 1].value
       : undefined;
 
+      console.log('contractAbi', contractAbi);
+    console.log('operateParameters', operateParameters);
     return (
       <>
         {this.renderInputAccount()}
@@ -217,7 +219,7 @@ class Deploy extends ContractModal<Props, State> {
         <InputParameters
           isDisabled={isBusy}
           onChange={this.onChangeOperateParameters}
-          isError={operateParameters.isErr()}
+          isError={operateParameters.isError()}
           onEnter={this.sendTx}
         />
         {this.renderInputGas()}
@@ -298,7 +300,7 @@ class Deploy extends ContractModal<Props, State> {
   }
 
   private onChangeOperateParameters = (operateParameters?: Parameters): void => {
-    this.setState({ operateParameters: operateParameters || Parameters.default() })
+    this.setState({ operateParameters: operateParameters.value || Parameters.default() })
   }
 
   private onSuccess = (result: SubmittableResult): void => {

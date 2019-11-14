@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 // @ts-check
 // Import the API
-import { Struct, u128, bool, Bool, U128 } from '@polkadot/types';
+import { Struct, u128, bool } from '@polkadot/types';
 
 export class Parameters extends Struct {
 	constructor (value?: any) {
@@ -13,22 +13,20 @@ export class Parameters extends Struct {
   }
   static default(): Parameters {
     return new Parameters({
-      canBeNominated: new Bool(true),
-      optionExpired: new U128(0),
-      optionP: new U128(0)
+      canBeNominated: new bool(true),
+      optionExpired: new u128(0),
+      optionP: new u128(0)
     });
   }
-  public isErr(): boolean {
+  public isError(): boolean {
     return false;
   }
 }
 
-const types = {
+export const types = {
   Parameters: {
     canBeNominated: 'bool',
     optionExpired: 'u128',
     optionP: 'u128'
   },
 };
-
-export default types;
