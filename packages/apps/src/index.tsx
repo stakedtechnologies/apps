@@ -20,7 +20,7 @@ import { QueueConsumer } from '@polkadot/react-components/Status/Context';
 import Queue from '@polkadot/react-components/Status/Queue';
 import { BlockAuthors, Events } from '@polkadot/react-query';
 import Apps from './Apps';
-import types from './types';
+import { types } from '@plasm/utils';
 
 const rootId = 'root';
 const rootElement = document.getElementById(rootId);
