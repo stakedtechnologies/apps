@@ -19,7 +19,7 @@ export default ([
       ]
     },
     i18n: {
-      defaultValue: 'OperatedContracts'
+      defaultValue: 'OP Contracts'
     },
     icon: 'compress',
     name: 'operated-contracts'

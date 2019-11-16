@@ -1,3 +1,3 @@
-# @polkadot/app-contracts
+# @polkadot/app-operated-contracts
 
-Substrate contracts - code deployment, instance creation and messages.
+Plasmchain(Substrate) operated contracts - code deployment, instance creation and messages with operated.

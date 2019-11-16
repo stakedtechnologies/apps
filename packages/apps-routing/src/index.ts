@@ -61,7 +61,6 @@ const routes: Routes = appSettings.uiMode === 'light'
     treasury,
     parachains,
     null,
-    contracts,
     operatedcontracts,
     storage,
     extrinsics,
