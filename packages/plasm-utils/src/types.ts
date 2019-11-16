@@ -6,10 +6,10 @@ import { Struct, u128, bool } from '@polkadot/types';
 export class Parameters extends Struct {
 	constructor (value?: any) {
     super({
-      canBeNominated: bool,
-      optionExpired: u128,
-      optionP: u128
-    })
+      canBeNominated: 'bool',
+      optionExpired: 'u128',
+      optionP: 'u128'
+    }, value)
   }
   static default(): Parameters {
     return new Parameters({

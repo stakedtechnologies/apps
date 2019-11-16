@@ -17,6 +17,7 @@ import keyring from '@polkadot/ui-keyring';
 import { Button, Dropdown, InputBalance, MessageSignature, TxButton, InputParameters } from '@polkadot/react-components';
 import createValues from '@polkadot/react-params/values';
 import { Parameters } from '@plasm/utils';
+import { bool } from '@polkadot/types';
 
 import ContractModal, { ContractModalProps, ContractModalState } from './Modal';
 import Params from './Params';
@@ -250,7 +251,7 @@ class Deploy extends ContractModal<Props, State> {
           tx={
             api.tx.contracts
               ? api.tx.operator.instantiate
-                ? 'contracts.instantiate' // V2 (new)
+                ? 'operator.instantiate' // V2 (new)
                 : 'contracts.create' // V2 (old)
               : 'contract.create' // V1
           }
@@ -300,7 +301,13 @@ class Deploy extends ContractModal<Props, State> {
   }
 
   private onChangeOperateParameters = (operateParameters?: Parameters): void => {
-    this.setState({ operateParameters: operateParameters.value || Parameters.default() })
+    const { canBeNominated, optionExpired, optionP } = operateParameters[0].value;
+    const ops = new Parameters({
+      canBeNominated: new bool(canBeNominated),
+      optionExpired,
+      optionP
+    })
+    this.setState({ operateParameters: ops })
   }
 
   private onSuccess = (result: SubmittableResult): void => {
