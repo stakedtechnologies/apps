@@ -18,7 +18,7 @@ interface Props extends I18nProps {
 function ChangeOperator ({ className, onClose, accountId, t }: Props): React.ReactElement<Props> {
   const [operatorId, setOperatorId] = useState<string | null>(accountId || null);
   const [contractList, setContractList] = useState<any[]>([]);
-  const [recipientId, setRecipientId] = useState<string | null>(accountId || null);
+  const [recipientId, setRecipientId] = useState<string | null>(null);
 
   const transferrable = <span className='label'>{t('transferrable')}</span>;
 
