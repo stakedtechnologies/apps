@@ -1,78 +1,29 @@
 /* eslint-disable @typescript-eslint/camelcase */
-// Copyright 2017-2019 @polkadot/app-123code authors & contributors
+// Copyright 2017-2019 @polkadot/faucet authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Compact } from '@polkadot/types';
-import { Balance, EcdsaSignature, EthereumAddress } from '@polkadot/types/interfaces';
 import { AppProps, I18nProps } from '@polkadot/react-components/types';
 import { ApiProps } from '@polkadot/react-api/types';
 
 import React from 'react';
 import { Trans } from 'react-i18next';
-import styled from 'styled-components';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { withApi, withMulti } from '@polkadot/react-api';
-import { Button, Card, Columar, Column, InputAddress, Tooltip } from '@polkadot/react-components';
+import { withApi, withMulti, api } from '@polkadot/react-api';
+import { Button, Card, Columar, Column, InputAddress, TxButton, AddressInfo, Label } from '@polkadot/react-components';
 import { TokenUnit } from '@polkadot/react-components/InputNumber';
-import TxModal, { TxModalState, TxModalProps } from '@polkadot/react-components/TxModal';
-import { u8aToHex, u8aToString } from '@polkadot/util';
-import { decodeAddress } from '@polkadot/util-crypto';
-
-import ClaimDisplay from './Claim';
-import { recoverFromJSON } from './util';
+import TxModal, { TxModalProps, TxModalState } from '@polkadot/react-components/TxModal';
 
 import translate from './translate';
-
-enum Step {
-  Account = 0,
-  Sign = 1,
-  Claim = 2,
-}
+import { FaucetLog } from 'packages/plasm-utils/src';
+import { Vec } from '@polkadot/types';
+import { Moment } from '@polkadot/types/interfaces';
 
 interface Props extends AppProps, ApiProps, I18nProps, TxModalProps {}
-
 interface State extends TxModalState {
-  didCopy: boolean;
-  ethereumAddress: EthereumAddress | null;
-  claims?: Balance | null;
-  signature?: EcdsaSignature | null;
-  step: Step;
+  accountId?: string;
+  now?: Moment;
+  logs?: FaucetLog[];
 }
-
-const Payload = styled.pre`
-  cursor: copy;
-  font-family: monospace;
-  border: 1px dashed #c2c2c2;
-  background: #fafafa;
-  padding: 1rem;
-  width: 100%;
-  margin: 1rem 0;
-  white-space: normal;
-  word-break: break-all;
-`;
-
-const Signature = styled.textarea`
-  font-family: monospace;
-  padding: 1rem;
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  border-radius: 0.25rem;
-  margin: 1rem 0;
-  resize: none;
-  width: 100%;
-
-  &::placeholder {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  &:-ms-input-placeholder {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  &::-ms-input-placeholder {
-    color: rgba(0, 0, 0, 0.5);
-  }
-`;
 
 class App extends TxModal<Props, State> {
   constructor (props: Props) {
@@ -80,125 +31,83 @@ class App extends TxModal<Props, State> {
 
     this.defaultState = {
       ...this.defaultState,
-      claims: null,
-      didCopy: false,
-      ethereumAddress: null,
-      signature: null,
-      step: 0
     };
     this.state = this.defaultState;
   }
 
-  public componentDidUpdate (): void {
-    if (this.state.didCopy) {
-      setTimeout((): void => {
-        this.setState({ didCopy: false });
-      }, 1000);
-    }
+  public componentDidMount (): void {
+    setInterval((): void => {
+      this.fetchNow();
+    }, 10000);
   }
 
   public render (): React.ReactNode {
-    const { api, systemChain = '', t } = this.props;
-    const { accountId, didCopy, ethereumAddress, signature, step } = this.state;
-
-    const payload = accountId
-      ? (
-        u8aToString(Compact.stripLengthPrefix(api.consts.faucet.prefix.toU8a(true))) +
-        u8aToHex(decodeAddress(accountId), -1, false)
-      )
-      : '';
-
+    const { api, t } = this.props;
+    const logs = this.state.logs ? this.state.logs.map((log: any) => {
+      return (
+        <Column>
+        <Card>
+          <Label label={t('amount')} />
+          <div className='result'>{log.get('amount').toString()}</div>
+          <Label label={t('time')} />
+          <div className='result'>{log.get('time').toString()}</div>
+        </Card></Column>);
+    }): <></>;
+    var waitingTime = !!this.state.now && !!this.state.logs && this.state.logs.length
+     ? (BigInt(1000 * 60 * 60 * 24) - BigInt(this.state.now.toString()) + BigInt(this.state.logs[this.state.logs.length - 1].get('time').toString())) : 0;
+    var isValid = false;
+    if( waitingTime <= 0 ) {
+      waitingTime = 0;
+      isValid = true;
+    }
     return (
       <main>
         <header />
         <h1>
-          <Trans>claims your <em>{TokenUnit.abbr}</em> tokens</Trans>
+          <Trans> Faucet <em>{TokenUnit.abbr}</em> tokens</Trans>
         </h1>
+        <hr />
+        <InputAddress
+            defaultValue={this.state.accountId}
+            help={t('The account you want to claim to.')}
+            label={t('faucet to account')}
+            onChange={this.onChangeAccount}
+            type='all'
+        />
+        <AddressInfo
+          address={this.state.accountId}
+          withBalance
+          withExtended
+        />
+        <Button.Group floated='right'>
+          <TxButton
+            accountId={this.state.accountId}
+            icon='star'
+            isDisabled={!isValid}
+            isPrimary
+            label={t('Claims')}
+            onClick={this.toggleBusy(true)}
+            onSuccess={this.onSuccess}
+            onFailed={this.toggleBusy(false)}
+            params={[]}
+            tx='faucet.claims'
+            ref={this.button}
+          />
+        </Button.Group>
+        <hr />
+        <h1><Trans>Faucet History</Trans></h1>
+        <h2><Trans>Now: {this.state.now?this.state.now.toString():'0'}, waitingTime: {waitingTime.toString()}</Trans></h2>
         <Columar>
-          <Column>
-            <Card withBottomMargin>
-              <h3>{t('1. Select your {{chain}} account', {
-                replace: {
-                  chain: systemChain
-                }
-              })}</h3>
-              <InputAddress
-                defaultValue={this.state.accountId}
-                help={t('The account you want to claims to.')}
-                label={t('claims to account')}
-                onChange={this.onChangeAccount}
-                type='all'
-              />
-              {(step === Step.Account) && (
-                <Button.Group>
-                  <Button
-                    icon='sign-in'
-                    isPrimary
-                    onClick={this.setStep(Step.Sign)}
-                    label={t('Continue')}
-                  />
-                </Button.Group>
-              )}
-            </Card>
-            {(step >= Step.Sign && !!accountId) && (
-              <Card>
-                <h3>{t('2. Sign ETH transaction')}</h3>
-                <CopyToClipboard
-                  onCopy={this.onCopy}
-                  text={payload}
-                >
-                  <Payload
-                    data-for='tx-payload'
-                    data-tip
-                  >
-                    {payload}
-                  </Payload>
-                </CopyToClipboard>
-                <Tooltip
-                  place='right'
-                  text={didCopy ? t('copied') : t('click to copy')}
-                  trigger='tx-payload'
-                />
-                <div>
-                  {t('Copy the above string and sign an Ethereum transaction with the account you used during the pre-sale in the wallet of your choice, using the string as the payload, and then paste the transaction signature object below')}
-                  :
-                </div>
-                <Signature
-                  onChange={this.onChangeSignature}
-                  placeholder='{\n  "address": "0x ...",\n  "msg": "Pay KSMs to the Kusama account: ...",\n  "sig": "0x ...",\n  "version": "2"\n}'
-                  rows={10}
-                />
-                {(step === Step.Sign) && (
-                  <Button.Group>
-                    <Button
-                      icon='sign-in'
-                      isDisabled={!accountId || !signature}
-                      isPrimary
-                      onClick={this.setStep(Step.Claim)}
-                      label={t('Confirm claims')}
-                    />
-                  </Button.Group>
-                )}
-              </Card>
-            )}
-          </Column>
-          <Column showEmptyText={false}>
-            {(step >= Step.Claim) && (
-              <ClaimDisplay
-                button={this.renderTxButton()}
-                ethereumAddress={ethereumAddress}
-              />
-            )}
-          </Column>
+        {logs}
         </Columar>
       </main>
     );
   }
 
   protected isDisabled = (): boolean => {
-    const { accountId, signature } = this.state;
+    const { accountId } = this.state;
 
-    return !accountId || !signature;
+    return !accountId;
   }
 
   protected isUnsigned = (): boolean => true;
@@ -207,49 +116,38 @@ class App extends TxModal<Props, State> {
 
   protected txMethod = (): string => 'faucet.claims';
 
-  protected txParams = (): [string | null, EcdsaSignature | null] => {
-    const { accountId, signature } = this.state;
-
-    return [
-      accountId ? accountId.toString() : null,
-      signature || null
-    ];
-  }
-
   protected onChangeAccount = (accountId: string | null): void => {
-    this.setState(({ step }: State): Pick<State, never> => {
+    this.fetchClaims(accountId);
+    this.fetchNow();
+    this.setState((): Pick<State, never> => {
       return {
-        ...(
-          step > Step.Account
-            ? this.defaultState
-            : {}
-        ),
         accountId
       };
     });
   }
 
-  protected onChangeSignature = (event: React.SyntheticEvent<Element>): void => {
-    const { value: signatureJson } = event.target as HTMLInputElement;
-
-    this.setState(({ step }: State): Pick<State, never> => ({
-      ...(
-        step > Step.Sign
-          ? { step: Step.Sign }
-          : {}
-      ),
-      ...recoverFromJSON(signatureJson)
-    }));
+  protected fetchNow = (): void => {
+    api.query.timestamp.now((now): void => {
+      this.setState((): Pick<State, never> => {
+        console.log('now',now)
+        return {
+          now
+        };
+      })
+    })
   }
 
-  private onCopy = (): void => {
-    this.setState({ didCopy: true });
+  protected fetchClaims = (accountId: string| null): void => {
+    api.query.faucet
+      .faucetHistory<Vec<FaucetLog>>(accountId)
+      .then((logs): void => {
+        this.setState((): Pick<State, never> => {
+          return {
+            logs
+          };
+        })
+    });
   }
-
-  private setStep = (step: Step): () => void =>
-    (): void => {
-      this.setState({ step });
-    }
 }
 
 export default withMulti(

@@ -4,4 +4,4 @@
 
 import { withTranslation } from 'react-i18next';
 
-export default withTranslation(['app-claims']);
+export default withTranslation(['app-faucet']);

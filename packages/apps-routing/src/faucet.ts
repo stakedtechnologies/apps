@@ -11,7 +11,7 @@ export default ([
     Component: Faucet,
     display: {
       needsApi: [
-        'query.faucet.claims'
+        'tx.faucet.claims'
       ]
     },
     i18n: {
