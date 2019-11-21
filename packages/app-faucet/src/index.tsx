@@ -42,7 +42,7 @@ class App extends TxModal<Props, State> {
   }
 
   public render (): React.ReactNode {
-    const { api, t } = this.props;
+    const { t } = this.props;
     const logs = this.state.logs ? this.state.logs.map((log: any) => {
       return (
         <Column>
@@ -53,11 +53,16 @@ class App extends TxModal<Props, State> {
           <div className='result'>{log.get('time').toString()}</div>
         </Card></Column>);
     }): <></>;
-    var waitingTime = !!this.state.now && !!this.state.logs && this.state.logs.length
-     ? (BigInt(1000 * 60 * 60 * 24) - BigInt(this.state.now.toString()) + BigInt(this.state.logs[this.state.logs.length - 1].get('time').toString())) : 0;
+    var waitingTime = BigInt(0);
+    if (!!this.state.now && !!this.state.logs && this.state.logs.length) {
+      const prTime = this.state.logs[this.state.logs.length - 1].get('time');
+      if(prTime){
+        waitingTime = (BigInt(1000 * 60 * 60 * 24) - BigInt(this.state.now.toString()) + BigInt(prTime.toString()));
+      } 
+    }
     var isValid = false;
     if( waitingTime <= 0 ) {
-      waitingTime = 0;
+      waitingTime = BigInt(0);
       isValid = true;
     }
     return (
@@ -79,7 +84,7 @@ class App extends TxModal<Props, State> {
           withBalance
           withExtended
         />
-        <Button.Group floated='right'>
+        <Button.Group>
           <TxButton
             accountId={this.state.accountId}
             icon='star'
@@ -117,7 +122,7 @@ class App extends TxModal<Props, State> {
   protected txMethod = (): string => 'faucet.claims';
 
   protected onChangeAccount = (accountId: string | null): void => {
-    this.fetchClaims(accountId);
+    accountId?this.fetchClaims(accountId):false;
     this.fetchNow();
     this.setState((): Pick<State, never> => {
       return {
@@ -137,10 +142,10 @@ class App extends TxModal<Props, State> {
     })
   }
 
-  protected fetchClaims = (accountId: string| null): void => {
+  protected fetchClaims = (accountId: string): void => {
     api.query.faucet
       .faucetHistory<Vec<FaucetLog>>(accountId)
-      .then((logs): void => {
+      .then((logs: FaucetLog[]): void => {
         this.setState((): Pick<State, never> => {
           return {
             logs
