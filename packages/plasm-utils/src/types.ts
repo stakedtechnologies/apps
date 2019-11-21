@@ -23,10 +23,24 @@ export class Parameters extends Struct {
   }
 }
 
+export class FaucetLog extends Struct {
+	constructor (value?: any) {
+    super({
+      amount: 'Balance',
+      time: 'Moment'
+    }, value)
+  }
+}
+
+
 export const types = {
   Parameters: {
     canBeNominated: 'bool',
     optionExpired: 'u128',
     optionP: 'u128'
   },
+  FaucetLog: {
+    amount: 'Balance',
+    time: 'Moment'
+  }
 };

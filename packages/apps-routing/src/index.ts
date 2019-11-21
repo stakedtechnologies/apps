@@ -10,6 +10,7 @@ import template from './123code';
 import accounts from './accounts';
 import addressbook from './addressbook';
 import claims from './claims';
+import faucet from './faucet';
 import council from './council';
 // import dashboard from './dashboard';
 import democracy from './democracy';
@@ -35,6 +36,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     accounts,
     addressbook,
     claims,
+    faucet,
     transfer,
     genericAsset,
     null,
@@ -53,6 +55,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     accounts,
     addressbook,
     claims,
+    faucet,
     transfer,
     genericAsset,
     null,
