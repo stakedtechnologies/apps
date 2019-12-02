@@ -44,8 +44,7 @@ const PROVIDERS: Record<ProviderName, PoviderData> = ORDER_PROVIDERS.reduce((map
   map[p] = {
     providerDisplay: 'Stake technologies Host',
     nodes: {
-      plasmTestV1: 'wss://' + 'testnet.plasmnet.io',
-      plasmTestV2: 'wss://' + 'new.testnet.plasmnet.io',// old
+      plasmTestV2: 'wss://' + HOSTS[i],
     }
   };
   return map;
