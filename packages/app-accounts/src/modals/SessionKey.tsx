@@ -2,7 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { I18nProps } from '@polkadot/react-components/types';
+import { registry } from '@polkadot/react-api';
+import { Vec, u8 } from '@polkadot/types'
 
 import React, { useEffect, useState } from 'react';
 import { Button, InputAddress, Input, Modal, TxButton } from '@polkadot/react-components';
@@ -15,17 +18,25 @@ interface Props extends I18nProps {
   onClose: () => void;
 }
 
-const EMPTY_PROOF = new Uint8Array();
+const EMPTY_PROOF = new Vec(registry, u8, []);
 
 function SetSessionKey ({ className, senderId: propSenderId, onClose, t }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
-  const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic | null>(null);
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
+  const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic | null>(null);
   const [keys, setKeys] = useState<string | null>(null);
+  const [hasError, setHasError] = useState<boolean>(true);
 
   useEffect((): void => {
-    if (keys) {
-      setExtrinsic(api.tx.session.setKeys(keys, EMPTY_PROOF));
+    if (!!keys && /^0x[0-9a-f]+$/i.test(keys)) {
+      try {
+        setExtrinsic(api.tx.session.setKeys(keys, EMPTY_PROOF));
+        setHasError(false)
+      } catch {
+        setHasError(true)
+      }
+    } else {
+      setHasError(true)
     }
   }, [keys]);
 
@@ -68,7 +79,7 @@ function SetSessionKey ({ className, senderId: propSenderId, onClose, t }: Props
           <TxButton
             accountId={senderId}
             extrinsic={extrinsic}
-            isDisabled={!keys}
+            isDisabled={hasError && extrinsic}
             isPrimary
             label={t('Set Session Key')}
             icon='sign-in'
