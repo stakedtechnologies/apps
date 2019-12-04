@@ -14,7 +14,6 @@ import { registry } from '@polkadot/react-api';
 import { Available } from '@polkadot/react-query';
 import { Vec } from '@polkadot/types';
 
-import BTreeSet from '../BTreeSet';
 import translate from '../translate';
 import AccountId from '@polkadot/types/primitive/Generic/AccountId';
 
@@ -72,19 +71,28 @@ interface Props extends I18nProps {
   senderId?: string;
 }
 
-const fetchContracts = (accountId: string | null): any[] => {
-  return []
-}
-
 function ChangeOperator ({ className, onClose, recipientId: propRecipientId, senderId: propSenderId, t }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic | null>(null);
   const [hasAvailable, setHasAvailable] = useState(true);
-  const [recipientId, setRecipientId] = useState<string | null>(propRecipientId || null);
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
-  const contracts: string[] = fetchContracts(senderId);
+  const [contracts, setContracts] = useState<string[]>([]);
   const [selects, setSelects] = useState<Record<string, boolean>>(
     contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
+  const [recipientId, setRecipientId] = useState<string | null>(propRecipientId || null);
+
+  const onChangeOperator = (accountId: string | null): void => {
+    console.log('accountId', accountId)
+    setSenderId(accountId);
+    if (!!accountId) {
+      api.query.operator
+        .operatorHasContracts(accountId as any)
+        .then((contracts: any[]): void => {
+          setContracts(contracts);
+          setSelects(contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
+       });
+    }
+  }
 
   const onChangeContracts = (accountId: string): (isChecked: boolean) => void =>
     (isChecked: boolean): void => {
@@ -92,6 +100,7 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
     }
 
   useEffect((): void => {
+    console.log('useEffect')
     const _ok = Object.values(selects).some((select): boolean => select);
     if (senderId && recipientId && _ok) {
       setExtrinsic(api.tx.operator.changeOperator(
@@ -111,16 +120,16 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
       dimmer='inverted'
       open
     >
-      <Modal.Header>{t('Send funds')}</Modal.Header>
+      <Modal.Header>{t('Change operator')}</Modal.Header>
       <Modal.Content>
         <div className={className}>
           <InputAddress
             defaultValue={propSenderId}
-            help={t('The account you will send funds from.')}
+            help={t('The account you will change operator authorship.')}
             isDisabled={!!propSenderId}
-            label={t('send from account')}
+            label={t('change from account')}
             labelExtra={<Available label={transferrable} params={senderId} />}
-            onChange={setSenderId}
+            onChange={onChangeOperator}
             type='account'
           />
           <Candidates>
@@ -149,11 +158,13 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
             })}
           </Candidates>
           <InputAddress
+            defaultValue={propRecipientId}
+            isDisabled={!!propRecipientId}
             help={t('Select a the operator address you want to change to.')}
             label={t('new operator address')}
             labelExtra={<Available label={transferrable} params={recipientId} />}
             onChange={setRecipientId}
-            type='account'
+            type='allPlus'
           />
         </div>
       </Modal.Content>
