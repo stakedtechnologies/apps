@@ -160,9 +160,7 @@ class Deploy extends ContractModal<Props, State> {
     const defaultCode = codeOptions.length
       ? codeOptions[codeOptions.length - 1].value
       : undefined;
-
-      console.log('contractAbi', contractAbi);
-    console.log('operateParameters', operateParameters);
+    
     return (
       <>
         {this.renderInputAccount()}
