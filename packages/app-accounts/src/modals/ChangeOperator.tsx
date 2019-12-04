@@ -16,6 +16,7 @@ import { Vec } from '@polkadot/types';
 
 import translate from '../translate';
 import AccountId from '@polkadot/types/primitive/Generic/AccountId';
+import { Codec } from '@polkadot/types/types';
 
 const Candidates = styled.div`
   display: flex;
@@ -82,14 +83,14 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
   const [recipientId, setRecipientId] = useState<string | null>(propRecipientId || null);
 
   const onChangeOperator = (accountId: string | null): void => {
-    console.log('accountId', accountId)
     setSenderId(accountId);
     if (!!accountId) {
       api.query.operator
-        .operatorHasContracts(accountId as any)
-        .then((contracts: any[]): void => {
-          setContracts(contracts);
-          setSelects(contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
+        .operatorHasContracts<AccountId[] & Codec>(accountId as any)
+        .then((contracts): void => {
+          const contractList: string[] = contracts.map((c): string => c.toString());
+          setContracts(contractList);
+          setSelects(contractList.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
        });
     }
   }
@@ -100,7 +101,6 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
     }
 
   useEffect((): void => {
-    console.log('useEffect')
     const _ok = Object.values(selects).some((select): boolean => select);
     if (senderId && recipientId && _ok) {
       setExtrinsic(api.tx.operator.changeOperator(
