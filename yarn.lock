@@ -2077,7 +2077,7 @@
     "@polkadot/api" "^0.97.1"
     "@polkadot/types" "^0.97.1"
 
-"@polkadot/api@^0.100.0-beta.14":
+"@polkadot/api@^0.100.0-beta.14", "@polkadot/api@^0.97.0-beta.2", "@polkadot/api@^0.97.1":
   version "0.100.0-beta.14"
   resolved "https://registry.npmjs.org/@polkadot/api/-/api-0.100.0-beta.14.tgz#fd6e04ebeca946af6479436860c1557769db2004"
   integrity sha512-fNhRyw0RLL2we8JCbrl5oErfcnK6OqgucveyJmekqkE9FXzkHuwiYwnpeCmyqCZchHJqSS5/XhZRURE1GkgAEg==
