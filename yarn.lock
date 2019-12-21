@@ -2051,7 +2051,7 @@
   dependencies:
     "@types/node" ">= 8"
 
-"@polkadot/api-contract@^0.100.0-beta.14", "@polkadot/api-contract@^0.97.0-beta.16":
+"@polkadot/api-contract@^0.100.0-beta.14":
   version "0.100.0-beta.14"
   resolved "https://registry.npmjs.org/@polkadot/api-contract/-/api-contract-0.100.0-beta.14.tgz#a1a608cebb43ef0ac993038064c3f31a64c4de27"
   integrity sha512-A0PA8sa8mni5mlqFYwB4zB3GoXPMT71q3WSY1yM0biRhA/nKU0rO6BGjwM04ABaMzwOtP99GJ4TSq5AN9lyVBw==
@@ -2068,16 +2068,7 @@
     "@polkadot/api" "^0.100.0-beta.14"
     "@polkadot/types" "^0.100.0-beta.14"
 
-"@polkadot/api-derive@^0.97.1":
-  version "0.97.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/api-derive/-/api-derive-0.97.1.tgz#f0ef55f7b3e91a2060db1a88d301cc8a96ef497d"
-  integrity sha512-lZowtrvqSfNO3LL89xSS4Gf7ec6fNOj4H8ywglnM58Msxd+WOho9uieIY7ywZhiWozXN5DXM8iwqCKHxVoVGOA==
-  dependencies:
-    "@babel/runtime" "^7.7.4"
-    "@polkadot/api" "^0.97.1"
-    "@polkadot/types" "^0.97.1"
-
-"@polkadot/api@^0.100.0-beta.14", "@polkadot/api@^0.97.0-beta.2", "@polkadot/api@^0.97.1":
+"@polkadot/api@^0.100.0-beta.14":
   version "0.100.0-beta.14"
   resolved "https://registry.npmjs.org/@polkadot/api/-/api-0.100.0-beta.14.tgz#fd6e04ebeca946af6479436860c1557769db2004"
   integrity sha512-fNhRyw0RLL2we8JCbrl5oErfcnK6OqgucveyJmekqkE9FXzkHuwiYwnpeCmyqCZchHJqSS5/XhZRURE1GkgAEg==
@@ -2200,14 +2191,7 @@
   dependencies:
     "@babel/runtime" "^7.7.6"
 
-"@polkadot/jsonrpc@^0.97.1":
-  version "0.97.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/jsonrpc/-/jsonrpc-0.97.1.tgz#40db2edf06a248d76b0e1900c1036881414aff9e"
-  integrity sha512-4f/t1YrOOluUhxQXsVaQy4XJ96QiZjML3bTmIOMTIx6VKFIzTX7oRmhPeafVwyg9oj4p04WCuslmzUVV4dXbyQ==
-  dependencies:
-    "@babel/runtime" "^7.7.4"
-
-"@polkadot/keyring@^1.7.0-beta.6", "@polkadot/keyring@^1.7.1":
+"@polkadot/keyring@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-1.7.1.tgz#53a3dd87e547aaee0a877e4fc5fdfc4757e60a0d"
   integrity sha512-CWCnU0zsaot0QvEiasKfhCiVlZCIVKOQGPzXiVE9JSjoqTQQJ0BEdaEfM4x0/bFFvvsn/8RcjLPpxBPSfe2eOg==
@@ -2223,16 +2207,6 @@
   dependencies:
     "@babel/runtime" "^7.7.6"
     "@polkadot/types" "^0.100.0-beta.14"
-    "@polkadot/util" "^1.7.1"
-    "@polkadot/util-crypto" "^1.7.1"
-
-"@polkadot/metadata@^0.97.1":
-  version "0.97.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/metadata/-/metadata-0.97.1.tgz#31c3ecdaa5afbd9ab896521e88504904d8c68bf1"
-  integrity sha512-RbU0aNi2VwGJ2U902d0vuCIjgeZRgE8G0MJm0kR6F0nR+Ya5iSRAdLx4J6hm4kMdu9wvVDK2eUOuXiCmNskJww==
-  dependencies:
-    "@babel/runtime" "^7.7.4"
-    "@polkadot/types" "^0.97.1"
     "@polkadot/util" "^1.7.1"
     "@polkadot/util-crypto" "^1.7.1"
 
@@ -2273,18 +2247,6 @@
     "@polkadot/util" "^1.7.1"
     rxjs "^6.5.3"
 
-"@polkadot/rpc-core@^0.97.1":
-  version "0.97.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/rpc-core/-/rpc-core-0.97.1.tgz#bfeb69849c9101222abb12fcbd603d8921b1c83a"
-  integrity sha512-Np4uCupKuESxFYqPYxSYRr95F6nfy+lZOms/QM86w3wWusOkry8qFubJ0gra6LQ9qQi1s1CPHEyz+K6JkSxrHg==
-  dependencies:
-    "@babel/runtime" "^7.7.4"
-    "@polkadot/jsonrpc" "^0.97.1"
-    "@polkadot/rpc-provider" "^0.97.1"
-    "@polkadot/types" "^0.97.1"
-    "@polkadot/util" "^1.7.1"
-    rxjs "^6.5.3"
-
 "@polkadot/rpc-provider@^0.100.0-beta.14":
   version "0.100.0-beta.14"
   resolved "https://registry.npmjs.org/@polkadot/rpc-provider/-/rpc-provider-0.100.0-beta.14.tgz#928364095a44cd5cd1bf3af3626c338e4e4f311e"
@@ -2298,19 +2260,6 @@
     isomorphic-fetch "^2.2.1"
     websocket "^1.0.31"
 
-"@polkadot/rpc-provider@^0.97.1":
-  version "0.97.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/rpc-provider/-/rpc-provider-0.97.1.tgz#19da466081bde6702e347e064f4dde952a94c187"
-  integrity sha512-YU9+5wHyYw8LbuZclEgzDQtTwAdNWjqW3lBxL4xvu3ptGjnzlUjXHOxR0p8sLIU6DO6Bi8/RttVuJnm9gMZQYQ==
-  dependencies:
-    "@babel/runtime" "^7.7.4"
-    "@polkadot/metadata" "^0.97.1"
-    "@polkadot/util" "^1.7.1"
-    "@polkadot/util-crypto" "^1.7.1"
-    eventemitter3 "^4.0.0"
-    isomorphic-fetch "^2.2.1"
-    websocket "^1.0.30"
-
 "@polkadot/ts@^0.1.88":
   version "0.1.88"
   resolved "https://registry.yarnpkg.com/@polkadot/ts/-/ts-0.1.88.tgz#3e42d9c1981a50ece37184555a5a4aef46d160ab"
@@ -2318,7 +2267,7 @@
   dependencies:
     "@types/chrome" "^0.0.91"
 
-"@polkadot/types@^0.100.0-beta.14", "@polkadot/types@^0.97.0-beta.16", "@polkadot/types@^0.97.1":
+"@polkadot/types@^0.100.0-beta.14":
   version "0.100.0-beta.14"
   resolved "https://registry.npmjs.org/@polkadot/types/-/types-0.100.0-beta.14.tgz#65a511b11421a0d8ccb8e0c53e813a21cd227ef9"
   integrity sha512-Ud8sZxUCja0Kpjgk8/JwezlNIz7VSoSyejG++2v+OHjpTq8AlLrL+0ULJfigvfxxsY4ysCeeegaBjYJFoXJ+vw==
@@ -2374,7 +2323,7 @@
     "@types/color" "^3.0.0"
     color "^3.1.2"
 
-"@polkadot/util-crypto@^1.7.0-beta.6", "@polkadot/util-crypto@^1.7.1":
+"@polkadot/util-crypto@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-1.7.1.tgz#6cb1ed1f7ecbea3b41100231830817e7fd116dc6"
   integrity sha512-g0JCciJLJXbkc/Q+2QuJgCgS0Xfl7tO97ALdsI00bgSDA7zlh2zhjpx03Ve47hMndmn7K8ClIGrj4nxHx/95Tw==
@@ -2396,7 +2345,7 @@
     tweetnacl "^1.0.1"
     xxhashjs "^0.2.2"
 
-"@polkadot/util@^1.7.0-beta.6", "@polkadot/util@^1.7.0-beta.7", "@polkadot/util@^1.7.1":
+"@polkadot/util@^1.7.0-beta.7", "@polkadot/util@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-1.7.1.tgz#cb262fa5a441097c0c093532f70d0b7e0503fbb1"
   integrity sha512-tWvh+vYDIiXDIWgAGd9zyJWlDKxQ5KYTKZ9uTlLxfuy1qXEdVOjlX9Qz5+FACU2742e8tTvtvM9KfK05VK5X/A==
@@ -16498,7 +16447,7 @@ websocket-extensions@>=0.1.1:
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
   integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
 
-websocket@^1.0.30, websocket@^1.0.31:
+websocket@^1.0.31:
   version "1.0.31"
   resolved "https://registry.yarnpkg.com/websocket/-/websocket-1.0.31.tgz#e5d0f16c3340ed87670e489ecae6144c79358730"
   integrity sha512-VAouplvGKPiKFDTeCCO65vYHsyay8DqoBSlzIO3fayrfOgU94lQN5a1uWVnFrMLceTJw/+fQXR5PGbUVRaHshQ==
