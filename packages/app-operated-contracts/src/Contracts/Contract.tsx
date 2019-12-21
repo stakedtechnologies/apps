@@ -39,14 +39,14 @@ function Contract (props: Props): React.ReactElement<Props> | null {
   if (!address || !abi) {
     return null;
   }
-  console.log('address', address)
+  console.log('address', address);
   api.query.operator
     .contractHasOperator<AccountId & Codec>(address.toString())
     .then((operator): void => {
-      console.log('operator', operator)
+      console.log('operator', operator);
       setOperatorId(operator.toString());
     });
-  console.log('operatorId', operatorId)
+  console.log('operatorId', operatorId);
 
   const [isForgetOpen, setIsForgetOpen] = useState(false);
 
@@ -113,7 +113,7 @@ function Contract (props: Props): React.ReactElement<Props> | null {
         withNonce={false}
         withTags
       >
-        {!!operatorId &&(
+        {!!operatorId && (
           <AddressRow
             value={operatorId}
             isInline

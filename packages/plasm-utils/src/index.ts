@@ -4,7 +4,7 @@
 
 import { Parameters, types } from './types';
 
-export { 
-  Parameters, 
-  types 
+export {
+  Parameters,
+  types
 };

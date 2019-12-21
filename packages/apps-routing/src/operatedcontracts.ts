@@ -14,7 +14,7 @@ export default ([
       needsAccounts: true,
       needsApi: [
         [
-          'tx.operator.instantiate' // substrate 2.x          
+          'tx.operator.instantiate' // substrate 2.x
         ]
       ]
     },

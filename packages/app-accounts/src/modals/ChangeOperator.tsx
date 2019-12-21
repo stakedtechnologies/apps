@@ -79,36 +79,36 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
   const [contracts, setContracts] = useState<string[]>([]);
   const [selects, setSelects] = useState<Record<string, boolean>>(
-    contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
+    contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, { [contract]: false }), {}));
   const [recipientId, setRecipientId] = useState<string | null>(propRecipientId || null);
 
   const onChangeOperator = (accountId: string | null): void => {
     setSenderId(accountId);
-    if (!!accountId) {
+    if (accountId) {
       api.query.operator
         .operatorHasContracts<AccountId[] & Codec>(accountId as any)
         .then((contracts): void => {
           const contractList: string[] = contracts.map((c): string => c.toString());
           setContracts(contractList);
-          setSelects(contractList.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, {[contract]: false}), {}));
-       });
+          setSelects(contractList.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, { [contract]: false }), {}));
+        });
     }
-  }
+  };
 
   const onChangeContracts = (accountId: string): (isChecked: boolean) => void =>
     (isChecked: boolean): void => {
-      setSelects({...selects, [accountId]: isChecked});
-    }
+      setSelects({ ...selects, [accountId]: isChecked });
+    };
 
   useEffect((): void => {
     const _ok = Object.values(selects).some((select): boolean => select);
     if (senderId && recipientId && _ok) {
       setExtrinsic(api.tx.operator.changeOperator(
-        new Vec(registry, AccountId, 
+        new Vec(registry, AccountId,
           Object.entries(selects).filter(([, select]): boolean => select).map(([contractId]): string => contractId)), recipientId));
-      setHasAvailable(true)
+      setHasAvailable(true);
     } else {
-      setHasAvailable(false)
+      setHasAvailable(false);
     }
   }, [selects, recipientId, senderId]);
 

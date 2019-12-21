@@ -7,9 +7,8 @@ import { BareProps } from './types';
 import React from 'react';
 import styled from 'styled-components';
 import Params from '@polkadot/react-params';
-import { RawParams } from '@polkadot/react-params/types';
+import { RawParams, ComponentMap } from '@polkadot/react-params/types';
 import { getTypeDef } from '@polkadot/types';
-import { ComponentMap } from '@polkadot/react-params/types';
 
 interface Props extends BareProps {
   isDisabled?: boolean;
@@ -19,8 +18,8 @@ interface Props extends BareProps {
 }
 
 const PARAMETERS_PARAMS = [{
-  name: "Parameters",
-  type: getTypeDef("{\"canBeNominated\": \"bool\", \"optionExpired\" : \"u128\", \"optionP\" : \"u128\" }")
+  name: 'Parameters',
+  type: getTypeDef('{"canBeNominated": "bool", "optionExpired" : "u128", "optionP" : "u128" }')
 }];
 
 function InputParameters ({ isDisabled, onChange, onEnter, overrides }: Props): React.ReactElement<Props> {

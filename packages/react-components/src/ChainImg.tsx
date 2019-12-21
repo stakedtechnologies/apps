@@ -37,7 +37,7 @@ const NODES: Record<string, any> = {
   'parity-polkadot': polkadot,
   'polkadot-js': polkadotJs,
   'substrate-node': substrate,
-  'plasm-node': plasm,
+  'plasm-node': plasm
 };
 
 // overrides as specified
@@ -48,7 +48,7 @@ const LOGOS: Record<string, any> = {
   kusama: chainKusama,
   polkadot,
   substrate,
-  plasm,
+  plasm
 };
 
 interface Props {

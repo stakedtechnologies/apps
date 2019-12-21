@@ -1,25 +1,27 @@
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint new-cap: ["error", { "newIsCap": false }] */
 // @ts-check
 // Import the API
 import { Struct, u128, bool } from '@polkadot/types';
 import { registry } from '@polkadot/react-api';
 
 export class Parameters extends Struct {
-	constructor (value?: any) {
+  constructor (value?: any) {
     super(registry, {
       canBeNominated: 'bool',
       optionExpired: 'u128',
       optionP: 'u128'
-    }, value)
+    }, value);
   }
-  static default(): Parameters {
+
+  static default (): Parameters {
     return new Parameters({
-      canBeNominated: new bool(registry,true),
+      canBeNominated: new bool(registry, true),
       optionExpired: new u128(registry, 0),
       optionP: new u128(registry, 0)
     });
   }
-  public isError(): boolean {
+
+  public isError (): boolean {
     return false;
   }
 }
@@ -29,5 +31,5 @@ export const types = {
     canBeNominated: 'bool',
     optionExpired: 'u128',
     optionP: 'u128'
-  },
+  }
 };
