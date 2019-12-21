@@ -5,7 +5,7 @@
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { registry } from '@polkadot/react-api';
-import { Vec, u8 } from '@polkadot/types'
+import { Vec, u8 } from '@polkadot/types';
 
 import React, { useEffect, useState } from 'react';
 import { Button, InputAddress, Input, Modal, TxButton } from '@polkadot/react-components';
@@ -31,12 +31,12 @@ function SetSessionKey ({ className, senderId: propSenderId, onClose, t }: Props
     if (!!keys && /^0x[0-9a-f]+$/i.test(keys)) {
       try {
         setExtrinsic(api.tx.session.setKeys(keys, EMPTY_PROOF));
-        setHasError(false)
+        setHasError(false);
       } catch {
-        setHasError(true)
+        setHasError(true);
       }
     } else {
-      setHasError(true)
+      setHasError(true);
     }
   }, [keys]);
 

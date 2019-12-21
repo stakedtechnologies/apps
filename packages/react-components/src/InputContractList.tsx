@@ -17,8 +17,8 @@ interface Props extends BareProps {
 }
 
 const CONTRACTS_PARAMS = [{
-  name: "contracts",
-  type: getTypeDef("Vec<AccountId>")
+  name: 'contracts',
+  type: getTypeDef('Vec<AccountId>')
 }];
 
 function InputContractList ({ isDisabled, onChange, onEnter, overrides }: Props): React.ReactElement<Props> {

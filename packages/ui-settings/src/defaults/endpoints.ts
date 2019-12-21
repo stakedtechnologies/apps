@@ -37,14 +37,14 @@ const CHAIN_INFO: Record<ChainName, ChainData> = {
   }
 };
 
-const HOSTS: String[] = ['testnet.plasmnet.io'];
+const HOSTS: string[] = ['testnet.plasmnet.io'];
 
 // the actual providers with all  the nodes they provide
 const PROVIDERS: Record<ProviderName, PoviderData> = ORDER_PROVIDERS.reduce((map: any, p, i) => {
   map[p] = {
     providerDisplay: 'Stake technologies Host',
     nodes: {
-      plasmTestV2: 'wss://' + HOSTS[i],
+      plasmTestV2: 'wss://' + HOSTS[i]
     }
   };
   return map;

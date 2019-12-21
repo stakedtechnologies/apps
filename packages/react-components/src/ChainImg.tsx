@@ -27,8 +27,7 @@ const CHAINS: Record<string, any> = {
   Kusama: chainKusama, // old name, the W3F nodes still has these
   'Kusama CC1': chainKusama,
   'Kusama CC2': chainKusama,
-  'Kusama CC3': chainKusama,
-  'Plasm Testnet v2': plasm,
+  'Kusama CC3': chainKusama
 };
 
 // overrides based on the actual software node type
@@ -38,7 +37,7 @@ const NODES: Record<string, any> = {
   'parity-polkadot': polkadot,
   'polkadot-js': polkadotJs,
   'substrate-node': substrate,
-  'plasm-node': plasm,
+  'plasm-node': plasm
 };
 
 // overrides as specified
@@ -49,7 +48,7 @@ const LOGOS: Record<string, any> = {
   kusama: chainKusama,
   polkadot,
   substrate,
-  plasm,
+  plasm
 };
 
 interface Props {

@@ -2,6 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+/* eslint new-cap: ["error", { "newIsCap": false }] */
+
 import { AccountId } from '@polkadot/types/interfaces';
 import { ApiProps } from '@polkadot/react-api/types';
 import { I18nProps } from '@polkadot/react-components/types';
@@ -160,7 +162,7 @@ class Deploy extends ContractModal<Props, State> {
     const defaultCode = codeOptions.length
       ? codeOptions[codeOptions.length - 1].value
       : undefined;
-    
+
     return (
       <>
         {this.renderInputAccount()}
@@ -298,17 +300,17 @@ class Deploy extends ContractModal<Props, State> {
   }
 
   private onChangeOperateParameters = (operateParameters?: any): void => {
-    if(!!!operateParameters) { 
-      this.setState({operateParameters: Parameters.default()}) 
+    if (!operateParameters) {
+      this.setState({ operateParameters: Parameters.default() });
       return;
-   }
+    }
     const { canBeNominated, optionExpired, optionP } = operateParameters[0].value;
     const ops = new Parameters({
       canBeNominated: new bool(canBeNominated),
       optionExpired,
       optionP
-    })
-    this.setState({ operateParameters: ops })
+    });
+    this.setState({ operateParameters: ops });
   }
 
   private onSuccess = (result: SubmittableResult): void => {
