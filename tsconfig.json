@@ -39,6 +39,8 @@
       "@polkadot/app-settings/*": [ "packages/app-settings/src/*" ],
       "@polkadot/app-staking": [ "packages/app-staking/src" ],
       "@polkadot/app-staking/*": [ "packages/app-staking/src/*" ],
+      "@polkadot/app-dapps-staking": [ "packages/app-dapps-staking/src" ],
+      "@polkadot/app-dapps-staking/*": [ "packages/app-dapps-staking/src/*" ],
       "@polkadot/app-storage": [ "packages/app-storage/src" ],
       "@polkadot/app-storage/*": [ "packages/app-storage/src/*" ],
       "@polkadot/app-sudo": [ "packages/app-sudo/src" ],
@@ -70,7 +72,7 @@
       "@plasm/ui-assets": [ "packages/ui-assets/src" ],
       "@plasm/ui-assets/*": [ "packages/ui-assets/src/*" ],
       "@plasm/utils": [ "packages/plasm-utils/src" ],
-      "@plasm/utils/*": [ "packages/plasm-utils/src/*" ]
+      "@plasm/utils/*": [ "packages/plasm-utils/src/*" ],
     },
     "skipLibCheck": true,
     "typeRoots": [
