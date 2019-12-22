@@ -1,5 +1,5 @@
 import { SessionIndex } from '@polkadot/types/interfaces';
-import { DerivedSessionInfo, DeriveSessionIndexes } from '../types';
+import { DerivedSessionInfo, DeriveSessionIndexes } from '@polkadot/api-derive/types';
 
 import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';

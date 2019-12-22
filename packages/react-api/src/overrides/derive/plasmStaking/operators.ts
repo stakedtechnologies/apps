@@ -14,13 +14,12 @@ type DeriveOperators = [AccountId[], Option<AccountId>[]];
  * @description From the list of stash accounts, retrieve the list of controllers
  */
 export function operators (api: ApiInterfaceRx): () => Observable<DeriveOperators> {
-  return memo((): Observable<[AccountId[], Option<AccountId>[]]> => {
-    return api.query.plasmStaking.stakedContracts<ITuple<[Vec<AccountId>, Vec<Exposure>]>>().pipe(
-      switchMap(([contractIds]): Observable<DeriveOperators> => {
-        return combineLatest([
+  return memo((): Observable<[AccountId[], Option<AccountId>[]]> => 
+    api.query.plasmStaking.stakedContracts<ITuple<[Vec<AccountId>, Vec<Exposure>]>>().pipe(
+      switchMap(([contractIds]): Observable<DeriveOperators> =>
+        combineLatest([
           of(contractIds),
           api.query.operator.contractHasOperator.multi<Option<AccountId>>(contractIds)
         ])
-      })
-    )});
+      )));
 }
