@@ -27,10 +27,11 @@ import useSessionRewards from './useSessionRewards';
 const EMPY_ACCOUNTS: string[] = [];
 const EMPTY_ALL: [string[], string[]] = [EMPY_ACCOUNTS, EMPY_ACCOUNTS];
 
-function transformStakingControllers ([stashes, controllers]: [AccountId[], Option<AccountId>[]]): [string[], string[]] {
+function transformStakedContracts ([contracts, operators]: [AccountId[], Option<AccountId>[]]): [string[], string[]] {
+  console.log('transformStakedContracts', contracts, operators);
   return [
-    stashes.map((accountId): string => accountId.toString()),
-    controllers
+    contracts.map((accountId): string => accountId.toString()),
+    operators
       .filter((optId): boolean => optId.isSome)
       .map((accountId): string => accountId.unwrap().toString())
   ];
@@ -44,17 +45,14 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const [next, setNext] = useState<string[]>([]);
   const [allContracts, allOperators] = (useCall<[string[], string[]]>(api.derive.plasmStaking.operators, [], {
     defaultValue: EMPTY_ALL,
-    transform: transformStakingControllers
+    transform: transformStakedContracts
   }) as [string[], string[]]);
-  const sessionInfo = useCall<DerivedSessionInfo>(api.derive.session.info, []);
+  const sessionInfo = useCall<DerivedSessionInfo>(api.derive.plasmStaking.info, []);
   // const recentlyOnline = useCall<DerivedHeartbeats>(api.derive.imOnline.receivedHeartbeats, []);
   // const stakingOverview = useCall<DerivedStakingOverview>(api.derive.staking.overview, []);
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
   // const validators = stakingOverview?.validators;
-
-  console.log('api.derive.session.eraLength', api.derive.session.info);
-  console.log('sessionInfo', sessionInfo);
 
   console.log('api.derive.operators.', api.derive.plasmStaking.operators);
   console.log('allContracts', allContracts);

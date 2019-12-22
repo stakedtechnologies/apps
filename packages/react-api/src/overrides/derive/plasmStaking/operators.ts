@@ -15,17 +15,12 @@ type DeriveOperators = [AccountId[], Option<AccountId>[]];
  */
 export function operators (api: ApiInterfaceRx): () => Observable<DeriveOperators> {
   return memo((): Observable<[AccountId[], Option<AccountId>[]]> => {
-      console.log('call operators')
-    return api.query.plasmStaking.StakedContracts<ITuple<[Vec<AccountId>, Vec<Exposure>]>>().pipe(
+    return api.query.plasmStaking.stakedContracts<ITuple<[Vec<AccountId>, Vec<Exposure>]>>().pipe(
       switchMap(([contractIds]): Observable<DeriveOperators> => {
-          console.log('contractIds on derive: ',contractIds)
         return combineLatest([
           of(contractIds),
-          // for V2, don't return all the controllers, we call bonded at a later point
-          api.consts.session
-            ? of([])
-            : api.query.operator.contractHasOperator.multi<Option<AccountId>>(contractIds)
+          api.query.operator.contractHasOperator.multi<Option<AccountId>>(contractIds)
         ])
-    })
+      })
     )});
 }

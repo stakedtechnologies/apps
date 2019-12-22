@@ -42,7 +42,7 @@ function infoLatestAura (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
   );
 }
 
-function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
+function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {    
   return combineLatest([
     api.derive.session.indexes(),
     api.queryMulti<ResultSlots>([
