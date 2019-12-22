@@ -55,6 +55,7 @@ i18n
       'app-parachains',
       'app-settings',
       'app-staking',
+      'app-dapps-staking',
       'app-storage',
       'app-sudo',
       'app-toolbox',
