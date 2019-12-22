@@ -29,6 +29,7 @@ import transfer from './transfer';
 import treasury from './treasury';
 import operatedcontracts from './operatedcontracts';
 import operator from './operator';
+import dappsstaking from './dappsstaking';
 
 const routes: Routes = appSettings.uiMode === 'light'
   ? ([] as Routes).concat(
@@ -42,6 +43,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     genericAsset,
     null,
     operatedcontracts,
+    dappsstaking,
     operator,
     staking,
     democracy,
@@ -68,6 +70,7 @@ const routes: Routes = appSettings.uiMode === 'light'
     parachains,
     null,
     operatedcontracts,
+    dappsstaking,
     operator,
     storage,
     extrinsics,

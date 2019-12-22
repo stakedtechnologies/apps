@@ -2061,7 +2061,7 @@
 
 "@polkadot/api-derive@^0.100.0-beta.14":
   version "0.100.0-beta.14"
-  resolved "https://registry.npmjs.org/@polkadot/api-derive/-/api-derive-0.100.0-beta.14.tgz#4829f3a512a63e68346a3c9337c646e8a183c802"
+  resolved "https://registry.yarnpkg.com/@polkadot/api-derive/-/api-derive-0.100.0-beta.14.tgz#4829f3a512a63e68346a3c9337c646e8a183c802"
   integrity sha512-Fuz9ULI0ciqbEdBgIFjKbXfuHH/oKaGnSBD7bgdbzy1GfCoH+1cuHGcAsTdnikG8Xs/2hmzZ54oBGLudRqLBpQ==
   dependencies:
     "@babel/runtime" "^7.7.6"
