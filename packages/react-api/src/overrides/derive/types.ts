@@ -1,5 +1,12 @@
-import { AccountId, Nominations, Balance, BalanceLock, BlockNumber, EraIndex, Exposure, Keys, RewardDestination, SessionIndex, StakingLedger, ValidatorPrefs } from '@polkadot/types/interfaces';
+import { AccountId, Nominations, Option, Exposure, RewardDestination, StakingLedger } from '@polkadot/types/interfaces';
 import { Parameters } from '@plasm/utils';
+
+export type DeriveOperators = [AccountId[], Option<AccountId>[]];
+
+export interface DerivedDappsStakingOverview {
+  currentElected: DeriveOperators[];
+  contracts: DerivedDappsStakingQuery[];
+}
 
 export interface DerivedDappsStakingQuery {
   operatorId: undefined | AccountId;

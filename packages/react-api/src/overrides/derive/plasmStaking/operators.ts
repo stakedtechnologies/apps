@@ -7,8 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { Option, Vec } from '@polkadot/types';
 
 import { memo } from '@polkadot/api-derive/util/memo';
-
-type DeriveOperators = [AccountId[], Option<AccountId>[]];
+import { DeriveOperators } from '../types';
 
 /**
  * @description From the list of stash accounts, retrieve the list of controllers

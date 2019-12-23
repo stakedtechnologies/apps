@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedSessionInfo, DerivedHeartbeats, DerivedStakingOverview } from '@polkadot/api-derive/types';
+import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 import { AppProps as Props } from '@polkadot/react-components/types';
 import { AccountId } from '@polkadot/types/interfaces';
 
@@ -17,7 +17,7 @@ import { useCall, useAccounts, useApi } from '@polkadot/react-hooks';
 
 import basicMd from './md/basic.md';
 // import Actions from './Actions';
-// import Overview from './Overview';
+import Overview from './Overview';
 // import Summary from './Overview/Summary';
 // import Targets from './Targets';
 import { MAX_SESSIONS } from './constants';
@@ -47,26 +47,17 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
     defaultValue: EMPTY_ALL,
     transform: transformStakedContracts
   }) as [string[], string[]]);
-  const sessionInfo = useCall<DerivedSessionInfo>(api.derive.plasmStaking.info, []);
-  // const recentlyOnline = useCall<DerivedHeartbeats>(api.derive.imOnline.receivedHeartbeats, []);
-  // const stakingOverview = useCall<DerivedStakingOverview>(api.derive.staking.overview, []);
+  const stakingOverview = useCall<DerivedDappsStakingQuery>(api.derive.plasmStaking.query, []);
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
-  // const validators = stakingOverview?.validators;
 
   console.log('api.derive.operators.', api.derive.plasmStaking.operators);
   console.log('allContracts', allContracts);
   console.log('allOperators', allOperators);
 
-  // useEffect((): void => {
-  //   validators && setNext(
-  //     isSubstrateV2
-  //       // this is a V2 node currentValidators is a list of stashes
-  //       ? allStashes.filter((address): boolean => !validators.includes(address as any))
-  //       // this is a V1 node currentValidators is a list of controllers
-  //       : allControllers.filter((address): boolean => !validators.includes(address as any))
-  //   );
-  // }, [allControllers, allStashes, validators]);
+  useEffect((): void => {
+    allContracts && setNext(allContracts);
+  }, [allContracts]);
 
   return (
     <main className={`staking--App ${className}`}>
@@ -114,14 +105,14 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
         recentlyOnline={recentlyOnline}
         next={next}
         stakingOverview={stakingOverview}
-      />
+      /> */}
       <Overview
         hasQueries={hasQueries}
         isVisible={[basePath, `${basePath}/waiting`].includes(pathname)}
         recentlyOnline={recentlyOnline}
         next={next}
         stakingOverview={stakingOverview}
-      /> */}
+      />
     </main>
   );
 }

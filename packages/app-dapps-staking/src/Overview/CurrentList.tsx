@@ -14,6 +14,7 @@ import { useAccounts, useApi, useFavorites } from '@polkadot/react-hooks';
 import { STORE_FAVS_BASE } from '../constants';
 import translate from '../translate';
 import Address from './Address';
+import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 
 interface Props extends I18nProps {
   authorsMap: Record<string, string>;
@@ -22,8 +23,7 @@ interface Props extends I18nProps {
   isVisible: boolean;
   lastAuthors?: string[];
   next: string[];
-  recentlyOnline?: DerivedHeartbeats;
-  stakingOverview?: DerivedStakingOverview;
+  stakingOverview?: DerivedDappsStakingQuery;
 }
 
 type AccountExtend = [string, boolean, boolean, Points?];
@@ -57,17 +57,15 @@ function accountsToString (accounts: AccountId[]): string[] {
   return accounts.map((accountId): string => accountId.toString());
 }
 
-function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, next, recentlyOnline, stakingOverview, t }: Props): React.ReactElement<Props> | null {
+function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, next, electedContracts, t }: Props): React.ReactElement<Props> | null {
   const { isSubstrateV2 } = useApi();
   const { allAccounts } = useAccounts();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS_BASE);
   const [filter, setFilter] = useState<ValidatorFilter>('all');
-  const [{ elected, validators, waiting }, setFiltered] = useState<{ elected: AccountExtend[]; validators: AccountExtend[]; waiting: AccountExtend[] }>({ elected: [], validators: [], waiting: [] });
+  const [{ elected, contracts, waiting }, setFiltered] = useState<{ elected: AccountExtend[]; contracts: AccountExtend[]; waiting: AccountExtend[] }>({ elected: [], contracts: [], waiting: [] });
 
-  useEffect((): void => {
-    if (isVisible && stakingOverview) {
-      const _elected = accountsToString(stakingOverview.currentElected);
-      const _validators = accountsToString(stakingOverview.validators);
+  useEffect((): void => {// TODO ここまで三田
+    if (isVisible && electedContracts) {
       const validators = filterAccounts(_validators, _elected, favorites, [], stakingOverview.eraPoints);
       const elected = isSubstrateV2 ? filterAccounts(_elected, _elected, favorites, _validators) : [];
 
