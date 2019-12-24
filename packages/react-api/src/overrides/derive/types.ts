@@ -2,6 +2,7 @@ import { AccountId, Nominations, Option, Exposure, RewardDestination, StakingLed
 import { Parameters } from '@plasm/utils';
 
 export type DeriveOperators = [AccountId[], Option<AccountId>[]];
+export type DerivedStakedOperators = [AccountId[], Exposure[]];
 
 // export interface DerivedDappsStakingOverview {
 //   currentElected: DeriveOperators;

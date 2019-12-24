@@ -100,7 +100,7 @@ async function loadSome (api: ApiPromise, fromHash: Hash, toHash: Hash): Promise
     results.map(({ block }): Promise<EventRecord[]> =>
       (api.query.system.events.at(block) as unknown as Promise<EventRecord[]>)
         .then((records): EventRecord[] =>
-          records.filter(({ event: { section } }): boolean => section === 'staking')
+          records.filter(({ event: { section } }): boolean => section === 'plasmStaking')
         )
         .catch((): EventRecord[] => []) // may throw, update metadata for old
     )
@@ -128,7 +128,7 @@ async function loadSome (api: ApiPromise, fromHash: Hash, toHash: Hash): Promise
       blockNumber: headers[index].number.unwrap(),
       isEventsEmpty: events[index].length === 0,
       parentHash: headers[index].parentHash,
-      reward: rewards[index][0] || createType(registry, 'Balance'),
+      reward: rewards[index][1] || createType(registry, 'Balance'),
       sessionIndex: createType(registry, 'SessionIndex', u8aToU8a(
         value.isSome ? value.unwrap() : new Uint8Array([])
       )),
