@@ -15,18 +15,17 @@ import translate from '../../translate';
 
 interface Props extends I18nProps {
   controllerId: string;
-  next: string[];
   nominees?: string[];
   onClose: () => void;
-  stakingOverview?: DerivedStakingOverview;
+  allContracts?: string[];
   stashId: string;
 }
 
 const MAX_NOMINEES = 16;
 
-function Nominate ({ className, controllerId, nominees, onClose, next, stakingOverview, stashId, t }: Props): React.ReactElement<Props> | null {
+function Nominate ({ className, controllerId, nominees, onClose, allContracts, stashId, t }: Props): React.ReactElement<Props> | null {
   const [favorites] = useFavorites(STORE_FAVS_BASE);
-  const [validators, setValidators] = useState<string[]>([]);
+  const [contracts, setContracts] = useState<string[]>([]);
   const [selection, setSelection] = useState<string[]>([]);
   const [available, setAvailable] = useState<string[]>([]);
 
@@ -37,30 +36,29 @@ function Nominate ({ className, controllerId, nominees, onClose, next, stakingOv
   }, [selection, nominees]);
 
   useEffect((): void => {
-    if (stakingOverview) {
-      setValidators((stakingOverview.currentElected || []).map((acc): string => acc.toString()));
+    if (allContracts) {
+      setContracts((allContracts || []).map((acc): string => acc.toString()));
     }
-  }, [stakingOverview]);
+  }, [allContracts]);
 
   useEffect((): void => {
     const shortlist = [
       // ensure that the favorite is included in the list of stashes
-      ...favorites.filter((acc): boolean => validators.includes(acc) || next.includes(acc)),
+      ...favorites.filter((acc): boolean => contracts.includes(acc)),
       // make sure the nominee is not in our favorites already
       ...(nominees || []).filter((acc): boolean => !favorites.includes(acc))
     ];
 
     setAvailable([
       ...shortlist,
-      ...validators.filter((acc): boolean => !shortlist.includes(acc)),
-      ...next.filter((acc): boolean => !shortlist.includes(acc))
+      ...contracts.filter((acc): boolean => !shortlist.includes(acc))
     ]);
-  }, [favorites, next, nominees, validators]);
+  }, [favorites, nominees, contracts]);
 
   return (
     <Modal
       className={`staking--Nominating ${className}`}
-      header={t('Nominate Validators')}
+      header={t('Nominate Contracts')}
       open
     >
       <Modal.Content className='ui--signer-Signer-Content'>
@@ -103,7 +101,7 @@ function Nominate ({ className, controllerId, nominees, onClose, next, stakingOv
             params={[selection]}
             label={t('Nominate')}
             icon='hand paper outline'
-            tx='staking.nominate'
+            tx='plasmStaking.nominateContracts'
           />
         </Button.Group>
       </Modal.Actions>

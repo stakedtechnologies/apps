@@ -137,7 +137,7 @@ class BondExtra extends TxComponent<Props, State> {
       const { api } = this.props;
       const { amountError = prevState.amountError, maxAdditional = prevState.maxAdditional, maxBalance = prevState.maxBalance } = newState;
       const extrinsic = (maxAdditional && maxAdditional.gte(ZERO))
-        ? api.tx.staking.bondExtra(maxAdditional)
+        ? api.tx.plasmStaking.bondExtra(maxAdditional)
         : null;
 
       return {
@@ -163,7 +163,7 @@ class BondExtra extends TxComponent<Props, State> {
     while (!prevMax.eq(maxBalance)) {
       prevMax = maxBalance;
       extrinsic = (maxAdditional && maxAdditional.gte(ZERO))
-        ? api.tx.staking.bondExtra(maxAdditional)
+        ? api.tx.plasmStaking.bondExtra(maxAdditional)
         : null;
 
       const txLength = calcTxLength(extrinsic, accountNonce);

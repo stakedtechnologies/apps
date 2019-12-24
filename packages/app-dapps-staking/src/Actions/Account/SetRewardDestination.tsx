@@ -60,7 +60,7 @@ class SetRewardDestination extends TxComponent<Props, State> {
               icon='sign-in'
               onClick={onClose}
               params={[destination]}
-              tx={'staking.setPayee'}
+              tx={'plasmStaking.setPayee'}
               ref={this.button}
             />
           </Button.Group>

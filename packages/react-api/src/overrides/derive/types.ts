@@ -19,7 +19,7 @@ export interface DerivedDappsStakingQuery {
 export interface DerivedDappsStakingAccount {
   stashId: AccountId;
   controllerId: undefined | AccountId;
-  payee: undefined | RewardDestination;
+  payee: RewardDestination;
   ledger: undefined | StakingLedger;
   nominations: undefined | Nominations;
 }

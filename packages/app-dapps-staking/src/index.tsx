@@ -15,7 +15,7 @@ import Tabs from '@polkadot/react-components/Tabs';
 import { useCall, useAccounts, useApi } from '@polkadot/react-hooks';
 
 import basicMd from './md/basic.md';
-// import Actions from './Actions';
+import Actions from './Actions';
 import Overview from './Overview';
 import Summary from './Overview/Summary';
 // import Targets from './Targets';
@@ -27,7 +27,6 @@ const EMPY_ACCOUNTS: string[] = [];
 const EMPTY_ALL: [string[], string[]] = [EMPY_ACCOUNTS, EMPY_ACCOUNTS];
 
 function transformStakedContracts ([contracts, operators]: [AccountId[], Option<AccountId>[]]): [string[], string[]] {
-  console.log('transformStakedContracts', contracts, operators);
   return [
     contracts.map((accountId): string => accountId.toString()),
     operators
@@ -41,7 +40,6 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const { api } = useApi();
   const { hasAccounts } = useAccounts();
   const { pathname } = useLocation();
-  const [next, setNext] = useState<string[]>([]);
   const [allContracts, allOperators] = (useCall<[string[], string[]]>(api.derive.plasmStaking.operators, [], {
     defaultValue: EMPTY_ALL,
     transform: transformStakedContracts
@@ -56,13 +54,6 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   // unique, all = all + staked
   const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts).reduce((s, c) => s.add(c), new Set()));
   const allOperatorIds: string[] = Array.from(allOperators.concat(stakedOperators).reduce((s, c) => s.add(c), new Set()));
-
-  console.log('allContracts:', allContracts);
-  console.log('stakedContracts:', stakedContracts);
-
-  useEffect((): void => {
-    allContracts && setNext(allContracts);
-  }, [allContracts]);
 
   return (
     <main className={`staking--App ${className}`}>
@@ -96,26 +87,21 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
       </header>
       <Summary
         isVisible={pathname === basePath}
-        next={next}
         allContracts={allContractIds}
         stakedContracts={stakedContracts}
       />
-      {/* <Switch>
+      {/* {/* <Switch>
         <Route path={`${basePath}/returns`}>
           <Targets sessionRewards={sessionRewards} />
         </Route>
-      </Switch>
+      </Switch> */}
       <Actions
-        allStashes={allStashes}
-        isVisible={pathname === `${basePath}/actions`}
-        recentlyOnline={recentlyOnline}
-        next={next}
-        stakingOverview={stakingOverview}
-      /> */}
+        allContracts={allContractIds}
+        isVisible={pathname === `${basePath}/actions`}       
+      />
       <Overview
         hasQueries={hasQueries}
         isVisible={[basePath, `${basePath}/waiting`].includes(pathname)}
-        next={next}
         allContracts={allContractIds}
         allOperators={allOperatorIds}
         electedContracts={stakedContracts}

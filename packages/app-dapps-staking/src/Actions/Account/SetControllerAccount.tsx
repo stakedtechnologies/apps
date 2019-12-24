@@ -15,7 +15,6 @@ import InputValidationController from './InputValidationController';
 
 interface Props extends ApiProps, I18nProps {
   defaultControllerId: string;
-  isValidating?: boolean;
   onClose: () => void;
   stashId: string;
 }
@@ -36,7 +35,7 @@ class SetControllerAccount extends TxComponent<Props, State> {
   }
 
   public render (): React.ReactNode {
-    const { defaultControllerId, isValidating, onClose, stashId, systemChain, t } = this.props;
+    const { defaultControllerId, onClose, stashId, systemChain, t } = this.props;
     const { controllerError, controllerId } = this.state;
     const isUnsafeChain = detectUnsafe(systemChain);
     const canSubmit = isUnsafeChain || (!controllerError && !!controllerId && (defaultControllerId !== controllerId));
@@ -49,14 +48,6 @@ class SetControllerAccount extends TxComponent<Props, State> {
         size='small'
       >
         <Modal.Content className='ui--signer-Signer-Content'>
-          {isValidating && (
-            <article className='warning'>
-              <div className='warning'>
-                <Icon name='warning sign' />
-                {t('Warning - Changing the controller while validating will modify the associated session account. It is advised to stop validating before changing the controller account.')}
-              </div>
-            </article>
-          )}
           <InputAddress
             className='medium'
             isDisabled
@@ -66,7 +57,7 @@ class SetControllerAccount extends TxComponent<Props, State> {
           <InputAddress
             className='medium'
             defaultValue={defaultControllerId}
-            help={t('The controller is the account that will be used to control any nominating or validating actions. Should not match another stash or controller.')}
+            help={t('The controller is the account that will be used to control any nominating actions. Should not match another stash or controller.')}
             isError={!isUnsafeChain && !!controllerError}
             label={t('controller account')}
             onChange={this.onChangeController}
@@ -98,7 +89,7 @@ class SetControllerAccount extends TxComponent<Props, State> {
               icon='sign-in'
               onClick={onClose}
               params={[controllerId]}
-              tx='staking.setController'
+              tx='plasmStaking.setController'
               ref={this.button}
             />
           </Button.Group>

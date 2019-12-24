@@ -21,7 +21,6 @@ interface Props extends I18nProps {
   isIntentions: boolean;
   isVisible: boolean;
   lastAuthors?: string[];
-  next: string[];
   allContracts: string[];
   allOperators: string[];
   electedContracts: string[];
@@ -56,18 +55,11 @@ function accountsToString (accounts: AccountId[]): string[] {
   return accounts.map((accountId): string => accountId.toString());
 }
 
-function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, next, allContracts, allOperators, electedContracts, electedOperators, t }: Props): React.ReactElement<Props> | null {
+function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, allContracts, allOperators, electedContracts, electedOperators, t }: Props): React.ReactElement<Props> | null {
   const { allAccounts } = useAccounts();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS_BASE);
   const [filter, setFilter] = useState<ContractFilter>('all');
   const [contracts, setFiltered] = useState<AccountExtend[]>([]);
-
-  // operatorId: undefined | AccountId;
-  // nominators?: AccountId[];
-  // stakers?: Exposure;
-  // contractId: AccountId;
-  // contractParameters: undefined | Parameters;
-  console.log('isIntentions', isIntentions);
 
   useEffect((): void => {
     if (isVisible && allContracts) {
@@ -75,7 +67,7 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
 
       setFiltered(contracts);
     }
-  }, [allContracts, allOperators, electedContracts, favorites, isVisible, next]);
+  }, [allContracts, allOperators, electedContracts, favorites, isVisible]);
 
   const _renderRows = (addresses: AccountExtend[], defaultName: string): React.ReactNode =>
     addresses.map(([contract, operator, isElected, isFavorite]): React.ReactNode => (

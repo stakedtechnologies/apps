@@ -84,7 +84,7 @@ class Unbond extends TxComponent<Props, State> {
               icon='sign-out'
               onClick={onClose}
               params={[maxUnbond]}
-              tx='staking.unbond'
+              tx='plasmStaking.unbond'
               ref={this.button}
             />
           </Button.Group>
@@ -162,6 +162,6 @@ export default withMulti(
   translate,
   withApi,
   withCalls<Props>(
-    ['query.staking.ledger', { paramName: 'controllerId' }]
+    ['query.plasmStaking.ledger', { paramName: 'controllerId' }]
   )
 );

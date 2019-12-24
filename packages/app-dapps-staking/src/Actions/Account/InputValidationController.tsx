@@ -24,7 +24,7 @@ const DISTINCT = 'Distinct stash and controller accounts are recommended to ensu
 
 function ValidateController ({ accountId, controllerId, defaultController, isUnsafeChain, onError, t }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
-  const bondedId = useCall<string | null>(api.query.staking.bonded, [controllerId], {
+  const bondedId = useCall<string | null>(api.query.plasmStaking.bonded, [controllerId], {
     transform: (value: Option<AccountId>): string | null => {
       const extracted = value.unwrapOr(null);
 

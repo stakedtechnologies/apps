@@ -69,7 +69,6 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
         ? stakers.others.map(({ who, value }): [AccountId, Balance] => [who, value.unwrap()])
         : [];
       const stakeTotal = (stakers && !stakers.total.isEmpty && stakers.total.unwrap()) || undefined;
-      console.log(contractParameters);
 
       setStakingState({
         hasNominators: nominators.length !== 0,
@@ -100,8 +99,6 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
 
     setIsExpanded(!isExpanded);
   };
-  console.log('Address!');
-  console.log('isFavorite', isFavorite);
 
   return (
     <tr className={`${className}`}>

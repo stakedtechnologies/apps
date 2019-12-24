@@ -14,14 +14,13 @@ import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/t
 interface Props extends BareProps {
   hasQueries: boolean;
   isVisible: boolean;
-  next: string[];
   allContracts: string[];
   allOperators: string[];
   electedContracts: string[];
   electedOperators: string[];
 }
 
-export default function Overview ({ hasQueries, isVisible, className, next, allContracts, allOperators, electedContracts, electedOperators }: Props): React.ReactElement<Props> {
+export default function Overview ({ hasQueries, isVisible, className, allContracts, allOperators, electedContracts, electedOperators }: Props): React.ReactElement<Props> {
   const { pathname } = useLocation();
   const { byAuthor, lastBlockAuthors } = useContext(BlockAuthorsContext);
   const isIntentions = pathname !== '/dapps-staking';
@@ -34,7 +33,6 @@ export default function Overview ({ hasQueries, isVisible, className, next, allC
         isIntentions={isIntentions}
         isVisible={isVisible}
         lastAuthors={lastBlockAuthors}
-        next={next}
         allContracts={allContracts}
         allOperators={allOperators}
         electedContracts={electedContracts}

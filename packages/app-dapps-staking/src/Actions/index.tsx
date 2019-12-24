@@ -16,44 +16,43 @@ import StartStaking from './NewStake';
 import translate from '../translate';
 
 interface Props extends I18nProps {
-  allStashes: string[];
+  allContracts: string[];
   isVisible: boolean;
-  recentlyOnline?: DerivedHeartbeats;
-  next: string[];
-  stakingOverview?: DerivedStakingOverview;
 }
 
-function getStashes (allAccounts: string[], stashTypes: Record<string, number>, queryBonded?: Option<AccountId>[], queryLedger?: Option<StakingLedger>[]): [string, boolean][] | null {
-  const result: [string, boolean][] = [];
+function getStashes (allAccounts: string[], stashTypes: Record<string, number>, queryBonded?: Option<AccountId>[], queryLedger?: Option<StakingLedger>[]): string[] | null {
+  const result: string[] = [];
 
   if (!queryBonded || !queryLedger) {
     return null;
   }
 
   queryBonded.forEach((value, index): void => {
-    value.isSome && result.push([allAccounts[index], true]);
+    value.isSome && result.push(allAccounts[index]);
   });
 
   queryLedger.forEach((ledger): void => {
     if (ledger.isSome) {
       const stashId = ledger.unwrap().stash.toString();
 
-      !result.some(([accountId]): boolean => accountId === stashId) && result.push([stashId, false]);
+      !result.some(([accountId]): boolean => accountId === stashId) && result.push(stashId);
     }
   });
 
-  return result.sort((a, b): number =>
+  const uniqResult: string[] = Array.from(result.reduce((s,r: string) => s.add(r), new Set()));
+
+  return uniqResult.sort((a, b): number =>
     (stashTypes[a[0]] || 99) - (stashTypes[b[0]] || 99)
   );
 }
 
-function Actions ({ allStashes, className, isVisible, next, recentlyOnline, stakingOverview, t }: Props): React.ReactElement<Props> {
+function Actions ({ allContracts, className, isVisible, t }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const { allAccounts } = useAccounts();
   const queryBonded = useCall<Option<AccountId>[]>(api.query.plasmStaking.bonded.multi as any, [allAccounts]);
-  const queryLedger = useCall<Option<StakingLedger>[]>(api.query.staking.ledger.multi as any, [allAccounts]);
+  const queryLedger = useCall<Option<StakingLedger>[]>(api.query.plasmStaking.ledger.multi as any, [allAccounts]);
   const [isNewStakeOpen, setIsNewStateOpen] = useState(false);
-  const [foundStashes, setFoundStashes] = useState<[string, boolean][] | null>(null);
+  const [foundStashes, setFoundStashes] = useState<string[] | null>(null);
   const [stashTypes, setStashTypes] = useState<Record<string, number>>({});
 
   useEffect((): void => {
@@ -61,7 +60,7 @@ function Actions ({ allStashes, className, isVisible, next, recentlyOnline, stak
   }, [allAccounts, queryBonded, queryLedger, stashTypes]);
 
   const _toggleNewStake = (): void => setIsNewStateOpen(!isNewStakeOpen);
-  const _onUpdateType = (stashId: string, type: 'validator' | 'nominator' | 'started' | 'other'): void =>
+  const _onUpdateType = (stashId: string, type: 'validator' | 'contract' | 'nominator' | 'started' | 'other'): void =>
     setStashTypes({
       ...stashTypes,
       [stashId]: type === 'validator'
@@ -89,15 +88,11 @@ function Actions ({ allStashes, className, isVisible, next, recentlyOnline, stak
         ? (
           <Table>
             <Table.Body>
-              {foundStashes.map(([stashId, isOwnStash]): React.ReactNode => (
+              {foundStashes.map((stashId): React.ReactNode => (
                 <Account
-                  allStashes={allStashes}
-                  isOwnStash={isOwnStash}
+                  allContracts={allContracts}
                   key={stashId}
-                  next={next}
                   onUpdateType={_onUpdateType}
-                  recentlyOnline={recentlyOnline}
-                  stakingOverview={stakingOverview}
                   stashId={stashId}
                 />
               ))}

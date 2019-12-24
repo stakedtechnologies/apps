@@ -4,31 +4,31 @@
 
 import { ApiInterfaceRx } from '@polkadot/api/types';
 import { StakingLedger, Option, AccountId, Nominations, RewardDestination } from '@polkadot/types/interfaces';
-import { DerivedStakingAccount } from '../types';
 import { createType } from '@polkadot/types';
 
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { memo } from '@polkadot/api-derive/util/memo';
+import { DerivedDappsStakingAccount } from '../types';
 
 interface ParseInput {
   stashId: Uint8Array | string;
   controllerId: Option<AccountId>;
-  payee: Option<RewardDestination>;
-  ledger: Option<StakingLedger>;
+  payee: RewardDestination;
+  ledger: Option<StakingLedger> | undefined;
   nominations: Option<Nominations>;
 }
 
-function parseResult ({ stashId, controllerId, payee, ledger, nominations }: ParseInput): DerivedDappsStakingAccount {
-  const _controllerId = controllerId.unwrap_or(undefined);
-  const _payee = payee.unwrap_or(undefined);
-  const _ledger = ledger.unwrap_or(undefined);
-  const _nominations = nominations.unwrap_or(undefined);
+function parseResult (api: ApiInterfaceRx, { stashId, controllerId, payee, ledger, nominations }: ParseInput): DerivedDappsStakingAccount {
+  const _controllerId = controllerId.unwrapOr(undefined);
+  const _ledger = ledger ? ledger.unwrapOr(undefined) : undefined;
+  const _nominations = nominations.unwrapOr(undefined);
+  console.log('parseResult', stashId, controllerId, payee, ledger, nominations)
   return {
     stashId: createType(api.registry, 'AccountId', stashId),
     controllerId: _controllerId,
-    payee: _payee,
+    payee,
     ledger: _ledger,
     nominations: _nominations
   };
@@ -37,24 +37,25 @@ function parseResult ({ stashId, controllerId, payee, ledger, nominations }: Par
 /**
  * @description From a stash, retrieve the controllerId and fill in all the relevant staking details
  */
-export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) => Observable<DerivedStakingAccount> {
-  return memo((stashId: Uint8Array | string): Observable<DerivedStakingAccount> =>
+export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) => Observable<DerivedDappsStakingAccount> {
+  return memo((stashId: Uint8Array | string): Observable<DerivedDappsStakingAccount> =>
     combineLatest([
       api.query.plasmStaking.bonded<Option<AccountId>>(stashId),
-      api.query.plasmStaking.payee<Option<RewardDestination>>(stashId),
+      api.query.plasmStaking.payee<RewardDestination>(stashId),
       api.query.plasmStaking.dappsNominations<Option<Nominations>>(stashId)
     ]).pipe(
-      switchMap(([controllerId, payee, nominations]): Observable<DerivedStakingAccount> =>
-        combineLatest([
+      switchMap(([controllerId, payee, nominations]): Observable<DerivedDappsStakingAccount> => {
+        console.log('account switchMap', controllerId, payee, nominations);
+        return combineLatest([
           of(controllerId),
           of(payee),
           controllerId.isSome
-            ? api.query.plasmStaking.ledger<Option<StakingLedger>>(controllerId)
-            : of(controllerId),
+            ? api.query.plasmStaking.ledger<Option<StakingLedger>>(controllerId.unwrap())
+            : of(undefined),
           of(nominations)
         ]).pipe(
-          map(([controllerId, payee, ledger, nominations]): DerivedStakingAccount =>
-            parseResult({ stashId, controllerId, payee, ledger, nominations })
+          map(([controllerId, payee, ledger, nominations]): DerivedDappsStakingAccount =>
+            parseResult( api, { stashId, controllerId, payee, ledger, nominations })
           ))
-      )));
+        })));
 }

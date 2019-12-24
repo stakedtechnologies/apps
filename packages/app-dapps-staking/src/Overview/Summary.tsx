@@ -14,12 +14,11 @@ import translate from '../translate';
 interface Props extends I18nProps {
   className?: string;
   isVisible: boolean;
-  next: string[];
   allContracts: string[];
   stakedContracts: string[];
 }
 
-function Summary ({ className, isVisible, next, allContracts, stakedContracts, style, t }: Props): React.ReactElement<Props> {
+function Summary ({ className, isVisible, allContracts, stakedContracts, style, t }: Props): React.ReactElement<Props> {
   return (
     <SummaryBox
       className={`${className} ${!isVisible && 'staking--hidden'}`}

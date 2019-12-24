@@ -72,7 +72,7 @@ class NewStake extends TxComponent<Props, State> {
           />
           <InputAddress
             className='medium'
-            help={t('The controller is the account that will be used to control any nominating or validating actions. Should not match another stash or controller.')}
+            help={t('The controller is the account that will be used to control any nominating actions. Should not match another stash or controller.')}
             isError={!isUnsafeChain && !!controllerError}
             label={t('controller account')}
             onChange={this.onChangeController}
@@ -90,7 +90,7 @@ class NewStake extends TxComponent<Props, State> {
             className='medium'
             controllerId={controllerId}
             destination={destination}
-            extrinsicProp={'staking.bond'}
+            extrinsicProp={'plasmStaking.bond'}
             help={t('The total amount of the stash balance that will be at stake in any forthcoming rounds (should be less than the total amount available)')}
             isError={!hasValue || !!amountError}
             label={t('value bonded')}
@@ -107,7 +107,7 @@ class NewStake extends TxComponent<Props, State> {
           <Dropdown
             className='medium'
             defaultValue={0}
-            help={t('The destination account for any payments as either a nominator or validator')}
+            help={t('The destination account for any payments as either a nominator')}
             label={t('payment destination')}
             onChange={this.onChangeDestination}
             options={rewardDestinationOptions}
@@ -144,7 +144,7 @@ class NewStake extends TxComponent<Props, State> {
       const { api } = this.props;
       const { amountError = prevState.amountError, bondValue = prevState.bondValue, controllerError = prevState.controllerError, controllerId = prevState.controllerId, destination = prevState.destination, stashId = prevState.stashId } = newState;
       const extrinsic = (bondValue && controllerId)
-        ? api.tx.staking.bond(controllerId, bondValue, destination)
+        ? api.tx.plasmStaking.bond(controllerId, bondValue, destination)
         : null;
 
       return {
