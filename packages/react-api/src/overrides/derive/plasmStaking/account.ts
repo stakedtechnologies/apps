@@ -20,11 +20,11 @@ interface ParseInput {
   nominations: Option<Nominations>;
 }
 
-function parseResult ({stashId, controllerId, payee, ledger, nominations}: ParseInput): DerivedDappsStakingAccount {
-  const _controllerId = controllerId.unwrap_or(undefined)
-  const _payee = payee.unwrap_or(undefined)
-  const _ledger = ledger.unwrap_or(undefined)
-  const _nominations = nominations.unwrap_or(undefined)
+function parseResult ({ stashId, controllerId, payee, ledger, nominations }: ParseInput): DerivedDappsStakingAccount {
+  const _controllerId = controllerId.unwrap_or(undefined);
+  const _payee = payee.unwrap_or(undefined);
+  const _ledger = ledger.unwrap_or(undefined);
+  const _nominations = nominations.unwrap_or(undefined);
   return {
     stashId: createType(api.registry, 'AccountId', stashId),
     controllerId: _controllerId,
@@ -48,13 +48,13 @@ export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) =>
         combineLatest([
           of(controllerId),
           of(payee),
-          controllerId.isSome?
-            api.query.plasmStaking.ledger<Option<StakingLedger>>(controllerId)
-            :of(controllerId),          
+          controllerId.isSome
+            ? api.query.plasmStaking.ledger<Option<StakingLedger>>(controllerId)
+            : of(controllerId),
           of(nominations)
         ]).pipe(
-          map(([controllerId, payee, ledger, nominations]):DerivedStakingAccount => 
-            parseResult({stashId, controllerId, payee, ledger, nominations})
+          map(([controllerId, payee, ledger, nominations]): DerivedStakingAccount =>
+            parseResult({ stashId, controllerId, payee, ledger, nominations })
           ))
-        )));
+      )));
 }

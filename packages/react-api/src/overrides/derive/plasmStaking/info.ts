@@ -42,7 +42,7 @@ function infoLatestAura (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
   );
 }
 
-function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {    
+function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
   return combineLatest([
     api.derive.session.indexes(),
     api.queryMulti<ResultSlots>([
@@ -67,8 +67,8 @@ function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
  */
 export function info (api: ApiInterfaceRx): () => Observable<DerivedSessionInfo> {
   const query = api.consts.babe
-      ? infoLatestBabe // 2.x with Babe
-      : infoLatestAura // 2.x with Aura (not all info there)
+    ? infoLatestBabe // 2.x with Babe
+    : infoLatestAura; // 2.x with Aura (not all info there)
 
   return memo((): Observable<DerivedSessionInfo> =>
     query(api));

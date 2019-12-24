@@ -13,7 +13,7 @@ import { DeriveOperators } from '../types';
  * @description From the list of stash accounts, retrieve the list of controllers
  */
 export function stakedOperators (api: ApiInterfaceRx): () => Observable<DeriveOperators> {
-  return memo((): Observable<[AccountId[], Option<AccountId>[]]> => 
+  return memo((): Observable<[AccountId[], Option<AccountId>[]]> =>
     api.query.plasmStaking.stakedContracts<ITuple<[Vec<AccountId>, Vec<Exposure>]>>().pipe(
       switchMap(([contractIds]): Observable<DeriveOperators> =>
         combineLatest([

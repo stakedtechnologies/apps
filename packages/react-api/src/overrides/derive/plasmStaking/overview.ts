@@ -27,6 +27,6 @@
 //       map(([queryResults]): DerivedDappsStakingOverview => {
 //         console.log('queryResults', queryResults);
 //         return {contracts: queryResults};
-//       })      
+//       })
 //     ));
 // }

@@ -38,9 +38,9 @@ function filterAccounts (allContracts: string[] = [], allOperators: string[] = [
       const isFavA = favorites.includes(a[0]);
       const isFavB = favorites.includes(b[0]);
       const isElectedA = electedContracts.includes(a[0]);
-      return isFavA === isFavB 
+      return isFavA === isFavB
         ? (isElectedA ? -1 : 1)
-        : (isFavA ? -1 : 1)
+        : (isFavA ? -1 : 1);
     })
     .map((contract): AccountExtend => {
       return [
@@ -48,7 +48,7 @@ function filterAccounts (allContracts: string[] = [], allOperators: string[] = [
         contract[1],
         electedContracts.includes(contract[0]),
         favorites.includes(contract[0])
-      ]
+      ];
     });
 }
 
@@ -67,7 +67,7 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
   // stakers?: Exposure;
   // contractId: AccountId;
   // contractParameters: undefined | Parameters;
-  console.log('isIntentions', isIntentions)
+  console.log('isIntentions', isIntentions);
 
   useEffect((): void => {
     if (isVisible && allContracts) {
@@ -106,7 +106,7 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
             { text: t('Show only with nominators'), value: 'hasNominators' },
             { text: t('Show only without nominators'), value: 'noNominators' },
             { text: t('Show only with warnings'), value: 'hasWarnings' },
-            { text: t('Show only without warnings'), value: 'noWarnings' },
+            { text: t('Show only without warnings'), value: 'noWarnings' }
           ]}
           value={filter}
           withLabel={false}

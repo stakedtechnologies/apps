@@ -76,7 +76,7 @@ function SummarySession (props: Props): React.ReactElement<Props> {
   useEffect((): void => {
     setExpanded({ ...props, sessionInfo });
   }, [props, sessionInfo]);
-  
+
   return (
     <>
       {renderSession(expanded)}

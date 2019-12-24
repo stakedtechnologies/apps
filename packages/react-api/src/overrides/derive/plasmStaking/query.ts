@@ -26,8 +26,8 @@ interface ParseInput {
 function parseResult ({ operatorId, nominators, stakers, contractId, contractParameters }: ParseInput): DerivedDappsStakingQuery {
   const _operatorId = operatorId.unwrapOr(undefined);
   const _contractParameters = contractParameters.unwrapOr(undefined);
-  console.log('operatorId', _operatorId)
-  console.log('parameters', _contractParameters)
+  console.log('operatorId', _operatorId);
+  console.log('parameters', _contractParameters);
   console.log('staker', stakers);
   return {
     operatorId: _operatorId,
@@ -39,7 +39,7 @@ function parseResult ({ operatorId, nominators, stakers, contractId, contractPar
 }
 
 function retrieve (api: ApiInterfaceRx, contractId: AccountId): Observable<DerivedDappsStakingQuery> {
-  console.log('retrive')
+  console.log('retrive');
   console.log('retrive', contractId.toString());
   return combineLatest([
     api.query.plasmStaking.stakedContracts<Exposure>(contractId),
@@ -61,8 +61,9 @@ function retrieve (api: ApiInterfaceRx, contractId: AccountId): Observable<Deriv
 /**
  * @description From a stash, retrieve the controllerId and fill in all the relevant staking details
  */
-export function query (api: ApiInterfaceRx): (_accountId: Uint8Array | string) => Observable<DerivedDappsStakingQuery> {  
+export function query (api: ApiInterfaceRx): (_accountId: Uint8Array | string) => Observable<DerivedDappsStakingQuery> {
   return memo((accountId: Uint8Array | string): Observable<DerivedDappsStakingQuery> => {
-    console.log('query in ', accountId)
-    return retrieve(api, createType(api.registry, 'AccountId', accountId))});
+    console.log('query in ', accountId);
+    return retrieve(api, createType(api.registry, 'AccountId', accountId));
+  });
 }

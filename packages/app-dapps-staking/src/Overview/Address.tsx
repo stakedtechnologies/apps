@@ -51,7 +51,6 @@ interface StakingState {
 // contractId: AccountId;
 // contractParameters: undefined | Parameters;
 
-
 function Address ({ address, operator, authorsMap, className, filter, hasQueries, isElected, isFavorite, lastAuthors, myAccounts, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
@@ -70,7 +69,7 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
         ? stakers.others.map(({ who, value }): [AccountId, Balance] => [who, value.unwrap()])
         : [];
       const stakeTotal = (stakers && !stakers.total.isEmpty && stakers.total.unwrap()) || undefined;
-      console.log(contractParameters)
+      console.log(contractParameters);
 
       setStakingState({
         hasNominators: nominators.length !== 0,
@@ -101,8 +100,8 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
 
     setIsExpanded(!isExpanded);
   };
-  console.log('Address!')
-  console.log('isFavorite', isFavorite)
+  console.log('Address!');
+  console.log('isFavorite', isFavorite);
 
   return (
     <tr className={`${className}`}>
@@ -164,7 +163,7 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
           </td>
           <td className='number'>
             {contractParameters && (
-<><label>{t('option parcent')}</label>{formatNumber(contractParameters.optionP/10000000)}{'%'}</>
+              <><label>{t('option parcent')}</label>{formatNumber(contractParameters.optionP / 10000000)}{'%'}</>
             )}
           </td>
           <td className='number'>

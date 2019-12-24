@@ -52,10 +52,10 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   }) as [string[], string[]]);
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
-  
+
   // unique, all = all + staked
-  const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts).reduce((s, c) => s.add(c), new Set()))
-  const allOperatorIds: string[] = Array.from(allOperators.concat(stakedOperators).reduce((s, c) => s.add(c), new Set()))
+  const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts).reduce((s, c) => s.add(c), new Set()));
+  const allOperatorIds: string[] = Array.from(allOperators.concat(stakedOperators).reduce((s, c) => s.add(c), new Set()));
 
   console.log('allContracts:', allContracts);
   console.log('stakedContracts:', stakedContracts);
