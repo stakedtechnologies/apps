@@ -5,7 +5,7 @@
 import { DerivedHeartbeats, DerivedStakingOverview } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId, EraPoints, Points } from '@polkadot/types/interfaces';
-import { ValidatorFilter } from '../types';
+import { ContractFilter } from '../types';
 
 import React, { useEffect, useState } from 'react';
 import { Dropdown, FilterOverlay, Table } from '@polkadot/react-components';
@@ -14,7 +14,6 @@ import { useAccounts, useApi, useFavorites } from '@polkadot/react-hooks';
 import { STORE_FAVS_BASE } from '../constants';
 import translate from '../translate';
 import Address from './Address';
-import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 
 interface Props extends I18nProps {
   authorsMap: Record<string, string>;
@@ -23,33 +22,33 @@ interface Props extends I18nProps {
   isVisible: boolean;
   lastAuthors?: string[];
   next: string[];
-  stakingOverview?: DerivedDappsStakingQuery;
+  allContracts: string[];
+  allOperators: string[];
+  electedContracts: string[];
+  electedOperators: string[];
 }
 
-type AccountExtend = [string, boolean, boolean, Points?];
+// ContractId, OperatorId, isElected, isFav
+type AccountExtend = [string, string, boolean, boolean];
 
-function filterAccounts (accounts: string[] = [], elected: string[], favorites: string[], without: string[], eraPoints?: EraPoints): AccountExtend[] {
-  return accounts
-    .filter((accountId): boolean => !without.includes(accountId as any))
+function filterAccounts (allContracts: string[] = [], allOperators: string[] = [], electedContracts: string[] = [], favorites: string[]): AccountExtend[] {
+  return allContracts
+    .map((a, i) => [a, allOperators[i]])
     .sort((a, b): number => {
-      const isFavA = favorites.includes(a);
-      const isFavB = favorites.includes(b);
-
-      return isFavA === isFavB
-        ? 0
-        : (isFavA ? -1 : 1);
+      const isFavA = favorites.includes(a[0]);
+      const isFavB = favorites.includes(b[0]);
+      const isElectedA = electedContracts.includes(a[0]);
+      return isFavA === isFavB 
+        ? (isElectedA ? -1 : 1)
+        : (isFavA ? -1 : 1)
     })
-    .map((accountId): AccountExtend => {
-      const electedIdx = elected.indexOf(accountId);
-
+    .map((contract): AccountExtend => {
       return [
-        accountId,
-        elected.includes(accountId),
-        favorites.includes(accountId),
-        electedIdx !== -1
-          ? eraPoints?.individual[electedIdx]
-          : undefined
-      ];
+        contract[0],
+        contract[1],
+        electedContracts.includes(contract[0]),
+        favorites.includes(contract[0])
+      ]
     });
 }
 
@@ -57,30 +56,32 @@ function accountsToString (accounts: AccountId[]): string[] {
   return accounts.map((accountId): string => accountId.toString());
 }
 
-function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, next, electedContracts, t }: Props): React.ReactElement<Props> | null {
-  const { isSubstrateV2 } = useApi();
+function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAuthors, next, allContracts, allOperators, electedContracts, electedOperators, t }: Props): React.ReactElement<Props> | null {
   const { allAccounts } = useAccounts();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS_BASE);
-  const [filter, setFilter] = useState<ValidatorFilter>('all');
-  const [{ elected, contracts, waiting }, setFiltered] = useState<{ elected: AccountExtend[]; contracts: AccountExtend[]; waiting: AccountExtend[] }>({ elected: [], contracts: [], waiting: [] });
+  const [filter, setFilter] = useState<ContractFilter>('all');
+  const [contracts, setFiltered] = useState<AccountExtend[]>([]);
 
-  useEffect((): void => {// TODO ここまで三田
-    if (isVisible && electedContracts) {
-      const validators = filterAccounts(_validators, _elected, favorites, [], stakingOverview.eraPoints);
-      const elected = isSubstrateV2 ? filterAccounts(_elected, _elected, favorites, _validators) : [];
+  // operatorId: undefined | AccountId;
+  // nominators?: AccountId[];
+  // stakers?: Exposure;
+  // contractId: AccountId;
+  // contractParameters: undefined | Parameters;
+  console.log('isIntentions', isIntentions)
 
-      setFiltered({
-        elected,
-        validators,
-        waiting: filterAccounts(next, [], favorites, _elected)
-      });
+  useEffect((): void => {
+    if (isVisible && allContracts) {
+      const contracts = filterAccounts(allContracts, allOperators, electedContracts, favorites);
+
+      setFiltered(contracts);
     }
-  }, [favorites, isVisible, next, stakingOverview]);
+  }, [allContracts, allOperators, electedContracts, favorites, isVisible, next]);
 
-  const _renderRows = (addresses: AccountExtend[], defaultName: string, withOnline: boolean): React.ReactNode =>
-    addresses.map(([address, isElected, isFavorite, points]): React.ReactNode => (
+  const _renderRows = (addresses: AccountExtend[], defaultName: string): React.ReactNode =>
+    addresses.map(([contract, operator, isElected, isFavorite]): React.ReactNode => (
       <Address
-        address={address}
+        address={contract}
+        operator={operator}
         authorsMap={authorsMap}
         defaultName={defaultName}
         filter={filter}
@@ -88,14 +89,8 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
         isElected={isElected}
         isFavorite={isFavorite}
         lastAuthors={lastAuthors}
-        key={address}
+        key={contract}
         myAccounts={allAccounts}
-        points={points}
-        recentlyOnline={
-          withOnline
-            ? recentlyOnline
-            : undefined
-        }
         toggleFavorite={toggleFavorite}
       />
     ));
@@ -106,13 +101,12 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
         <Dropdown
           onChange={setFilter}
           options={[
-            { text: t('Show all validators and intentions'), value: 'all' },
+            { text: t('Show all contracts and intentions'), value: 'all' },
             { text: t('Show only my nominations'), value: 'iNominated' },
             { text: t('Show only with nominators'), value: 'hasNominators' },
             { text: t('Show only without nominators'), value: 'noNominators' },
             { text: t('Show only with warnings'), value: 'hasWarnings' },
             { text: t('Show only without warnings'), value: 'noWarnings' },
-            { text: t('Show only elected for next session'), value: 'nextSet' }
           ]}
           value={filter}
           withLabel={false}
@@ -120,13 +114,7 @@ function CurrentList ({ authorsMap, hasQueries, isIntentions, isVisible, lastAut
       </FilterOverlay>
       <Table className={isIntentions ? 'staking--hidden' : ''}>
         <Table.Body>
-          {_renderRows(validators, t('validators'), true)}
-        </Table.Body>
-      </Table>
-      <Table className={isIntentions ? '' : 'staking--hidden'}>
-        <Table.Body>
-          {_renderRows(elected, t('intention'), false)}
-          {_renderRows(waiting, t('intention'), false)}
+          {_renderRows(contracts, t('contracts'))}
         </Table.Body>
       </Table>
     </div>

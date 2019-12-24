@@ -15,13 +15,16 @@ interface Props extends BareProps {
   hasQueries: boolean;
   isVisible: boolean;
   next: string[];
-  stakingOverview?: DerivedDappsStakingQuery;
+  allContracts: string[];
+  allOperators: string[];
+  electedContracts: string[];
+  electedOperators: string[];
 }
 
-export default function Overview ({ hasQueries, isVisible, className, next, stakingOverview }: Props): React.ReactElement<Props> {
+export default function Overview ({ hasQueries, isVisible, className, next, allContracts, allOperators, electedContracts, electedOperators }: Props): React.ReactElement<Props> {
   const { pathname } = useLocation();
   const { byAuthor, lastBlockAuthors } = useContext(BlockAuthorsContext);
-  const isIntentions = pathname !== '/staking';
+  const isIntentions = pathname !== '/dapps-staking';
 
   return (
     <div className={`staking--Overview ${className} ${!isVisible && 'staking--hidden'}`}>
@@ -32,7 +35,10 @@ export default function Overview ({ hasQueries, isVisible, className, next, stak
         isVisible={isVisible}
         lastAuthors={lastBlockAuthors}
         next={next}
-        stakingOverview={stakingOverview}
+        allContracts={allContracts}
+        allOperators={allOperators}
+        electedContracts={electedContracts}
+        electedOperators={electedOperators}
       />
     </div>
   );

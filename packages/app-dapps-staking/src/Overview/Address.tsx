@@ -2,10 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AccountId, Balance, Points, ValidatorPrefsTo196 } from '@polkadot/types/interfaces';
-import { DerivedStakingQuery, DerivedHeartbeats } from '@polkadot/api-derive/types';
+import { AccountId, Balance } from '@polkadot/types/interfaces';
+import { DerivedDappsStakingQuery, DerivedHeartbeats } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
-import { ValidatorFilter } from '../types';
+import { ContractFilter } from '../types';
+import { Parameters } from '@plasm/utils';
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -19,18 +20,17 @@ import translate from '../translate';
 
 interface Props extends I18nProps {
   address: AccountId | string;
+  operator: AccountId | string;
   authorsMap: Record<string, string>;
   className?: string;
   defaultName: string;
-  filter: ValidatorFilter;
+  filter: ContractFilter;
   hasQueries: boolean;
   isElected: boolean;
   isFavorite: boolean;
   lastAuthors?: string[];
   myAccounts: string[];
   onFavorite?: (accountId: string) => void;
-  points?: Points;
-  recentlyOnline?: DerivedHeartbeats;
   toggleFavorite: (accountId: string) => void;
   withNominations?: boolean;
 }
@@ -39,19 +39,24 @@ interface StakingState {
   operatorId?: string;
   hasNominators: boolean;
   nominators: [AccountId, Balance][];
-  sessionId?: string;
   stakeTotal?: BN;
-  stakeOther?: BN;
   contractId: string;
-  validatorPayment?: BN;
+  contractPayment?: BN;
+  contractParameters?: Parameters;
 }
 
-function Address ({ address, authorsMap, className, filter, hasQueries, isElected, isFavorite, lastAuthors, myAccounts, points, recentlyOnline, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
+// operatorId: undefined | AccountId;
+// nominators?: AccountId[];
+// stakers?: Exposure;
+// contractId: AccountId;
+// contractParameters: undefined | Parameters;
+
+
+function Address ({ address, operator, authorsMap, className, filter, hasQueries, isElected, isFavorite, lastAuthors, myAccounts, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
-  const stakingInfo = useCall<DerivedStakingQuery>(api.derive.staking.query as any, [address]);
-  const [hasActivity, setHasActivity] = useState(true);
-  const [{ hasNominators, nominators, contractId, stakeOwn, stakeOther, validatorPayment }, setStakingState] = useState<StakingState>({
+  const stakingInfo = useCall<DerivedDappsStakingQuery>(api.derive.plasmStaking.query as any, [address]);
+  const [{ hasNominators, nominators, contractId, stakeTotal, contractParameters }, setStakingState] = useState<StakingState>({
     hasNominators: false,
     nominators: [],
     contractId: address.toString()
@@ -60,52 +65,32 @@ function Address ({ address, authorsMap, className, filter, hasQueries, isElecte
 
   useEffect((): void => {
     if (stakingInfo) {
-      const { controllerId, nextSessionIds, stakers, contractId, validatorPrefs } = stakingInfo;
+      const { operatorId, stakers, contractId, contractParameters } = stakingInfo;
       const nominators = withNominations && stakers
         ? stakers.others.map(({ who, value }): [AccountId, Balance] => [who, value.unwrap()])
         : [];
       const stakeTotal = (stakers && !stakers.total.isEmpty && stakers.total.unwrap()) || undefined;
-      const stakeOwn = (stakers && !stakers.own.isEmpty && stakers.own.unwrap()) || undefined;
-      const stakeOther = (stakeTotal && stakeOwn) ? stakeTotal.sub(stakeOwn) : undefined;
-      const commission = validatorPrefs?.commission?.unwrap();
+      console.log(contractParameters)
 
       setStakingState({
-        commission: commission
-          ? `${(commission.toNumber() / 10000000).toFixed(2)}%`
-          : undefined,
-        controllerId: controllerId?.toString(),
         hasNominators: nominators.length !== 0,
-        isNominatorMe: nominators.some(([who]): boolean =>
-          myAccounts.includes(who.toString())
-        ),
+        operatorId,
         nominators,
-        sessionId: nextSessionIds && nextSessionIds[0]?.toString(),
-        contractId: (contractId || address).toString(),
-        stakeOther,
-        stakeOwn,
         stakeTotal,
-        validatorPayment: (validatorPrefs as any as ValidatorPrefsTo196)?.validatorPayment?.unwrap()
+        contractId,
+        contractParameters
       });
     }
   }, [stakingInfo]);
 
-  useEffect((): void => {
-    if (recentlyOnline && contractId && recentlyOnline[contractId]) {
-      setHasActivity(recentlyOnline[contractId].isOnline);
-    }
-  }, [recentlyOnline, contractId]);
-
   if ((filter === 'hasNominators' && !hasNominators) ||
     (filter === 'noNominators' && hasNominators) ||
-    (filter === 'hasWarnings' && hasActivity) ||
-    (filter === 'noWarnings' && !hasActivity) ||
-    (filter === 'iNominated' && !isNominatorMe) ||
-    (filter === 'nextSet' && !isElected)) {
+    (filter === 'hasWarnings' /* TODO */) ||
+    (filter === 'iNominated'/* TODO Erase */)) {
     return null;
   }
 
   const lastBlockNumber = authorsMap[contractId];
-  const isAuthor = lastAuthors && lastAuthors.includes(contractId);
   const _onFavorite = (): void => toggleFavorite(contractId);
   const _onQueryStats = (): void => {
     window.location.hash = `/staking/query/${contractId}`;
@@ -116,9 +101,11 @@ function Address ({ address, authorsMap, className, filter, hasQueries, isElecte
 
     setIsExpanded(!isExpanded);
   };
+  console.log('Address!')
+  console.log('isFavorite', isFavorite)
 
   return (
-    <tr className={`${className} ${isAuthor && 'isHighlight'}`}>
+    <tr className={`${className}`}>
       <td className='favorite'>
         <Icon
           className={`${isFavorite && 'isSelected'}`}
@@ -127,23 +114,16 @@ function Address ({ address, authorsMap, className, filter, hasQueries, isElecte
         />
       </td>
       <td className='together'>
+        <Badge
+          hover={t('Staked next/this session.')}
+          info={<Icon name='chevron right' />}
+          isInline
+          isTooltip
+          type='next'
+        />
         {isElected && (
           <Badge
-            hover={t('Selected for the next session')}
-            info={<Icon name='chevron right' />}
-            isInline
-            isTooltip
-            type='next'
-          />
-        )}
-        {recentlyOnline && hasActivity && recentlyOnline[contractId] && (
-          <Badge
-            hover={t('Active with {{blocks}} blocks authored{{hasMessage}} heartbeat message', {
-              replace: {
-                blocks: formatNumber(recentlyOnline[contractId].blockCount),
-                hasMessage: recentlyOnline[contractId].hasMessage ? ' and a' : ', no'
-              }
-            })}
+            hover={t('Already staked this session.')}
             info={<Icon name='check' />}
             isInline
             isTooltip
@@ -154,11 +134,11 @@ function Address ({ address, authorsMap, className, filter, hasQueries, isElecte
       <td>
         <AddressSmall value={contractId} />
       </td>
-      <td className='number'>
+      {/* <td className='number'>
         {stakeOwn && <FormatBalance label={<label>{t('own stake')}</label>} value={stakeOwn} />}
-      </td>
+      </td> */}
       <td className={'toggle number'} colSpan={isExpanded ? 5 : 1} onClick={_toggleNominators}>
-        {stakeOther && (
+        {nominators && (
           isExpanded
             ? (
               <div>
@@ -172,34 +152,32 @@ function Address ({ address, authorsMap, className, filter, hasQueries, isElecte
                 )}
               </div>
             )
-            : <FormatBalance label={<label>{t('other stake')}</label>} value={stakeOther}>&nbsp;({formatNumber(nominators.length)})&nbsp;<Icon name='angle double right' /></FormatBalance>
+            : <FormatBalance label={<label>{t('other stake')}</label>} value={stakeTotal}>&nbsp;({formatNumber(nominators.length)})&nbsp;<Icon name='angle double right' /></FormatBalance>
         )}
       </td>
       {!isExpanded && (
         <>
           <td className='number'>
-            {(commission || validatorPayment) && (
-              commission
-                ? <><label>{t('commission')}</label>{commission}</>
-                : <FormatBalance label={<label>{t('commission')}</label>} value={validatorPayment} />
+            {contractParameters && (
+              <><label>{t('option expired')}</label>{formatNumber(contractParameters.optionExpired)}</>
             )}
           </td>
           <td className='number'>
-            {points && points.gtn(0) && (
-              <><label>{t('points')}</label>{formatNumber(points)}</>
+            {contractParameters && (
+<><label>{t('option parcent')}</label>{formatNumber(contractParameters.optionP/10000000)}{'%'}</>
             )}
           </td>
           <td className='number'>
             {lastBlockNumber && <><label>{t('last #')}</label>{lastBlockNumber}</>}
           </td>
-          <td>
+          {/* <td> TODO
             {hasQueries && api.query.imOnline?.authoredBlocks && (
               <Icon
                 name='line graph'
                 onClick={_onQueryStats}
               />
             )}
-          </td>
+          </td> */}
         </>
       )}
     </tr>

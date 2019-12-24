@@ -45,12 +45,9 @@ function renderSession ({ sessionInfo, t, withSession = true }: Props): React.Re
 }
 
 function renderEra ({ sessionInfo, t, withEra = true }: Props): React.ReactNode {
-  console.log('renderEra', sessionInfo, withEra);
   if (!withEra || !sessionInfo) {
-    console.log('null!')
     return null;
   }
-  console.log('ok!', sessionInfo.sessionLength.toString())
 
   const label = t('era');
 

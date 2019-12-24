@@ -1,7 +1,8 @@
 // Plasm-api-derive
 
-export * from './operators';
+export * from './stakedOperators';
 export * from './info';
 export * from './query';
 export * from './account';
-export * from './overview';
+export * from './operators';
+// export * from './overview';

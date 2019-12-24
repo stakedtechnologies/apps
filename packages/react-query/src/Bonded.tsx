@@ -32,13 +32,13 @@ export function BondedDisplay ({ children, className, label, staking_ledger }: P
 }
 
 export default withCalls<Props>(
-  ['query.staking.bonded', {
+  ['query.plasmStaking.bonded', {
     paramName: 'params',
     propName: 'controllerId',
     transform: (value): AccountId | null =>
       value.unwrapOr(null)
   }],
-  ['query.staking.ledger', {
+  ['query.plasmStaking.ledger', {
     paramName: 'controllerId',
     transform: (value): StakingLedger | null =>
       value.unwrapOr(null)

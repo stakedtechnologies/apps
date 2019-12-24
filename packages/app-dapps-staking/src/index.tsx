@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 import { AppProps as Props } from '@polkadot/react-components/types';
 import { AccountId } from '@polkadot/types/interfaces';
 
@@ -39,7 +38,7 @@ function transformStakedContracts ([contracts, operators]: [AccountId[], Option<
 
 function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { api, isSubstrateV2 } = useApi();
+  const { api } = useApi();
   const { hasAccounts } = useAccounts();
   const { pathname } = useLocation();
   const [next, setNext] = useState<string[]>([]);
@@ -47,13 +46,19 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
     defaultValue: EMPTY_ALL,
     transform: transformStakedContracts
   }) as [string[], string[]]);
-  const stakingOverview = useCall<DerivedDappsStakingQuery>(api.derive.plasmStaking.query, []);
+  const [stakedContracts, stakedOperators] = (useCall<[string[], string[]]>(api.derive.plasmStaking.stakedOperators, [], {
+    defaultValue: EMPTY_ALL,
+    transform: transformStakedContracts
+  }) as [string[], string[]]);
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
+  
+  // unique, all = all + staked
+  const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts).reduce((s, c) => s.add(c), new Set()))
+  const allOperatorIds: string[] = Array.from(allOperators.concat(stakedOperators).reduce((s, c) => s.add(c), new Set()))
 
-  console.log('api.derive.operators.', api.derive.plasmStaking.operators);
-  console.log('allContracts', allContracts);
-  console.log('allOperators', allOperators);
+  console.log('allContracts:', allContracts);
+  console.log('stakedContracts:', stakedContracts);
 
   useEffect((): void => {
     allContracts && setNext(allContracts);
@@ -109,9 +114,11 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
       <Overview
         hasQueries={hasQueries}
         isVisible={[basePath, `${basePath}/waiting`].includes(pathname)}
-        recentlyOnline={recentlyOnline}
         next={next}
-        stakingOverview={stakingOverview}
+        allContracts={allContractIds}
+        allOperators={allOperatorIds}
+        electedContracts={stakedContracts}
+        electedOperators={stakedOperators}
       />
     </main>
   );
