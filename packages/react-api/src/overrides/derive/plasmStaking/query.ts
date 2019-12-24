@@ -45,7 +45,7 @@ function retrieve (api: ApiInterfaceRx, contractId: AccountId): Observable<Deriv
     return parseResult({
       operatorId,
       nominators,
-      stakers: staker ? staker : undefined,
+      stakers: staker || undefined,
       contractId,
       contractParameters
     });

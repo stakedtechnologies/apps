@@ -47,7 +47,7 @@ interface StakingState {
 function Address ({ address, authorsMap, className, filter, isElected, isFavorite, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
-  const stakingInfo = useCall<DerivedDappsStakingQuery>((api.derive as any).plasmStaking.query as any, [address]);
+  const stakingInfo = useCall<DerivedDappsStakingQuery>((api.derive as any).plasmStaking.query, [address]);
   const [{ hasNominators, nominators, contractId, stakeTotal, contractParameters }, setStakingState] = useState<StakingState>({
     hasNominators: false,
     nominators: [],

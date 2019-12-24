@@ -29,7 +29,7 @@ function parseResult (api: ApiInterfaceRx, { stashId, controllerId, payee, ledge
     controllerId: _controllerId,
     payee,
     ledger: _ledger,
-    nominations: _nominations? (_nominations as any)[0] : undefined
+    nominations: _nominations ? (_nominations as any)[0] : undefined
   };
 }
 
