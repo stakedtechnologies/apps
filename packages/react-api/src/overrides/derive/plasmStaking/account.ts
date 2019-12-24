@@ -53,7 +53,7 @@ export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) =>
           of(nominations)
         ]).pipe(
           map(([controllerId, payee, ledger, nominations]): DerivedDappsStakingAccount =>
-            parseResult( api, { stashId, controllerId, payee, ledger, nominations })
+            parseResult(api, { stashId, controllerId, payee, ledger, nominations })
           ))
-        )));
+      )));
 }

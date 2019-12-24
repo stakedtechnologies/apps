@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AccountId, Balance } from '@polkadot/types/interfaces';
-import { DerivedDappsStakingQuery, DerivedHeartbeats } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { ContractFilter } from '../types';
 import { Parameters } from '@plasm/utils';
+import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -51,7 +51,7 @@ interface StakingState {
 // contractId: AccountId;
 // contractParameters: undefined | Parameters;
 
-function Address ({ address, operator, authorsMap, className, filter, hasQueries, isElected, isFavorite, lastAuthors, myAccounts, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
+function Address ({ address, authorsMap, className, filter, isElected, isFavorite, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
   const stakingInfo = useCall<DerivedDappsStakingQuery>(api.derive.plasmStaking.query as any, [address]);
@@ -90,9 +90,6 @@ function Address ({ address, operator, authorsMap, className, filter, hasQueries
 
   const lastBlockNumber = authorsMap[contractId];
   const _onFavorite = (): void => toggleFavorite(contractId);
-  const _onQueryStats = (): void => {
-    window.location.hash = `/staking/query/${contractId}`;
-  };
   const _toggleNominators = (event: React.SyntheticEvent): void => {
     event.preventDefault();
     event.stopPropagation();

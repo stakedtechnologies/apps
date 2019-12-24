@@ -43,7 +43,7 @@ function toIdString (id?: AccountId | null): string | null {
     : null;
 }
 
-function getStakeState ({ stashId, controllerId, payee, ledger, nominations }: DerivedDappsStakingAccount): StakeState {
+function getStakeState ({ controllerId, payee, ledger, nominations }: DerivedDappsStakingAccount): StakeState {
   const isStashNominating = !!nominations[0].targets;
   return {
     controllerId: toIdString(controllerId),
@@ -51,7 +51,7 @@ function getStakeState ({ stashId, controllerId, payee, ledger, nominations }: D
     isStashNominating,
     // we assume that all ids are non-null
     nominees: nominations[0] ? nominations[0].targets.map(toIdString) as string[] : [],
-    stakingLedger: ledger,
+    stakingLedger: ledger
   };
 }
 
@@ -59,14 +59,14 @@ function Account ({ allContracts, className, onUpdateType, stashId, t }: Props):
   const { api } = useApi();
   const balancesAll = useCall<DerivedBalances>(api.derive.balances.all as any, [stashId]);
   const stakingAccount = useCall<DerivedDappsStakingAccount>(api.derive.plasmStaking.account as any, [stashId]);
-  const [{ controllerId, destination, isStashNominating, nominees, contractParameters }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, isStashNominating: false });
+  const [{ controllerId, destination, isStashNominating, nominees }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, isStashNominating: false });
   const [isBondExtraOpen, toggleBondExtra] = useToggle();
   const [isNominateOpen, toggleNominate] = useToggle();
   const [isRewardDestinationOpen, toggleRewardDestination] = useToggle();
   const [isSetControllerOpen, toggleSetController] = useToggle();
   const [isSettingsOpen, toggleSettings] = useToggle();
   const [isUnbondOpen, toggleUnbond] = useToggle();
-  
+
   useEffect((): void => {
     if (stakingAccount) {
       const state = getStakeState(stakingAccount);
@@ -156,7 +156,7 @@ function Account ({ allContracts, className, onUpdateType, stashId, t }: Props):
               ))}
             </details>
           )}
-        </td>        
+        </td>
       }
       <td className='top number together'>
         <>

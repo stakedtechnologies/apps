@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedHeartbeats, DerivedStakingOverview } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId, StakingLedger } from '@polkadot/types/interfaces';
 
@@ -39,7 +38,7 @@ function getStashes (allAccounts: string[], stashTypes: Record<string, number>, 
     }
   });
 
-  const uniqResult: string[] = Array.from(result.reduce((s,r: string) => s.add(r), new Set()));
+  const uniqResult: string[] = Array.from(result.reduce((s, r: string) => s.add(r), new Set()));
 
   return uniqResult.sort((a, b): number =>
     (stashTypes[a[0]] || 99) - (stashTypes[b[0]] || 99)

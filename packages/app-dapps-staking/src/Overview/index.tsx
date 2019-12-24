@@ -9,18 +9,15 @@ import { useLocation } from 'react-router-dom';
 import { BlockAuthorsContext } from '@polkadot/react-query';
 
 import CurrentList from './CurrentList';
-import { DerivedDappsStakingQuery } from '@polkadot/react-api/overrides/derive/types';
 
 interface Props extends BareProps {
   hasQueries: boolean;
   isVisible: boolean;
   allContracts: string[];
-  allOperators: string[];
   electedContracts: string[];
-  electedOperators: string[];
 }
 
-export default function Overview ({ hasQueries, isVisible, className, allContracts, allOperators, electedContracts, electedOperators }: Props): React.ReactElement<Props> {
+export default function Overview ({ hasQueries, isVisible, className, allContracts, electedContracts }: Props): React.ReactElement<Props> {
   const { pathname } = useLocation();
   const { byAuthor, lastBlockAuthors } = useContext(BlockAuthorsContext);
   const isIntentions = pathname !== '/dapps-staking';
@@ -34,9 +31,7 @@ export default function Overview ({ hasQueries, isVisible, className, allContrac
         isVisible={isVisible}
         lastAuthors={lastBlockAuthors}
         allContracts={allContracts}
-        allOperators={allOperators}
         electedContracts={electedContracts}
-        electedOperators={electedOperators}
       />
     </div>
   );

@@ -19,20 +19,13 @@ import Actions from './Actions';
 import Overview from './Overview';
 import Summary from './Overview/Summary';
 // import Targets from './Targets';
-import { MAX_SESSIONS } from './constants';
 import { useTranslation } from './translate';
-import useSessionRewards from './useSessionRewards';
 
 const EMPY_ACCOUNTS: string[] = [];
-const EMPTY_ALL: [string[], string[]] = [EMPY_ACCOUNTS, EMPY_ACCOUNTS];
+const EMPTY_ALL: string[] = EMPY_ACCOUNTS;
 
-function transformStakedContracts ([contracts, operators]: [AccountId[], Option<AccountId>[]]): [string[], string[]] {
-  return [
-    contracts.map((accountId): string => accountId.toString()),
-    operators
-      .filter((optId): boolean => optId.isSome)
-      .map((accountId): string => accountId.unwrap().toString())
-  ];
+function transformStakedContracts ([contracts, _]: [AccountId[], Option<AccountId>[]]): string[] {
+  return contracts.map((accountId): string => accountId.toString());
 }
 
 function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> {
@@ -40,20 +33,18 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const { api } = useApi();
   const { hasAccounts } = useAccounts();
   const { pathname } = useLocation();
-  const [allContracts, allOperators] = (useCall<[string[], string[]]>(api.derive.plasmStaking.operators, [], {
+  const [allContracts] = (useCall<[string[], string[]]>(api.derive.plasmStaking.operators, [], {
     defaultValue: EMPTY_ALL,
     transform: transformStakedContracts
-  }) as [string[], string[]]);
-  const [stakedContracts, stakedOperators] = (useCall<[string[], string[]]>(api.derive.plasmStaking.stakedOperators, [], {
+  }) as string[]);
+  const [stakedContracts] = (useCall<[string[], string[]]>(api.derive.plasmStaking.stakedOperators, [], {
     defaultValue: EMPTY_ALL,
     transform: transformStakedContracts
-  }) as [string[], string[]]);
-  const sessionRewards = useSessionRewards(MAX_SESSIONS);
+  }) as string[]);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
 
   // unique, all = all + staked
   const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts).reduce((s, c) => s.add(c), new Set()));
-  const allOperatorIds: string[] = Array.from(allOperators.concat(stakedOperators).reduce((s, c) => s.add(c), new Set()));
 
   return (
     <main className={`staking--App ${className}`}>
@@ -97,15 +88,13 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
       </Switch> */}
       <Actions
         allContracts={allContractIds}
-        isVisible={pathname === `${basePath}/actions`}       
+        isVisible={pathname === `${basePath}/actions`}
       />
       <Overview
         hasQueries={hasQueries}
         isVisible={[basePath, `${basePath}/waiting`].includes(pathname)}
         allContracts={allContractIds}
-        allOperators={allOperatorIds}
         electedContracts={stakedContracts}
-        electedOperators={stakedOperators}
       />
     </main>
   );

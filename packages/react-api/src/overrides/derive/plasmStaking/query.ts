@@ -3,15 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ApiInterfaceRx } from '@polkadot/api/types';
-import { AccountId, Exposure, IndividualExposure, Keys, Nominations, RewardDestination, StakingLedger } from '@polkadot/types/interfaces';
+import { AccountId, Exposure, IndividualExposure } from '@polkadot/types/interfaces';
 import { Parameters } from '@plasm/utils';
 
-import { ITuple } from '@polkadot/types/types';
 import { DerivedDappsStakingQuery } from '../types';
 
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { createType, Option, Vec } from '@polkadot/types';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { createType, Option } from '@polkadot/types';
 
 import { memo } from '@polkadot/api-derive/util/memo';
 
