@@ -44,7 +44,6 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
   const [lastReward, setLastReward] = useState(new BN(0));
   const [{ percentage, staked }, setStakeInfo] = useState<StakeInfo>({ percentage: '-', staked: null });
   const [total, setTotal] = useState<string | null>(null);
-  const totalStaked = extractInfo(stakedExposures);
 
   useEffect((): void => {
     if (sessionRewards && sessionRewards.length) {
@@ -67,13 +66,14 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
   }, [totalInsurance]);
 
   useEffect((): void => {
+    const totalStaked = extractInfo(stakedExposures);
     if (totalInsurance && totalStaked?.gtn(0)) {
       setStakeInfo({
         percentage: `${(totalStaked.muln(10000).div(totalInsurance).toNumber() / 100).toFixed(2)}%`,
         staked: `${formatBalance(totalStaked, false)}${formatBalance.calcSi(totalStaked.toString()).value}`
       });
     }
-  }, [totalInsurance, totalStaked]);
+  }, [totalInsurance, stakedExposures]);
 
   return (
     <SummaryBox
