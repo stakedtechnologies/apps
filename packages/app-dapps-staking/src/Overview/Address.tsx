@@ -20,7 +20,6 @@ import translate from '../translate';
 
 interface Props extends I18nProps {
   address: AccountId | string;
-  operator: AccountId | string;
   authorsMap: Record<string, string>;
   className?: string;
   defaultName: string;
@@ -45,16 +44,10 @@ interface StakingState {
   contractParameters?: Parameters;
 }
 
-// operatorId: undefined | AccountId;
-// nominators?: AccountId[];
-// stakers?: Exposure;
-// contractId: AccountId;
-// contractParameters: undefined | Parameters;
-
 function Address ({ address, authorsMap, className, filter, isElected, isFavorite, t, toggleFavorite, withNominations = true }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
-  const stakingInfo = useCall<DerivedDappsStakingQuery>(api.derive.plasmStaking.query as any, [address]);
+  const stakingInfo = useCall<DerivedDappsStakingQuery>((api.derive as any).plasmStaking.query as any, [address]);
   const [{ hasNominators, nominators, contractId, stakeTotal, contractParameters }, setStakingState] = useState<StakingState>({
     hasNominators: false,
     nominators: [],
@@ -72,10 +65,10 @@ function Address ({ address, authorsMap, className, filter, isElected, isFavorit
 
       setStakingState({
         hasNominators: nominators.length !== 0,
-        operatorId,
+        operatorId: operatorId?.toString(),
         nominators,
         stakeTotal,
-        contractId,
+        contractId: contractId?.toString(),
         contractParameters
       });
     }
@@ -152,12 +145,12 @@ function Address ({ address, authorsMap, className, filter, isElected, isFavorit
         <>
           <td className='number'>
             {contractParameters && (
-              <><label>{t('option expired')}</label>{formatNumber(contractParameters.optionExpired)}</>
+              <><label>{t('option expired')}</label>{formatNumber((contractParameters as any).optionExpired)}</>
             )}
           </td>
           <td className='number'>
             {contractParameters && (
-              <><label>{t('option parcent')}</label>{formatNumber(contractParameters.optionP / 10000000)}{'%'}</>
+              <><label>{t('option parcent')}</label>{formatNumber((contractParameters as any).optionP / 10000000)}{'%'}</>
             )}
           </td>
           <td className='number'>

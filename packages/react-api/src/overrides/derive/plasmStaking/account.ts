@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ApiInterfaceRx } from '@polkadot/api/types';
-import { StakingLedger, Option, AccountId, Nominations, RewardDestination } from '@polkadot/types/interfaces';
-import { createType } from '@polkadot/types';
+import { StakingLedger, AccountId, Nominations, RewardDestination } from '@polkadot/types/interfaces';
+import { Option, createType } from '@polkadot/types';
 
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -29,7 +29,7 @@ function parseResult (api: ApiInterfaceRx, { stashId, controllerId, payee, ledge
     controllerId: _controllerId,
     payee,
     ledger: _ledger,
-    nominations: _nominations
+    nominations: _nominations? (_nominations as any)[0] : undefined
   };
 }
 

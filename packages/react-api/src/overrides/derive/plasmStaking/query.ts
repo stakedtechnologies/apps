@@ -40,11 +40,12 @@ function retrieve (api: ApiInterfaceRx, contractId: AccountId): Observable<Deriv
     api.query.operator.contractHasOperator<Option<AccountId>>(contractId),
     api.query.operator.contractParameters<Option<Parameters>>(contractId)
   ]).pipe(map(([stakers, operatorId, contractParameters]): DerivedDappsStakingQuery => {
-    const nominators: AccountId[] = stakers[0] ? stakers[0].others.map<AccountId>((indv: IndividualExposure) => indv.who) : [];
+    const staker: Exposure = (stakers as any)[0];
+    const nominators: AccountId[] = staker ? staker.others.map<AccountId>((indv: IndividualExposure) => indv.who) : [];
     return parseResult({
       operatorId,
       nominators,
-      stakers: stakers[0] ? stakers[0] : undefined,
+      stakers: staker ? staker : undefined,
       contractId,
       contractParameters
     });

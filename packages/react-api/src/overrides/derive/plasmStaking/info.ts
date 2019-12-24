@@ -30,18 +30,6 @@ function createDerivedLatest (api: ApiInterfaceRx, [[hasBabe, epochDuration, ses
   };
 }
 
-function infoLatestAura (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
-  return api.derive.session.indexes().pipe(
-    map((indexes): DerivedSessionInfo =>
-      createDerivedLatest(api, [
-        [false, createType(api.registry, 'u64', 1), api.consts.plasmStaking?.sessionsPerEra || createType(api.registry, 'SessionIndex', 1)],
-        indexes,
-        [createType(api.registry, 'u64', 1), createType(api.registry, 'u64', 1), createType(api.registry, 'u64', 1), createType(api.registry, 'SessionIndex', 1)]
-      ])
-    )
-  );
-}
-
 function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
   return combineLatest([
     api.derive.session.indexes(),
@@ -54,7 +42,7 @@ function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
   ]).pipe(
     map(([indexes, slots]: [DeriveSessionIndexes, ResultSlots]): DerivedSessionInfo =>
       createDerivedLatest(api, [
-        [true, api.consts.babe.epochDuration, api.consts.plasmStaking.sessionsPerEra],
+        [true, api.consts.babe.epochDuration, api.consts.plasmStaking.sessionsPerEra as any],
         indexes,
         slots
       ])
@@ -66,10 +54,7 @@ function infoLatestBabe (api: ApiInterfaceRx): Observable<DerivedSessionInfo> {
  * @description Retrieves all the session and era info and calculates specific values on it as the length of the session and eras
  */
 export function info (api: ApiInterfaceRx): () => Observable<DerivedSessionInfo> {
-  const query = api.consts.babe
-    ? infoLatestBabe // 2.x with Babe
-    : infoLatestAura; // 2.x with Aura (not all info there)
-
+  const query = infoLatestBabe;
   return memo((): Observable<DerivedSessionInfo> =>
     query(api));
 }

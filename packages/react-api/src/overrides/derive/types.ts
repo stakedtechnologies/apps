@@ -1,4 +1,5 @@
-import { AccountId, Nominations, Option, Exposure, RewardDestination, StakingLedger } from '@polkadot/types/interfaces';
+import { AccountId, Nominations, Exposure, RewardDestination, StakingLedger } from '@polkadot/types/interfaces';
+import { Option } from '@polkadot/types';
 import { Parameters } from '@plasm/utils';
 
 export type DeriveOperators = [AccountId[], Option<AccountId>[]];

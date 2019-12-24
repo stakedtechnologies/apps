@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { I18nProps } from '@polkadot/react-components/types';
-import { Exposure, Balance } from '@polkadot/types/interface';
+import { Exposure, Balance } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';

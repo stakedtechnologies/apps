@@ -44,13 +44,14 @@ function toIdString (id?: AccountId | null): string | null {
 }
 
 function getStakeState ({ controllerId, payee, ledger, nominations }: DerivedDappsStakingAccount): StakeState {
-  const isStashNominating = !!nominations[0].targets;
+  const targets: AccountId[] = nominations ? nominations.targets : [];
+  const isStashNominating = !!targets;
   return {
     controllerId: toIdString(controllerId),
     destination: payee?.toNumber() || 0,
     isStashNominating,
     // we assume that all ids are non-null
-    nominees: nominations[0] ? nominations[0].targets.map(toIdString) as string[] : [],
+    nominees: targets.map(toIdString) as string[],
     stakingLedger: ledger
   };
 }
@@ -58,7 +59,7 @@ function getStakeState ({ controllerId, payee, ledger, nominations }: DerivedDap
 function Account ({ allContracts, className, onUpdateType, stashId, t }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const balancesAll = useCall<DerivedBalances>(api.derive.balances.all as any, [stashId]);
-  const stakingAccount = useCall<DerivedDappsStakingAccount>(api.derive.plasmStaking.account as any, [stashId]);
+  const stakingAccount = useCall<DerivedDappsStakingAccount>((api.derive as any).plasmStaking.account, [stashId]);
   const [{ controllerId, destination, isStashNominating, nominees }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, isStashNominating: false });
   const [isBondExtraOpen, toggleBondExtra] = useToggle();
   const [isNominateOpen, toggleNominate] = useToggle();
