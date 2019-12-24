@@ -5,7 +5,7 @@
 import { AppProps as Props } from '@polkadot/react-components/types';
 import { Exposure, AccountId } from '@polkadot/types/interfaces';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 // import { Route, Switch } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -25,14 +25,14 @@ import useSessionRewards from './useSessionRewards';
 
 const EMPY_ACCOUNTS: string[] = [];
 const EMPTY_EXPOSURES: Exposure[] = [];
-const EMPTY_ALL: [string[], Exposure[]] = [EMPY_ACCOUNTS, EMPTY_EXPOSURES]
+const EMPTY_ALL: [string[], Exposure[]] = [EMPY_ACCOUNTS, EMPTY_EXPOSURES];
 
-function transformAllContracts ([contracts, _]: [AccountId[], Option<AccountId>[]]): string[] {
+function transformAllContracts ([contracts]: [AccountId[], Option<AccountId>[]]): string[] {
   return contracts.map((accountId): string => accountId.toString());
 }
 
 function transformStakedContracts ([contracts, exposures]: [AccountId[], Exposure[]]): [string[], Exposure[]] {
-  return [contracts.map((accountId): string => accountId.toString()), exposures]
+  return [contracts.map((accountId): string => accountId.toString()), exposures];
 }
 
 function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> {

@@ -15,7 +15,6 @@ import { useApi, useCall } from '@polkadot/react-hooks';
 import { formatBalance } from '@polkadot/util';
 import { SessionRewards } from '../types';
 import translate from '../translate';
-import { TotalIssuance } from '@polkadot/react-query';
 
 interface Props extends I18nProps {
   className?: string;
@@ -31,11 +30,11 @@ interface StakeInfo {
   staked: string | null;
 }
 
-function extractInfo(stakedExposures: Exposure[]): BN {
+function extractInfo (stakedExposures: Exposure[]): BN {
   let totalStaked = new BN(0);
   stakedExposures.map((exp) => {
     totalStaked = totalStaked.add(exp.total.unwrap());
-  })
+  });
   return totalStaked;
 }
 
@@ -59,7 +58,7 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
     }
   }, [sessionRewards]);
 
-  useEffect((): void => {    
+  useEffect((): void => {
     if (totalInsurance) {
       setTotal(
         `${formatBalance(totalInsurance, false)}${formatBalance.calcSi(totalInsurance.toString()).value}`
@@ -75,7 +74,7 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
       });
     }
   }, [totalInsurance, totalStaked]);
-  
+
   return (
     <SummaryBox
       className={`${className} ${!isVisible && 'staking--hidden'}`}

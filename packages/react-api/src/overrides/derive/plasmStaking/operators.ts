@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ApiInterfaceRx } from '@polkadot/api/types';
 import { AccountId, Nominations } from '@polkadot/types/interfaces';
 import { ITuple } from '@polkadot/types/types';

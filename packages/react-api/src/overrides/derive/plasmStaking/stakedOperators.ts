@@ -4,7 +4,7 @@ import { ITuple } from '@polkadot/types/types';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Option, Vec } from '@polkadot/types';
+import { Vec } from '@polkadot/types';
 
 import { memo } from '@polkadot/api-derive/util/memo';
 import { DerivedStakedOperators } from '../types';

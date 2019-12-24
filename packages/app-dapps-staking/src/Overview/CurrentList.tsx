@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { I18nProps } from '@polkadot/react-components/types';
-import { AccountId } from '@polkadot/types/interfaces';
 import { ContractFilter } from '../types';
 
 import React, { useEffect, useState } from 'react';
