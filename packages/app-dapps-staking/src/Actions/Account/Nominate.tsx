@@ -47,11 +47,12 @@ function Nominate ({ className, controllerId, nominees, onClose, allContracts, s
       // make sure the nominee is not in our favorites already
       ...(nominees || []).filter((acc): boolean => !favorites.includes(acc))
     ];
-
-    setAvailable([
+    const available: string[] = Array.from([
       ...shortlist,
       ...contracts.filter((acc): boolean => !shortlist.includes(acc))
-    ]);
+    ].reduce((s, c) => s.add(c), new Set<string>()));
+
+    setAvailable(available);
   }, [favorites, nominees, contracts]);
 
   return (

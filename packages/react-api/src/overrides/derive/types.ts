@@ -5,11 +5,6 @@ import { Parameters } from '@plasm/utils';
 export type DeriveOperators = [AccountId[], Option<AccountId>[]];
 export type DerivedStakedOperators = [AccountId[], Exposure[]];
 
-// export interface DerivedDappsStakingOverview {
-//   currentElected: DeriveOperators;
-//   contracts: DerivedDappsStakingQuery[];
-// }
-
 export interface DerivedDappsStakingQuery {
   operatorId: undefined | AccountId;
   nominators?: AccountId[];

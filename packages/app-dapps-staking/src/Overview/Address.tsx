@@ -48,7 +48,7 @@ function Address ({ address, authorsMap, className, filter, isElected, isFavorit
   const { api } = useApi();
   // FIXME Any horrors, caused by derive type mismatches
   const stakingInfo = useCall<DerivedDappsStakingQuery>((api.derive as any).plasmStaking.query, [address]);
-  const [{ hasNominators, nominators, contractId, stakeTotal, contractParameters }, setStakingState] = useState<StakingState>({
+  const [{ operatorId, hasNominators, nominators, contractId, stakeTotal, contractParameters }, setStakingState] = useState<StakingState>({
     hasNominators: false,
     nominators: [],
     contractId: address.toString()
@@ -119,6 +119,13 @@ function Address ({ address, authorsMap, className, filter, isElected, isFavorit
       </td>
       <td>
         <AddressSmall value={contractId} />
+      </td>
+      <td className='top '>
+        <AddressMini
+          className='mini-nopad'
+          label={t('operator')}
+          value={operatorId}
+        />
       </td>
       {/* <td className='number'>
         {stakeOwn && <FormatBalance label={<label>{t('own stake')}</label>} value={stakeOwn} />}

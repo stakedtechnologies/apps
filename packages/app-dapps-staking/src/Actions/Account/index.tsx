@@ -45,7 +45,7 @@ function toIdString (id?: AccountId | null): string | null {
 
 function getStakeState ({ controllerId, payee, ledger, nominations }: DerivedDappsStakingAccount): StakeState {
   const targets: AccountId[] = nominations ? nominations.targets : [];
-  const isStashNominating = !!targets;
+  const isStashNominating = !!targets.length;
   return {
     controllerId: toIdString(controllerId),
     destination: payee?.toNumber() || 0,
@@ -133,9 +133,9 @@ function Account ({ allContracts, className, onUpdateType, stashId, t }: Props):
         <AddressInfo
           address={stashId}
           withBalance={{
-            available: false,
+            available: true,
             bonded: true,
-            free: false,
+            free: true,
             redeemable: true,
             unlocking: true
           }}
