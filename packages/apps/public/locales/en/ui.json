@@ -774,5 +774,15 @@
   "Select a the operator address you want to change to.": "",
   "new operator address": "",
   "ChangeOperator": "",
-  "operator": ""
+  "operator": "",
+  "Nominate Contracts": "",
+  "The controller is the account that will be used to control any nominating actions. Should not match another stash or controller.": "",
+  "The destination account for any payments as either a nominator": "",
+  "Staked next/this session.": "",
+  "Already staked this session.": "",
+  "option expired": "",
+  "option parcent": "",
+  "Show all contracts and intentions": "",
+  "contracts": "",
+  "staked contracts": ""
 }
