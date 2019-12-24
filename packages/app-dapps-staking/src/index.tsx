@@ -17,7 +17,7 @@ import { useCall, useAccounts, useApi } from '@polkadot/react-hooks';
 import basicMd from './md/basic.md';
 // import Actions from './Actions';
 import Overview from './Overview';
-// import Summary from './Overview/Summary';
+import Summary from './Overview/Summary';
 // import Targets from './Targets';
 import { MAX_SESSIONS } from './constants';
 import { useTranslation } from './translate';
@@ -94,12 +94,13 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
           ]}
         />
       </header>
-      {/* <Summary
+      <Summary
         isVisible={pathname === basePath}
         next={next}
-        stakingOverview={stakingOverview}
+        allContracts={allContractIds}
+        stakedContracts={stakedContracts}
       />
-      <Switch>
+      {/* <Switch>
         <Route path={`${basePath}/returns`}>
           <Targets sessionRewards={sessionRewards} />
         </Route>
