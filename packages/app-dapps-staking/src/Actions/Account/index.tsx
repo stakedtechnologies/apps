@@ -45,11 +45,6 @@ function toIdString (id?: AccountId | null): string | null {
 
 function getStakeState ({ stashId, controllerId, payee, ledger, nominations }: DerivedDappsStakingAccount): StakeState {
   const isStashNominating = !!nominations[0].targets;
-  console.log('getStakeState:', stashId.toString(), controllerId?.toString())
-  console.log('payee:', payee)
-  console.log('ledger:', ledger)
-  console.log('nominations', nominations[0])
-  console.log('nominees:', nominations[0] ? nominations[0].targets.map(toIdString) as string[] : [])
   return {
     controllerId: toIdString(controllerId),
     destination: payee?.toNumber() || 0,
@@ -72,14 +67,10 @@ function Account ({ allContracts, className, onUpdateType, stashId, t }: Props):
   const [isSettingsOpen, toggleSettings] = useToggle();
   const [isUnbondOpen, toggleUnbond] = useToggle();
   
-  console.log('stakingAccount', stakingAccount);
-
   useEffect((): void => {
     if (stakingAccount) {
       const state = getStakeState(stakingAccount);
-      console.log('state',state)
       setStakeState(state);
-      console.log('state',state)
 
       if (state.isStashNominating) {
         onUpdateType(stashId, 'nominator');

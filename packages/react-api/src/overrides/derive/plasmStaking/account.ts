@@ -24,7 +24,6 @@ function parseResult (api: ApiInterfaceRx, { stashId, controllerId, payee, ledge
   const _controllerId = controllerId.unwrapOr(undefined);
   const _ledger = ledger ? ledger.unwrapOr(undefined) : undefined;
   const _nominations = nominations.unwrapOr(undefined);
-  console.log('parseResult', stashId, controllerId, payee, ledger, nominations)
   return {
     stashId: createType(api.registry, 'AccountId', stashId),
     controllerId: _controllerId,
@@ -44,9 +43,8 @@ export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) =>
       api.query.plasmStaking.payee<RewardDestination>(stashId),
       api.query.plasmStaking.dappsNominations<Option<Nominations>>(stashId)
     ]).pipe(
-      switchMap(([controllerId, payee, nominations]): Observable<DerivedDappsStakingAccount> => {
-        console.log('account switchMap', controllerId, payee, nominations);
-        return combineLatest([
+      switchMap(([controllerId, payee, nominations]): Observable<DerivedDappsStakingAccount> =>
+        combineLatest([
           of(controllerId),
           of(payee),
           controllerId.isSome
@@ -57,5 +55,5 @@ export function account (api: ApiInterfaceRx): (stashId: Uint8Array | string) =>
           map(([controllerId, payee, ledger, nominations]): DerivedDappsStakingAccount =>
             parseResult( api, { stashId, controllerId, payee, ledger, nominations })
           ))
-        })));
+        )));
 }
