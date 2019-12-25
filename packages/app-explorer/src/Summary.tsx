@@ -31,8 +31,8 @@ function Summary ({ t }: Props): React.ReactElement<Props> {
           <TotalIssuance />
         </CardSummary>
       </section>
-      <section className='ui--media-large'>
-        <SummarySession withEra={false} />
+      <section className='ui--media-small'>
+        <SummarySession withEra={true} />
       </section>
       <section>
         <CardSummary label={t('finalized')}>

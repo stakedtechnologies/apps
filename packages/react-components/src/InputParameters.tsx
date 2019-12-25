@@ -19,7 +19,7 @@ interface Props extends BareProps {
 
 const PARAMETERS_PARAMS = [{
   name: 'Parameters',
-  type: getTypeDef('{"canBeNominated": "bool", "optionExpired" : "u128", "optionP" : "u128" }')
+  type: getTypeDef('{"canBeNominated": "bool", "optionExpied" : "u128", "optionP" : "u32" }')
 }];
 
 function InputParameters ({ isDisabled, onChange, onEnter, overrides }: Props): React.ReactElement<Props> {

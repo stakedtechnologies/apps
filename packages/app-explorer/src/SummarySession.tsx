@@ -70,7 +70,7 @@ function renderEra ({ sessionInfo, t, withEra = true }: Props): React.ReactNode 
 
 function SummarySession (props: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const sessionInfo = useCall<DerivedSessionInfo>(api.derive.session.info, []);
+  const sessionInfo = useCall<DerivedSessionInfo>((api.derive as any).plasmStaking.info, []);
   const [expanded, setExpanded] = useState<Props>(props);
 
   useEffect((): void => {

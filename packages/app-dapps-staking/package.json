@@ -1,0 +1,19 @@
+{
+  "name": "@polkadot/app-dapps-staking",
+  "version": "0.39.0-beta.26",
+  "description": "A basic staking app",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Takumi Yamashita <takumi@stake.co.jp>, Jaco Greeff <jacogr@gmail.com>",
+  "maintainers": [
+    "Takumi Yamashita <takumi@stake.co.jp>",
+    "Jaco Greeff <jacogr@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/runtime": "^7.7.5",
+    "@polkadot/app-explorer": "^0.39.0-beta.26",
+    "@polkadot/react-components": "^0.39.0-beta.26",
+    "@polkadot/react-query": "^0.39.0-beta.26"
+  }
+}

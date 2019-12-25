@@ -21,6 +21,7 @@ import addressDefaults from '@polkadot/util-crypto/address/defaults';
 
 import typesChain from './overrides/chain';
 import typesSpec from './overrides/spec';
+import derive from './overrides/derive';
 import ApiContext from './ApiContext';
 import registry from './typeRegistry';
 
@@ -90,7 +91,8 @@ export default class Api extends React.PureComponent<Props, State> {
       signer,
       typesChain,
       typesSpec,
-      types
+      types,
+      derives: derive
     });
   }
 

@@ -1,0 +1,1 @@
+# @polkadot/app-dapps-staking
