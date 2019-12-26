@@ -375,7 +375,6 @@ function AddressInfo (props: Props): React.ReactElement<Props> {
   const { allAccounts } = useAccounts();
   const { className, children, extraInfo, stakingInfo, t, withBalanceToggle, withHexSessionId, withRewardDestination } = props;
 
-  console.log('stakingInfo', stakingInfo);
   return (
     <div className={`ui--AddressInfo ${className} ${withBalanceToggle ? 'ui--AddressInfo-expander' : ''}`}>
       <div className={`column ${withBalanceToggle ? 'column--expander' : ''}`}>
