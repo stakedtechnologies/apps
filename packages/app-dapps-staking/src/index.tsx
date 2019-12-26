@@ -40,7 +40,7 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const { api } = useApi();
   const { hasAccounts } = useAccounts();
   const { pathname } = useLocation();
-  const allContracts = (useCall<string[]>((api.derive as any).plasmStaking.operators, [], {
+  const allContractIds = (useCall<string[]>(api.query.operator?.contractHasOperator, [], {
     defaultValue: EMPY_ACCOUNTS,
     transform: transformAllContracts
   }) as string[]);
@@ -52,7 +52,7 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
 
   // unique, all = all + staked
-  const allContractIds: string[] = Array.from(allContracts.concat(stakedContracts[0]).reduce((s, c) => s.add(c), new Set<string>()));
+  console.log("allContractIds", allContractIds);
 
   return (
     <main className={`staking--App ${className}`}>
