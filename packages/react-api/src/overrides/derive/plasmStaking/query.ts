@@ -26,7 +26,7 @@ function parseResult ({ operatorId, nominators, stakers, contractId, contractPar
   const _operatorId = operatorId.unwrapOr(undefined);
   const _contractParameters = contractParameters.unwrapOr(undefined);
   return {
-    operatorId: _operatorId,
+    operatorId: _operatorId ? (_operatorId as any)[0] : undefined,
     nominators,
     stakers,
     contractId,
