@@ -52,7 +52,7 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const sessionRewards = useSessionRewards(MAX_SESSIONS);
 
   // unique, all = all + staked
-  console.log("allContractIds", allContractIds);
+  console.log('allContractIds', allContractIds);
 
   return (
     <main className={`staking--App ${className}`}>
