@@ -21,7 +21,6 @@ import { useTranslation } from './translate';
 
 interface Props {
   address: string;
-  allowTags: string[];
   className?: string;
   filter: string;
   isFavorite: boolean;

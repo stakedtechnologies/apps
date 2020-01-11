@@ -782,5 +782,22 @@
   "GitHub": "",
   "Wiki": "",
   "Fees of {{fees}} will be applied to the submission": "",
-  "filter by name or tags": ""
+  "filter by name or tags": "",
+  "Change operator": "",
+  "The account you will change operator authorship.": "",
+  "change from account": "",
+  "Select a the operator address you want to change to.": "",
+  "new operator address": "",
+  "ChangeOperator": "",
+  "Nominate Contracts": "",
+  "The controller is the account that will be used to control any nominating actions. Should not match another stash or controller.": "",
+  "The destination account for any payments as either a nominator": "",
+  "Staked next/this session.": "",
+  "Already staked this session.": "",
+  "operator": "",
+  "option expired": "",
+  "option parcent": "",
+  "Show all contracts and intentions": "",
+  "contracts": "",
+  "staked contracts": ""
 }
