@@ -1,6 +1,6 @@
 {
   "name": "@polkadot/app-operated-contracts",
-  "version": "0.39.0-beta.26",
+  "version": "0.39.0-beta.40",
   "description": "Deployment and management of substrate contracts with operated",
   "main": "index.js",
   "scripts": {},
@@ -11,8 +11,8 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/runtime": "^7.7.6",
-    "@polkadot/api-contract": "^0.100.0-beta.14",
-    "@polkadot/react-components": "^0.39.0-beta.26"
+    "@babel/runtime": "^7.7.7",
+    "@polkadot/api-contract": "^0.100.0-beta.27",
+    "@polkadot/react-components": "^0.39.0-beta.40"
   }
 }
