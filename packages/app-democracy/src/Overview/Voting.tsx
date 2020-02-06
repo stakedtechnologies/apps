@@ -2,31 +2,51 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { I18nProps } from '@polkadot/react-components/types';
+import { PropIndex, Proposal } from '@polkadot/types/interfaces';
 
-import BN from 'bn.js';
-import React, { useState } from 'react';
-import { Button, Modal, VoteAccount, VoteActions, VoteToggle } from '@polkadot/react-components';
-import { useAccounts } from '@polkadot/react-hooks';
+import React, { useMemo, useState } from 'react';
+import { Button, Dropdown, Modal, ProposedAction, VoteAccount, VoteActions, VoteToggle } from '@polkadot/react-components';
+import { useAccounts, useApi, useToggle } from '@polkadot/react-hooks';
 import { isBoolean } from '@polkadot/util';
 
-import translate from '../translate';
+import { useTranslation } from '../translate';
 
-interface Props extends I18nProps {
-  referendumId: BN | number;
+interface Props {
+  proposal?: Proposal;
+  referendumId: PropIndex;
 }
 
-function Voting ({ referendumId, t }: Props): React.ReactElement<Props> | null {
+const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+
+export default function Voting ({ proposal, referendumId }: Props): React.ReactElement<Props> | null {
+  const { t } = useTranslation();
+  const { api } = useApi();
   const { hasAccounts } = useAccounts();
   const [accountId, setAccountId] = useState<string | null>(null);
-  const [isVotingOpen, setIsVotingOpen] = useState(false);
-  const [voteValue, setVoteValue] = useState(true);
+  const [conviction, setConviction] = useState(0);
+  const [isVotingOpen, toggleVoting] = useToggle();
+  const [aye, setVoteValue] = useState(true);
+  const [enact] = useState(
+    (api.consts.democracy.enactmentPeriod.toNumber() * api.consts.timestamp.minimumPeriod.toNumber() / 1000 * 2) / 60 / 60 / 24
+  );
+  const convictionOpts = useMemo(() => [
+    { text: t('0.1x voting balance, no lockup period'), value: 0 },
+    ...CONVICTIONS.map(([value, lock]): { text: string; value: number } => ({
+      text: t('{{value}}x voting balance, locked for {{lock}}x enactment ({{period}} days)', {
+        replace: {
+          lock,
+          period: (enact * lock).toFixed(2),
+          value
+        }
+      }),
+      value
+    }))
+  ], [t, enact]);
 
   if (!hasAccounts) {
     return null;
   }
 
-  const _toggleVoting = (): void => setIsVotingOpen(!isVotingOpen);
   const _onChangeVote = (vote?: boolean): void => setVoteValue(isBoolean(vote) ? vote : true);
 
   return (
@@ -34,20 +54,30 @@ function Voting ({ referendumId, t }: Props): React.ReactElement<Props> | null {
       {isVotingOpen && (
         <Modal
           header={t('Vote on proposal')}
-          open
           size='small'
         >
           <Modal.Content>
+            <ProposedAction
+              idNumber={referendumId}
+              proposal={proposal}
+            />
             <VoteAccount onChange={setAccountId} />
             <VoteToggle
               onChange={_onChangeVote}
-              value={voteValue}
+              value={aye}
+            />
+            <Dropdown
+              help={t('The conviction to use for this vote, with an appropriate lock period.')}
+              label={t('conviction')}
+              onChange={setConviction}
+              options={convictionOpts}
+              value={conviction}
             />
           </Modal.Content>
           <VoteActions
             accountId={accountId}
-            onClick={_toggleVoting}
-            params={[referendumId, voteValue]}
+            onClick={toggleVoting}
+            params={[referendumId, { aye, conviction }]}
             tx='democracy.vote'
           />
         </Modal>
@@ -56,10 +86,8 @@ function Voting ({ referendumId, t }: Props): React.ReactElement<Props> | null {
         icon='check'
         isPrimary
         label={t('Vote')}
-        onClick={_toggleVoting}
+        onClick={toggleVoting}
       />
     </>
   );
 }
-
-export default translate(Voting);

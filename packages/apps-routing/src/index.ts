@@ -4,12 +4,13 @@
 
 import { Routing, Routes } from './types';
 
-import appSettings from '@plasm/ui-settings';
+import appSettings from '@polkadot/ui-settings';
 
 import template from './123code';
 import accounts from './accounts';
 import addressbook from './addressbook';
 import claims from './claims';
+import contracts from './contracts';
 import council from './council';
 // import dashboard from './dashboard';
 import democracy from './democracy';
@@ -19,7 +20,7 @@ import genericAsset from './generic-asset';
 import js from './js';
 import parachains from './parachains';
 import settings from './settings';
-import session from './session';
+import society from './society';
 import staking from './staking';
 import storage from './storage';
 import sudo from './sudo';
@@ -27,9 +28,6 @@ import techcomm from './techcomm';
 import toolbox from './toolbox';
 import transfer from './transfer';
 import treasury from './treasury';
-import operatedcontracts from './operatedcontracts';
-import operator from './operator';
-import dappsstaking from './dappsstaking';
 
 const routes: Routes = appSettings.uiMode === 'light'
   ? ([] as Routes).concat(
@@ -39,16 +37,12 @@ const routes: Routes = appSettings.uiMode === 'light'
     addressbook,
     claims,
     transfer,
-    session,
     genericAsset,
     null,
-    operatedcontracts,
-    dappsstaking,
-    operator,
     staking,
     democracy,
     council,
-    // TODO Not sure about the inclusion of treasury & parachains here
+    // TODO Not sure about the inclusion of treasury, parachains & society here
     null,
     settings
   )
@@ -59,7 +53,6 @@ const routes: Routes = appSettings.uiMode === 'light'
     addressbook,
     claims,
     transfer,
-    session,
     genericAsset,
     null,
     staking,
@@ -68,10 +61,9 @@ const routes: Routes = appSettings.uiMode === 'light'
     treasury,
     techcomm,
     parachains,
+    society,
     null,
-    operatedcontracts,
-    dappsstaking,
-    operator,
+    contracts,
     storage,
     extrinsics,
     sudo,

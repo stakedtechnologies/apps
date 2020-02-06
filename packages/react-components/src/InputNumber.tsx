@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { SiDef } from '@polkadot/util/types';
-import { BareProps, BitLength, I18nProps } from './types';
+import { BareProps, BitLength } from './types';
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -14,17 +14,18 @@ import { BitLengthOption } from './constants';
 // import Button from './Button';
 import Dropdown from './Dropdown';
 import Input, { KEYS, KEYS_PRE } from './Input';
-import translate from './translate';
+import { useTranslation } from './translate';
 
 // const ALLOW_MAX = false;
 
-interface Props extends BareProps, I18nProps {
+interface Props extends BareProps {
   autoFocus?: boolean;
   bitLength?: BitLength;
   defaultValue?: BN | string;
   help?: React.ReactNode;
   isDisabled?: boolean;
   isError?: boolean;
+  isFull?: boolean;
   isSi?: boolean;
   isDecimal?: boolean;
   isZeroable?: boolean;
@@ -192,8 +193,9 @@ function isNewPropsValue (propsValue: BN | string, value: string, valueBn: BN): 
   return BN.isBN(propsValue) ? !propsValue.eq(valueBn) : propsValue !== value;
 }
 
-function InputNumber (props: Props): React.ReactElement<Props> {
-  const { bitLength = DEFAULT_BITLENGTH, className, defaultValue = ZERO, help, isDecimal, isSi, isDisabled, isError = false, maxLength, maxValue, onChange, onEnter, onEscape, placeholder, style, value: propsValue, t } = props;
+export default function InputNumber (props: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const { bitLength = DEFAULT_BITLENGTH, className, defaultValue = ZERO, help, isDecimal, isFull, isSi, isDisabled, isError = false, maxLength, maxValue, onChange, onEnter, onEscape, placeholder, style, value: propsValue } = props;
 
   const [si, setSi] = useState<SiDef | null>(isSi ? formatBalance.findSi('-') : null);
   const [isPreKeyDown, setIsPreKeyDown] = useState(false);
@@ -268,6 +270,7 @@ function InputNumber (props: Props): React.ReactElement<Props> {
       isAction={isSi}
       isDisabled={isDisabled}
       isError={!isValid || isError}
+      isFull={isFull}
       maxLength={maxLength || maxValueLength}
       onChange={_onChange}
       onEnter={onEnter}
@@ -301,5 +304,3 @@ function InputNumber (props: Props): React.ReactElement<Props> {
     </Input>
   );
 }
-
-export default translate(InputNumber);

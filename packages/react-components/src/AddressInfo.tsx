@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedBalances, DerivedStakingAccount } from '@polkadot/api-derive/types';
+import { DerivedBalancesAll, DerivedStakingAccount } from '@polkadot/api-derive/types';
 import { ValidatorPrefsTo145 } from '@polkadot/types/interfaces';
-import { BareProps, I18nProps } from './types';
+import { BareProps } from './types';
 
 import BN from 'bn.js';
 import React from 'react';
@@ -17,7 +17,7 @@ import { FormatBalance } from '@polkadot/react-query';
 
 import CryptoType from './CryptoType';
 import Label from './Label';
-import translate from './translate';
+import { useTranslation } from './translate';
 
 // true to display, or (for bonded) provided values [own, ...all extras]
 export interface BalanceActiveType {
@@ -44,9 +44,9 @@ export interface ValidatorPrefsType {
 
 const PERBILL = new BN(1000000000);
 
-interface Props extends BareProps, I18nProps {
+interface Props extends BareProps {
   address: string;
-  balancesAll?: DerivedBalances;
+  balancesAll?: DerivedBalancesAll;
   children?: React.ReactNode;
   extraInfo?: [string, string][];
   stakingInfo?: DerivedStakingAccount;
@@ -129,7 +129,7 @@ function calcBonded (stakingInfo?: DerivedStakingAccount, bonded?: boolean | BN[
   return [own, other];
 }
 
-function renderExtended ({ balancesAll, t, address, withExtended }: Props): React.ReactNode {
+function renderExtended ({ balancesAll, address, withExtended }: Props, t: (key: string) => string): React.ReactNode {
   const extendedDisplay = withExtended === true
     ? DEFAULT_EXTENDED
     : withExtended || undefined;
@@ -159,7 +159,7 @@ function renderExtended ({ balancesAll, t, address, withExtended }: Props): Reac
   );
 }
 
-function renderUnlocking ({ stakingInfo, t }: Props): React.ReactNode {
+function renderUnlocking ({ address, stakingInfo }: Props, t: (key: string, data: any) => string): React.ReactNode {
   if (!stakingInfo || !stakingInfo.unlocking || !stakingInfo.unlocking.length) {
     return null;
   }
@@ -176,7 +176,7 @@ function renderUnlocking ({ stakingInfo, t }: Props): React.ReactNode {
       <Icon
         name='info circle'
         data-tip
-        data-for='unlocking-trigger'
+        data-for={`${address}-unlocking-trigger`}
       />
       <Tooltip
         text={stakingInfo.unlocking.map(({ remainingBlocks, value }, index): React.ReactNode => (
@@ -189,13 +189,13 @@ function renderUnlocking ({ stakingInfo, t }: Props): React.ReactNode {
             })}
           </div>
         ))}
-        trigger='unlocking-trigger'
+        trigger={`${address}-unlocking-trigger`}
       />
     </div>
   );
 }
 
-function renderValidatorPrefs ({ stakingInfo, t, withValidatorPrefs = false }: Props): React.ReactNode {
+function renderValidatorPrefs ({ stakingInfo, withValidatorPrefs = false }: Props, t: (key: string) => string): React.ReactNode {
   const validatorPrefsDisplay = withValidatorPrefs === true
     ? DEFAULT_PREFS
     : withValidatorPrefs;
@@ -237,8 +237,8 @@ function renderValidatorPrefs ({ stakingInfo, t, withValidatorPrefs = false }: P
   );
 }
 
-function renderBalances (props: Props, allAccounts: string[]): React.ReactNode {
-  const { balancesAll, stakingInfo, t, withBalance = true, withBalanceToggle = false } = props;
+function renderBalances (props: Props, allAccounts: string[], t: (key: string) => string): React.ReactNode {
+  const { address, balancesAll, stakingInfo, withBalance = true, withBalanceToggle = false } = props;
   const balanceDisplay = withBalance === true
     ? DEFAULT_BALANCES
     : withBalance || false;
@@ -249,6 +249,7 @@ function renderBalances (props: Props, allAccounts: string[]): React.ReactNode {
 
   const [ownBonded, otherBonded] = calcBonded(stakingInfo, balanceDisplay.bonded);
   const controllerId = stakingInfo?.controllerId?.toString();
+  const isAllLocked = !!balancesAll && balancesAll.lockedBreakdown.some(({ amount }): boolean => amount.isMax());
 
   const allItems = (
     <>
@@ -279,13 +280,30 @@ function renderBalances (props: Props, allAccounts: string[]): React.ReactNode {
           />
         </>
       )}
-      {balanceDisplay.locked && balancesAll?.lockedBalance?.gtn(0) && (
+      {balanceDisplay.locked && balancesAll && (isAllLocked || balancesAll.lockedBalance.gtn(0)) && (
         <>
           <Label label={t('locked')} />
           <FormatBalance
             className='result'
-            value={balancesAll.lockedBalance}
-          />
+            value={isAllLocked ? 'all' : balancesAll.lockedBalance}
+          >
+            <Icon
+              name='info circle'
+              data-tip
+              data-for={`${address}-locks-trigger`}
+            />
+            <Tooltip
+              text={balancesAll.lockedBreakdown.map(({ amount, reasons }, index): React.ReactNode => (
+                <div key={index}>
+                  {amount.isMax()
+                    ? t('all available')
+                    : formatBalance(amount, { forceUnit: '-' })
+                  }<div className='faded'>{reasons.toString()}</div>
+                </div>
+              ))}
+              trigger={`${address}-locks-trigger`}
+            />
+          </FormatBalance>
         </>
       )}
       {balanceDisplay.reserved && balancesAll?.reservedBalance?.gtn(0) && (
@@ -339,7 +357,7 @@ function renderBalances (props: Props, allAccounts: string[]): React.ReactNode {
         <>
           <Label label={t('unbonding')} />
           <div className='result'>
-            {renderUnlocking(props)}
+            {renderUnlocking(props, t)}
           </div>
         </>
       )}
@@ -372,13 +390,14 @@ function renderBalances (props: Props, allAccounts: string[]): React.ReactNode {
 }
 
 function AddressInfo (props: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
   const { allAccounts } = useAccounts();
-  const { className, children, extraInfo, stakingInfo, t, withBalanceToggle, withHexSessionId, withRewardDestination } = props;
+  const { className, children, extraInfo, stakingInfo, withBalanceToggle, withHexSessionId, withRewardDestination } = props;
 
   return (
     <div className={`ui--AddressInfo ${className} ${withBalanceToggle ? 'ui--AddressInfo-expander' : ''}`}>
       <div className={`column ${withBalanceToggle ? 'column--expander' : ''}`}>
-        {renderBalances(props, allAccounts)}
+        {renderBalances(props, allAccounts, t)}
         {withHexSessionId && withHexSessionId[0] && (
           <>
             <Label label={t('session keys')} />
@@ -391,7 +410,7 @@ function AddressInfo (props: Props): React.ReactElement<Props> {
             <div className='result'>{withHexSessionId[1]}</div>
           </>
         )}
-        {renderValidatorPrefs(props)}
+        {renderValidatorPrefs(props, t)}
         {extraInfo && (
           <>
             <div />
@@ -412,7 +431,7 @@ function AddressInfo (props: Props): React.ReactElement<Props> {
           </>
         )}
       </div>
-      {renderExtended(props)}
+      {renderExtended(props, t)}
       {children && (
         <div className='column'>
           {children}
@@ -489,14 +508,13 @@ export default withMulti(
       }
     }
   `,
-  translate,
   withCalls<Props>(
     ['derive.balances.all', {
       paramName: 'address',
       propName: 'balancesAll',
       skipIf: skipBalancesIf
     }],
-    ['derive.plasmStaking.addressInfo', {
+    ['derive.staking.account', {
       paramName: 'address',
       propName: 'stakingInfo',
       skipIf: skipStakingIf

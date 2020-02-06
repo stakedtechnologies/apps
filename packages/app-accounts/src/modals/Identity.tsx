@@ -6,7 +6,7 @@ import { Registration } from '@polkadot/types/interfaces';
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Input, Modal, Toggle, TxButton } from '@polkadot/react-components';
+import { Input, Modal, Toggle, TxButton } from '@polkadot/react-components';
 import { getAddressMeta } from '@polkadot/react-components/util';
 import { useApi, useCall } from '@polkadot/react-hooks';
 import { Data, Option } from '@polkadot/types';
@@ -63,6 +63,7 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
   const [hasLegal, setHasLegal] = useState(false);
   // const [hasPgp, setHasPgp] = useState(false);
   const [hasRiot, setHasRiot] = useState(false);
+  const [hasTwitter, setHasTwitter] = useState(false);
   const [hasWeb, setHasWeb] = useState(false);
   const [valDisplay, setValDisplay] = useState(getAddressMeta(address).name || '');
   const [valEmail, setValEmail] = useState('');
@@ -70,6 +71,7 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
   const [valLegal, setValLegal] = useState('');
   // const [{ errPgp, valPgp }, setValPgp] = useState<{ errPgp: boolean; valPgp: string }>({ errPgp: true, valPgp: '' });
   const [valRiot, setValRiot] = useState('');
+  const [valTwitter, setValTwitter] = useState('');
   const [valWeb, setValWeb] = useState('');
 
   useEffect((): void => {
@@ -80,6 +82,7 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
       setData(info.email, setHasEmail, setValEmail);
       setData(info.legal, setHasLegal, setValLegal);
       setData(info.riot, setHasRiot, setValRiot);
+      setData(info.twitter, setHasTwitter, setValTwitter);
       setData(info.web, setHasWeb, setValWeb);
     }
   }, [identityOpt]);
@@ -90,18 +93,18 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
       email: { [hasEmail ? 'raw' : 'none']: hasEmail ? valEmail : null },
       legal: { [hasLegal ? 'raw' : 'none']: hasLegal ? valLegal : null },
       riot: { [hasRiot ? 'raw' : 'none']: hasRiot ? valRiot : null },
+      twitter: { [hasTwitter ? 'raw' : 'none']: hasTwitter ? valTwitter : null },
       web: { [hasWeb ? 'raw' : 'none']: hasWeb ? valWeb : null }
       // image: { [hasImg ? 'sha256' : 'none']: hasImg ? valImg : null },
       // pgpFingerprint: hasPgp ? valPgp : null
     });
     //  errImg, errPgp, hasImg, hasPgp, valImg, valPgp,
-  }, [hasEmail, hasLegal, hasRiot, hasWeb, valDisplay, valEmail, valLegal, valRiot, valWeb]);
+  }, [hasEmail, hasLegal, hasRiot, hasTwitter, hasWeb, valDisplay, valEmail, valLegal, valRiot, valTwitter, valWeb]);
 
   return (
     <Modal
       className={className}
       header={t('Register identity')}
-      open
     >
       <Modal.Content>
         <Input
@@ -152,6 +155,18 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
           />
         </WrapToggle>
         <WrapToggle
+          onChange={setHasTwitter}
+          value={hasTwitter}
+        >
+          <Input
+            help={t('The twitter name for this identity.')}
+            isDisabled={!hasTwitter}
+            label={t('twitter')}
+            onChange={setValTwitter}
+            value={hasTwitter ? valTwitter : '<none>'}
+          />
+        </WrapToggle>
+        <WrapToggle
           onChange={setHasRiot}
           value={hasRiot}
         >
@@ -193,26 +208,16 @@ function Identity ({ address, className, onClose }: Props): React.ReactElement<P
           />
         </WrapToggle> */}
       </Modal.Content>
-      <Modal.Actions>
-        <Button.Group>
-          <Button
-            icon='cancel'
-            isNegative
-            label={t('Cancel')}
-            onClick={onClose}
-          />
-          <Button.Or />
-          <TxButton
-            accountId={address}
-            icon='send'
-            isPrimary
-            label={t('Set Identity')}
-            onStart={onClose}
-            params={[info]}
-            tx='identity.setIdentity'
-            withSpinner={false}
-          />
-        </Button.Group>
+      <Modal.Actions onCancel={onClose}>
+        <TxButton
+          accountId={address}
+          icon='send'
+          isPrimary
+          label={t('Set Identity')}
+          onStart={onClose}
+          params={[info]}
+          tx='identity.setIdentity'
+        />
       </Modal.Actions>
     </Modal>
   );

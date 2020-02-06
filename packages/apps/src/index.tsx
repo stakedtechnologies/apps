@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-// import first, get the load done
-import settings from '@plasm/ui-settings';
+import settings from '@polkadot/ui-settings';
 
 import 'semantic-ui-css/semantic.min.css';
 import '@polkadot/react-components/i18n';
@@ -15,11 +14,10 @@ import { HashRouter } from 'react-router-dom';
 import store from 'store';
 import { ThemeProvider } from 'styled-components';
 import { Api, registry } from '@polkadot/react-api';
-import { QueueConsumer } from '@polkadot/react-components/Status/Context';
 import Queue from '@polkadot/react-components/Status/Queue';
 import { BlockAuthors, Events } from '@polkadot/react-query';
+
 import Apps from './Apps';
-import { types } from '@plasm/utils';
 
 const rootId = 'root';
 const rootElement = document.getElementById(rootId);
@@ -28,7 +26,7 @@ const rootElement = document.getElementById(rootId);
 //  - http://localhost:3000/?rpc=wss://substrate-rpc.parity.io/#/explorer
 //  - http://localhost:3000/#/explorer?rpc=wss://substrate-rpc.parity.io
 const urlOptions = queryString.parse(location.href.split('?')[1]);
-const _wsEndpoint = urlOptions.rpc || process.env.WS_URL || settings.apiUrl;
+const _wsEndpoint = urlOptions.rpc || settings.apiUrl;
 
 if (Array.isArray(_wsEndpoint)) {
   throw new Error('Invalid WS endpoint specified');
@@ -62,28 +60,19 @@ if (!rootElement) {
 
 ReactDOM.render(
   <Suspense fallback='...'>
-    <Queue>
-      <QueueConsumer>
-        {({ queuePayload, queueSetTxStatus }): React.ReactNode => (
-          <Api
-            queuePayload={queuePayload}
-            queueSetTxStatus={queueSetTxStatus}
-            url={wsEndpoint}
-            types={types}
-          >
-            <BlockAuthors>
-              <Events>
-                <HashRouter>
-                  <ThemeProvider theme={theme}>
-                    <Apps />
-                  </ThemeProvider>
-                </HashRouter>
-              </Events>
-            </BlockAuthors>
-          </Api>
-        )}
-      </QueueConsumer>
-    </Queue>
+    <ThemeProvider theme={theme}>
+      <Queue>
+        <Api url={wsEndpoint}>
+          <BlockAuthors>
+            <Events>
+              <HashRouter>
+                <Apps />
+              </HashRouter>
+            </Events>
+          </BlockAuthors>
+        </Api>
+      </Queue>
+    </ThemeProvider>
   </Suspense>,
   rootElement
 );

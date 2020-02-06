@@ -2,18 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedBalances, DerivedStakingAccount, DerivedStakingOverview, DerivedHeartbeats } from '@polkadot/api-derive/types';
-import { I18nProps } from '@polkadot/react-components/types';
+import { DerivedBalancesAll, DerivedStakingAccount, DerivedStakingOverview, DerivedHeartbeats } from '@polkadot/api-derive/types';
 import { AccountId, Exposure, StakingLedger, ValidatorPrefs } from '@polkadot/types/interfaces';
 import { Codec, ITuple } from '@polkadot/types/types';
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AddressInfo, AddressMini, AddressSmall, Button, Menu, Popup, TxButton } from '@polkadot/react-components';
-import { useApi, useCall, useToggle } from '@polkadot/react-hooks';
+import { useAccounts, useApi, useCall, useToggle } from '@polkadot/react-hooks';
 import { u8aConcat, u8aToHex } from '@polkadot/util';
 
-import translate from '../../translate';
+import { useTranslation } from '../../translate';
 import BondExtra from './BondExtra';
 import InjectKeys from './InjectKeys';
 import Nominate from './Nominate';
@@ -22,11 +21,13 @@ import SetRewardDestination from './SetRewardDestination';
 import SetSessionKey from './SetSessionKey';
 import Unbond from './Unbond';
 import Validate from './Validate';
+import useInactives from './useInactives';
 
 type ValidatorInfo = ITuple<[ValidatorPrefs, Codec]>;
 
-interface Props extends I18nProps {
+interface Props {
   allStashes?: string[];
+  className?: string;
   isOwnStash: boolean;
   next: string[];
   onUpdateType: (stashId: string, type: 'validator' | 'nominator' | 'started' | 'other') => void;
@@ -41,6 +42,7 @@ interface StakeState {
   hexSessionIdNext: string | null;
   hexSessionIdQueue: string | null;
   isLoading: boolean;
+  isOwnController: boolean;
   isStashNominating: boolean;
   isStashValidating: boolean;
   nominees?: string[];
@@ -56,18 +58,20 @@ function toIdString (id?: AccountId | null): string | null {
     : null;
 }
 
-function getStakeState (allStashes: string[] | undefined, { controllerId, nextSessionIds, nominators, rewardDestination, sessionIds, stakers, stakingLedger, validatorPrefs }: DerivedStakingAccount, stashId: string, validateInfo: ValidatorInfo): StakeState {
+function getStakeState (allAccounts: string[], allStashes: string[] | undefined, { controllerId: _controllerId, nextSessionIds, nominators, rewardDestination, sessionIds, stakers, stakingLedger, validatorPrefs }: DerivedStakingAccount, stashId: string, validateInfo: ValidatorInfo): StakeState {
   const isStashNominating = !!(nominators?.length);
   const isStashValidating = !validateInfo[1].isEmpty || !!allStashes?.includes(stashId);
   const nextConcat = u8aConcat(...nextSessionIds.map((id): Uint8Array => id.toU8a()));
   const currConcat = u8aConcat(...sessionIds.map((id): Uint8Array => id.toU8a()));
+  const controllerId = toIdString(_controllerId);
 
   return {
-    controllerId: toIdString(controllerId),
+    controllerId,
     destination: rewardDestination?.toNumber() || 0,
     hexSessionIdNext: u8aToHex(nextConcat, 48),
     hexSessionIdQueue: u8aToHex(currConcat.length ? currConcat : nextConcat, 48),
     isLoading: false,
+    isOwnController: allAccounts.includes(controllerId || ''),
     isStashNominating,
     isStashValidating,
     // we assume that all ids are non-null
@@ -83,12 +87,16 @@ function getStakeState (allStashes: string[] | undefined, { controllerId, nextSe
   };
 }
 
-function Account ({ allStashes, className, isOwnStash, next, onUpdateType, stakingOverview, stashId, t }: Props): React.ReactElement<Props> {
-  const { api, isSubstrateV2 } = useApi();
+function Account ({ allStashes, className, isOwnStash, next, onUpdateType, stakingOverview, stashId }: Props): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const { api } = useApi();
+  const { allAccounts } = useAccounts();
   const validateInfo = useCall<ValidatorInfo>(api.query.staking.validators, [stashId]);
-  const balancesAll = useCall<DerivedBalances>(api.derive.balances.all as any, [stashId]);
+  const balancesAll = useCall<DerivedBalancesAll>(api.derive.balances.all as any, [stashId]);
   const stakingAccount = useCall<DerivedStakingAccount>(api.derive.staking.account as any, [stashId]);
-  const [{ controllerId, destination, hexSessionIdQueue, hexSessionIdNext, isLoading, isStashNominating, isStashValidating, nominees, sessionIds, validatorPrefs }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, hexSessionIdNext: null, hexSessionIdQueue: null, isLoading: true, isStashNominating: false, isStashValidating: false, sessionIds: [] });
+  const [{ controllerId, destination, hexSessionIdQueue, hexSessionIdNext, isLoading, isOwnController, isStashNominating, isStashValidating, nominees, sessionIds, validatorPrefs }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, hexSessionIdNext: null, hexSessionIdQueue: null, isLoading: true, isOwnController: false, isStashNominating: false, isStashValidating: false, sessionIds: [] });
+  const [activeNoms, setActiveNoms] = useState<string[]>([]);
+  const inactiveNoms = useInactives(stashId, nominees);
   const [isBondExtraOpen, toggleBondExtra] = useToggle();
   const [isInjectOpen, toggleInject] = useToggle();
   const [isNominateOpen, toggleNominate] = useToggle();
@@ -101,7 +109,7 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
 
   useEffect((): void => {
     if (stakingAccount && validateInfo) {
-      const state = getStakeState(allStashes, stakingAccount, stashId, validateInfo);
+      const state = getStakeState(allAccounts, allStashes, stakingAccount, stashId, validateInfo);
 
       setStakeState(state);
 
@@ -114,6 +122,12 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
       }
     }
   }, [allStashes, stakingAccount, stashId, validateInfo]);
+
+  useEffect((): void => {
+    if (nominees) {
+      setActiveNoms(nominees.filter((id): boolean => !inactiveNoms.includes(id)));
+    }
+  }, [inactiveNoms, nominees]);
 
   return (
     <tr className={className}>
@@ -202,25 +216,42 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
             <AddressInfo
               address={stashId}
               withBalance={false}
-              withHexSessionId={isSubstrateV2 && hexSessionIdNext !== '0x' && [hexSessionIdQueue, hexSessionIdNext]}
+              withHexSessionId={hexSessionIdNext !== '0x' && [hexSessionIdQueue, hexSessionIdNext]}
               withValidatorPrefs
             />
           </td>
         )
         : (
           <td>
-            {isStashNominating && nominees && (
-              <details>
-                <summary>{t('Nominating ({{count}})', { replace: { count: nominees.length } })}</summary>
-                {nominees.map((nomineeId, index): React.ReactNode => (
-                  <AddressMini
-                    key={index}
-                    value={nomineeId}
-                    withBalance={false}
-                    withBonded
-                  />
-                ))}
-              </details>
+            {isStashNominating && (
+              <>
+                {activeNoms.length !== 0 && (
+                  <details>
+                    <summary>{t('Active nominations ({{count}})', { replace: { count: activeNoms.length } })}</summary>
+                    {activeNoms.map((nomineeId, index): React.ReactNode => (
+                      <AddressMini
+                        key={index}
+                        value={nomineeId}
+                        withBalance={false}
+                        withBonded
+                      />
+                    ))}
+                  </details>
+                )}
+                {inactiveNoms.length !== 0 && (
+                  <details>
+                    <summary>{t('Inactive nominations ({{count}})', { replace: { count: inactiveNoms.length } })}</summary>
+                    {inactiveNoms.map((nomineeId, index): React.ReactNode => (
+                      <AddressMini
+                        key={index}
+                        value={nomineeId}
+                        withBalance={false}
+                        withBonded
+                      />
+                    ))}
+                  </details>
+                )}
+              </>
             )}
           </td>
         )
@@ -247,7 +278,7 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
                 )
                 : (
                   <Button.Group>
-                    {(!sessionIds.length || (isSubstrateV2 && hexSessionIdNext === '0x'))
+                    {(!sessionIds.length || hexSessionIdNext === '0x')
                       ? (
                         <Button
                           isPrimary
@@ -303,7 +334,10 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
                       {t('Bond more funds')}
                     </Menu.Item>
                   )}
-                  <Menu.Item onClick={toggleUnbond}>
+                  <Menu.Item
+                    disabled={!isOwnController}
+                    onClick={toggleUnbond}
+                  >
                     {t('Unbond funds')}
                   </Menu.Item>
                   <Menu.Item
@@ -312,25 +346,37 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
                   >
                     {t('Change controller account')}
                   </Menu.Item>
-                  <Menu.Item onClick={toggleRewardDestination}>
+                  <Menu.Item
+                    disabled={!isOwnController}
+                    onClick={toggleRewardDestination}
+                  >
                     {t('Change reward destination')}
                   </Menu.Item>
                   {isStashValidating &&
-                    <Menu.Item onClick={toggleValidate}>
+                    <Menu.Item
+                      disabled={!isOwnController}
+                      onClick={toggleValidate}
+                    >
                       {t('Change validator preferences')}
                     </Menu.Item>
                   }
                   {!isStashNominating &&
-                    <Menu.Item onClick={toggleSetSession}>
-                      {isSubstrateV2 ? t('Change session keys') : t('Change session account')}
+                    <Menu.Item
+                      disabled={!isOwnController}
+                      onClick={toggleSetSession}
+                    >
+                      {t('Change session keys')}
                     </Menu.Item>
                   }
                   {isStashNominating &&
-                    <Menu.Item onClick={toggleNominate}>
-                      {t('Change nominee(s)')}
+                    <Menu.Item
+                      disabled={!isOwnController}
+                      onClick={toggleNominate}
+                    >
+                      {t('Set nominees')}
                     </Menu.Item>
                   }
-                  {!isStashNominating && isSubstrateV2 &&
+                  {!isStashNominating &&
                     <Menu.Item onClick={toggleInject}>
                       {t('Inject session keys (advanced)')}
                     </Menu.Item>
@@ -345,16 +391,14 @@ function Account ({ allStashes, className, isOwnStash, next, onUpdateType, staki
   );
 }
 
-export default translate(
-  styled(Account)`
-    .ui--Button-Group {
-      display: inline-block;
-      margin-right: 0.25rem;
-      vertical-align: inherit;
-    }
+export default styled(Account)`
+  .ui--Button-Group {
+    display: inline-block;
+    margin-right: 0.25rem;
+    vertical-align: inherit;
+  }
 
-    .mini-nopad {
-      padding: 0;
-    }
-  `
-);
+  .mini-nopad {
+    padding: 0;
+  }
+`;

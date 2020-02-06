@@ -37,6 +37,8 @@
       "@polkadot/app-parachains/*": [ "packages/app-parachains/src/*" ],
       "@polkadot/app-settings": [ "packages/app-settings/src" ],
       "@polkadot/app-settings/*": [ "packages/app-settings/src/*" ],
+      "@polkadot/app-society": [ "packages/app-society/src" ],
+      "@polkadot/app-society/*": [ "packages/app-society/src/*" ],
       "@polkadot/app-staking": [ "packages/app-staking/src" ],
       "@polkadot/app-staking/*": [ "packages/app-staking/src/*" ],
       "@polkadot/app-dapps-staking": [ "packages/app-dapps-staking/src" ],

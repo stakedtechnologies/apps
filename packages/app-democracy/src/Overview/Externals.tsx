@@ -4,7 +4,6 @@
 
 import { AccountId, Balance, BlockNumber, Hash, Proposal, VoteThreshold } from '@polkadot/types/interfaces';
 import { ITuple } from '@polkadot/types/types';
-import { I18nProps as Props } from '@polkadot/react-components/types';
 
 import React, { useEffect, useState } from 'react';
 import { AddressSmall, Table } from '@polkadot/react-components';
@@ -12,10 +11,16 @@ import { useApi, useCall } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
 import { Bytes, Option } from '@polkadot/types';
 
-import translate from '../translate';
+import { useTranslation } from '../translate';
+import PreImageButton from './PreImageButton';
 import ProposalCell from './ProposalCell';
 
-function Externals ({ className, t }: Props): React.ReactElement<Props> | null {
+interface Props {
+  className?: string;
+}
+
+export default function Externals ({ className }: Props): React.ReactElement<Props> | null {
+  const { t } = useTranslation();
   const { api } = useApi();
   const external = useCall<Option<ITuple<[Hash, VoteThreshold]>>>(api.query.democracy.nextExternal, []);
   const [hash, setHash] = useState<Hash | null>(null);
@@ -66,11 +71,16 @@ function Externals ({ className, t }: Props): React.ReactElement<Props> | null {
               proposalHash={hash}
               proposal={expanded?.proposal}
             />
+            <td className='together number top'>
+              <PreImageButton
+                hash={hash}
+                proposal={expanded?.proposal}
+                withoutOr
+              />
+            </td>
           </tr>
         </Table.Body>
       </Table>
     </div>
   );
 }
-
-export default translate(Externals);
