@@ -43,7 +43,7 @@ class SetRewardDestination extends TxComponent<Props, State> {
         size='small'
       >
         {this.renderContent()}
-        <Modal.Actions>
+        <Modal.Actions onCancel={onClose}>
           <Button.Group>
             <Button
               isNegative

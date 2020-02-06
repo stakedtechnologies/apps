@@ -64,7 +64,7 @@ class ContractModal<P extends ContractModalProps, S extends ContractModalState> 
         <Modal.Content>
           {this.renderContent()}
         </Modal.Content>
-        <Modal.Actions>
+        <Modal.Actions onCancel={this.onClose}>
           {this.renderButtons()}
         </Modal.Actions>
       </Modal>

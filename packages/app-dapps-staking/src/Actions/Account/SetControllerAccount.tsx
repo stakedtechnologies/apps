@@ -72,7 +72,7 @@ class SetControllerAccount extends TxComponent<Props, State> {
             onError={this.onControllerError}
           />
         </Modal.Content>
-        <Modal.Actions>
+        <Modal.Actions onCancel={onClose}>
           <Button.Group>
             <Button
               isNegative

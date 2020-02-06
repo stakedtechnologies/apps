@@ -168,7 +168,7 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
           />
         </div>
       </Modal.Content>
-      <Modal.Actions>
+      <Modal.Actions onCancel={onClose}>
         <Button.Group>
           <Button
             icon='cancel'

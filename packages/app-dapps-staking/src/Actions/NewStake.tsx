@@ -114,7 +114,7 @@ class NewStake extends TxComponent<Props, State> {
             value={destination}
           />
         </Modal.Content>
-        <Modal.Actions>
+        <Modal.Actions onCancel={onClose}>
           <Button.Group>
             <Button
               isNegative

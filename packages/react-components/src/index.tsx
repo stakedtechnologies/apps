@@ -87,5 +87,6 @@ export { default as TxModalNew } from './TxModalNew';
 export { default as VoteAccount } from './VoteAccount';
 export { default as VoteActions } from './VoteActions';
 export { default as VoteToggle } from './VoteToggle';
+export { default as InputParameters } from './InputParameters';
 
 export { default as media } from './media';
