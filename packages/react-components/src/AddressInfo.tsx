@@ -514,7 +514,7 @@ export default withMulti(
       propName: 'balancesAll',
       skipIf: skipBalancesIf
     }],
-    ['derive.staking.account', {
+    ['derive.plasmStaking.addressInfo', {
       paramName: 'address',
       propName: 'stakingInfo',
       skipIf: skipStakingIf
