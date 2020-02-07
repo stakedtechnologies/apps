@@ -8,7 +8,7 @@ import { I18nProps } from '@polkadot/react-components/types';
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AddressMini, Button, Toggle, InputAddress, Modal, TxButton } from '@polkadot/react-components';
+import { AddressMini, Button, Toggle, InputAddress, Modal, TxButton, InputBalance } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { registry } from '@polkadot/react-api';
 import { Available } from '@polkadot/react-query';
@@ -81,6 +81,9 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
   const [selects, setSelects] = useState<Record<string, boolean>>(
     contracts.reduce((obj, contract): Record<string, boolean> => Object.assign(obj, { [contract]: false }), {}));
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
+
+  const [amount, setAmount] = useState<BN | undefined>(new BN(0));
+  const [hasAvailable] = useState(true);
 
   const onOffer = (accountId: string | null): void => {
     setSenderId(accountId);
@@ -166,6 +169,15 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
             onChange={onOffer}
             type='allPlus'
           />
+          <InputBalance
+            autoFocus
+            help={t('Type the amount you want to trade. Note that you can select the unit on the right e.g sending 1 milli is equivalent to sending 0.001.')}
+            isError={!hasAvailable}
+            isZeroable
+            label={t('amount')}
+            onChange={setAmount}
+          />
+          // Input ExpiredA
         </div>
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
