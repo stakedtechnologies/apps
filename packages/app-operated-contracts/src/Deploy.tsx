@@ -1,4 +1,4 @@
-// Copyright 2017-2020 @polkadot/app-contracts authors & contributors
+// Copyright 2017-2020 @polkadot/app-operated-contracts authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -14,9 +14,9 @@ import { RouteComponentProps } from 'react-router';
 import { withRouter } from 'react-router-dom';
 import { SubmittableResult } from '@polkadot/api';
 import { Abi } from '@polkadot/api-contract';
-import { withApi, withMulti } from '@polkadot/react-api';
+import { withApi, withMulti } from '@polkadot/react-api/hoc';
 import keyring from '@polkadot/ui-keyring';
-import { Button, Dropdown, InputBalance, MessageSignature, TxButton, InputParameters } from '@polkadot/react-components';
+import { Dropdown, InputBalance, MessageSignature, TxButton, InputParameters } from '@polkadot/react-components';
 import createValues from '@polkadot/react-params/values';
 import { Parameters } from '@plasm/utils';
 import { bool } from '@polkadot/types';
@@ -235,38 +235,36 @@ class Deploy extends ContractModal<Props, State> {
     const isValid = isAbiValid && isHashValid && isEndowValid && isGasValid && !!accountId && isNameValid;
 
     return (
-      <Button.Group>
-        {this.renderCancelButton()}
-        <TxButton
-          accountId={accountId}
-          icon='cloud upload'
-          isDisabled={!isValid}
-          isPrimary
-          label={t('Deploy')}
-          onClick={this.toggleBusy(true)}
-          onFailed={this.toggleBusy(false)}
-          onSuccess={this.onSuccess}
-          params={this.constructCall}
-          tx={
-            api.tx.contracts
-              ? api.tx.operator.instantiate
-                ? 'operator.instantiate' // V2 (new)
-                : 'contracts.create' // V2 (old)
-              : 'contract.create' // V1
-          }
-          ref={this.button}
-        />
-      </Button.Group>
+      <TxButton
+        accountId={accountId}
+        icon='cloud upload'
+        isDisabled={!isValid}
+        isPrimary
+        label={t('Deploy')}
+        onClick={this.toggleBusy(true)}
+        onFailed={this.toggleBusy(false)}
+        onSuccess={this.onSuccess}
+        params={this.constructCall}
+        tx={
+          api.tx.contracts
+            ? api.tx.operator.instantiate
+              ? 'operator.instantiate' // V2 (new)
+              : 'contracts.create' // V2 (old)
+            : 'contract.create' // V1
+        }
+        ref={this.button}
+        withSpinner
+      />
     );
   }
 
   private constructCall = (): any[] => {
     const { codeHash, constructorIndex, contractAbi, endowment, gasLimit, params, operateParameters } = this.state;
-
+    
     if (!contractAbi || constructorIndex < 0) {
       return [];
     }
-
+    
     return [endowment, gasLimit, codeHash, contractAbi.constructors[constructorIndex](...params), operateParameters];
   }
 

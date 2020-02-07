@@ -23,6 +23,7 @@ import ApiContext from './ApiContext';
 import registry from './typeRegistry';
 
 import derive from './overrides/derive';
+import { types } from '@plasm/utils';
 
 interface Props {
   children: React.ReactNode;
@@ -122,7 +123,7 @@ export default function Api ({ children, url }: Props): React.ReactElement<Props
     const provider = new WsProvider(url);
     const signer = new ApiSigner(queuePayload, queueSetTxStatus);
 
-    api = new ApiPromise({ provider, registry, signer, typesChain, typesSpec, derives: derive });
+    api = new ApiPromise({ provider, registry, signer, typesChain, typesSpec, types: types, derives: derive });
 
     api.on('connected', (): void => setIsApiConnected(true));
     api.on('disconnected', (): void => setIsApiConnected(false));

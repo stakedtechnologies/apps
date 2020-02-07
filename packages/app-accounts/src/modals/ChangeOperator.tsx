@@ -169,25 +169,16 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
         </div>
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
-        <Button.Group>
-          <Button
-            icon='cancel'
-            isNegative
-            label={t('Cancel')}
-            onClick={onClose}
-          />
-          <Button.Or />
-          <TxButton
-            accountId={senderId}
-            extrinsic={extrinsic}
-            icon='send'
-            isDisabled={!hasAvailable}
-            isPrimary
-            label={t('ChangeOperator')}
-            onStart={onClose}
-            withSpinner={false}
-          />
-        </Button.Group>
+        <TxButton
+          accountId={senderId}
+          extrinsic={extrinsic}
+          icon='send'
+          isDisabled={!hasAvailable}
+          isPrimary
+          label={t('ChangeOperator')}
+          onStart={onClose}
+          withSpinner
+        />
       </Modal.Actions>
     </Modal>
   );

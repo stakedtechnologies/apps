@@ -6,9 +6,10 @@
 import { SubmittableExtrinsic } from '@polkadot/api/promise/types';
 import { I18nProps } from '@polkadot/react-components/types';
 
+import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AddressMini, Button, Toggle, InputAddress, Modal, TxButton, InputBalance } from '@polkadot/react-components';
+import { AddressMini, Toggle, InputAddress, InputNumber, Modal, TxButton, InputBalance } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { registry } from '@polkadot/react-api';
 import { Available } from '@polkadot/react-query';
@@ -83,7 +84,7 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
 
   const [amount, setAmount] = useState<BN | undefined>(new BN(0));
-  const [hasAvailable] = useState(true);
+  const [expired, setExpired] = useState<BN | unndefined>();
 
   const onOffer = (accountId: string | null): void => {
     setSenderId(accountId);
@@ -107,8 +108,11 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
     const _ok = Object.values(selects).some((select): boolean => select);
     if (buyerId && senderId && _ok) {
       setExtrinsic(api.tx.trading.offer(
+        senderId,
         new Vec(registry, AccountId,
-          Object.entries(selects).filter(([, select]): boolean => select).map(([contractId]): string => contractId)), senderId));
+          Object.entries(selects).filter(([, select]): boolean => select).map(([contractId]): string => contractId)),
+        amount,
+        expired));
       setHasAvailable(true);
     } else {
       setHasAvailable(false);
@@ -177,29 +181,26 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
             label={t('amount')}
             onChange={setAmount}
           />
-          // Input ExpiredA
+          <InputNumber
+            help={t('The expired blockNumber.')}
+            isError={!expired}
+            isZeroable
+            label={t('expired block number')}
+            onChange={setExpired}
+          />
         </div>
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
-        <Button.Group>
-          <Button
-            icon='cancel'
-            isNegative
-            label={t('Cancel')}
-            onClick={onClose}
-          />
-          <Button.Or />
-          <TxButton
-            accountId={buyerId}
-            extrinsic={extrinsic}
-            icon='send'
-            isDisabled={!hasAvailable}
-            isPrimary
-            label={t('Offer')}
-            onStart={onClose}
-            withSpinner={false}
-          />
-        </Button.Group>
+        <TxButton
+          accountId={buyerId}
+          extrinsic={extrinsic}
+          icon='send'
+          isDisabled={!hasAvailable}
+          isPrimary
+          label={t('Offer')}
+          onStart={onClose}
+          withSpinner
+        />
       </Modal.Actions>
     </Modal>
   );

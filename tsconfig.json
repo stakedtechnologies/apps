@@ -47,6 +47,8 @@
       "@polkadot/app-storage/*": [ "packages/app-storage/src/*" ],
       "@polkadot/app-sudo": [ "packages/app-sudo/src" ],
       "@polkadot/app-sudo/*": [ "packages/app-sudo/src/*" ],
+      "@polkadot/app-trading": [ "packages/app-trading/src" ],
+      "@polkadot/app-trading/*": [ "packages/app-trading/src/*" ],
       "@polkadot/app-tech-comm": [ "packages/app-tech-comm/src" ],
       "@polkadot/app-tech-comm/*": [ "packages/app-tech-comm/src/*" ],
       "@polkadot/app-toolbox": [ "packages/app-toolbox/src" ],
