@@ -21,3 +21,4 @@ export { default as Nonce } from './Nonce';
 export { default as TimeNow } from './TimeNow';
 export { default as TimePeriod } from './TimePeriod';
 export { default as TotalIssuance } from './TotalIssuance';
+export { default as EstimateBlockNumber } from './EstimateBlockNumber';

@@ -9,7 +9,8 @@ import React, { useState } from 'react';
 // import { Route, Switch } from 'react-router';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Option } from '@polkadot/types';
+import { Vec } from '@polkadot/types';
+import { ITuple } from '@polkadot/types/types';
 import { Button, HelpOverlay } from '@polkadot/react-components';
 import Tabs from '@polkadot/react-components/Tabs';
 import { useCall, useAccounts, useApi } from '@polkadot/react-hooks';
@@ -20,33 +21,25 @@ import Overview from './Overview';
 import { useTranslation } from './translate';
 
 import Offer from '@polkadot/app-accounts/modals/Offer';
+import { OfferOf } from '@plasm/utils';
 
-const EMPY_ACCOUNTS: string[] = [];
-const EMPTY_EXPOSURES: Exposure[] = [];
-const EMPTY_ALL: [string[], Exposure[]] = [EMPY_ACCOUNTS, EMPTY_EXPOSURES];
+const EMPY_OFFERS: OfferOf[] = [];
 
-function transformAllContracts ([contracts]: [AccountId[], Option<AccountId>[]]): string[] {
-  return contracts.map((accountId): string => accountId.toString());
+function transformOffers ([_, offers]: ITuple<[Vec<AccountId>, Vec<OfferOf>]>): OfferOf[] {
+  return offers.map((offer): OfferOf => offer);
 }
 
-function transformStakedContracts ([contracts, exposures]: [AccountId[], Exposure[]]): [string[], Exposure[]] {
-  return [contracts.map((accountId): string => accountId.toString()), exposures];
-}
-
-function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> {
+function TradingApp ({ basePath, className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const { hasAccounts } = useAccounts();
-  const { pathname } = useLocation();
-  const allContractIds = (useCall<string[]>(api.query.operator?.contractHasOperator, [], {
-    defaultValue: EMPY_ACCOUNTS,
-    transform: transformAllContracts
-  }) as string[]);
-  const stakedContracts = (useCall<[string[], Exposure[]]>((api.derive as any).plasmStaking.stakedOperators, [], {
-    defaultValue: EMPTY_ALL,
-    transform: transformStakedContracts
-  }) as [string[], Exposure[]]);
+  const allOffers = (useCall<OfferOf[]>(api.query.trading.offers, [], {
+    defaultValue: EMPY_OFFERS,
+    transform: transformOffers,
+  }) as OfferOf[]);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
+
+  console.log('allOffers', allOffers);
 
   const [isOfferOpen, setIsOfferOpen] = useState(false);
   const _toggleOffer = (): void => setIsOfferOpen(!isOfferOpen);
@@ -86,16 +79,13 @@ function StakingApp ({ basePath, className }: Props): React.ReactElement<Props> 
         <Offer onClose={_toggleOffer} />
       )}
       <Overview
-        hasQueries={hasQueries}
-        isVisible={[basePath, `${basePath}/waiting`].includes(pathname)}
-        allContracts={allContractIds}
-        electedContracts={stakedContracts[0]}
+        allOffers={allOffers}
       />
     </main>
   );
 }
 
-export default styled(StakingApp)`
+export default styled(TradingApp)`
   .staking--hidden {
     display: none;
   }

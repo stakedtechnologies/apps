@@ -4,34 +4,22 @@
 
 import { BareProps } from '@polkadot/react-components/types';
 
-import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import { BlockAuthorsContext } from '@polkadot/react-query';
-
+import React from 'react';
 import CurrentList from './CurrentList';
+import Summary from './Summary';
+
+import { OfferOf } from '@plasm/utils';
 
 interface Props extends BareProps {
-  hasQueries: boolean;
-  isVisible: boolean;
-  allContracts: string[];
-  electedContracts: string[];
+  allOffers: OfferOf[];
 }
 
-export default function Overview ({ hasQueries, isVisible, className, allContracts, electedContracts }: Props): React.ReactElement<Props> {
-  const { pathname } = useLocation();
-  const { byAuthor, lastBlockAuthors } = useContext(BlockAuthorsContext);
-  const isIntentions = pathname !== '/dapps-staking';
-
+export default function Overview ({ className, allOffers }: Props): React.ReactElement<Props> {
   return (
-    <div className={`staking--Overview ${className} ${!isVisible && 'staking--hidden'}`}>
+    <div className={`staking--Overview ${className}`}>
+      <Summary />
       <CurrentList
-        authorsMap={byAuthor}
-        hasQueries={hasQueries}
-        isIntentions={isIntentions}
-        isVisible={isVisible}
-        lastAuthors={lastBlockAuthors}
-        allContracts={allContracts}
-        electedContracts={electedContracts}
+        allOffers={allOffers}        
       />
     </div>
   );

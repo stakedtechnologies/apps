@@ -1,7 +1,8 @@
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 // @ts-check
 // Import the API
-import { Struct, u128, bool, u32, Enum } from '@polkadot/types';
+import { Struct, u128, bool, u32, Enum, Vec } from '@polkadot/types';
+import { AccountId, Balance, BlockNumber } from 'polkadot/types/interface';
 import { registry } from '@polkadot/react-api';
 
 export class Parameters extends Struct {
@@ -34,17 +35,13 @@ export interface OfferState extends Enum {
 }
 
 /** @name Offer */
-export class OfferOf extends Struct {
-  constructor (value?: any) {
-    super(registry, {
-      buyer: 'AccountId',
-      sender: 'AccountId',
-      contracts: 'Vec<AccountId>',
-      amount: 'Balance',
-      expired: 'BlockNumber',
-      state: 'OfferState'
-    }, value);
-  }
+export interface OfferOf extends Struct {
+  readonly buyer: AccountId;
+  readonly sender: AccountId;
+  readonly contracts: Vec<AccountId>;
+  readonly amount: Balance;
+  readonly expired: BlockNumber;
+  readonly state: OfferState;
 }
 
 export const types = {
