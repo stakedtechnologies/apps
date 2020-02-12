@@ -6,7 +6,7 @@ import { OfferOf } from '@plasm/utils';
 
 import React, { useState } from 'react';
 import { AddressMini, AddressSmall, Badge, Button, Icon, TxButton } from '@polkadot/react-components';
-import { useCall, useApi, useToggle } from '@polkadot/react-hooks';
+import { useCall, useApi } from '@polkadot/react-hooks';
 import { formatBalance, formatNumber } from '@polkadot/util';
 
 import { BlockNumber, AccountId } from '@polkadot/types/interface';
@@ -34,10 +34,6 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
     setIsExpanded(!isExpanded);
   };
 
-  // const [isAcceptOpen, toggleAcceptOpen] = useToggle();
-  // const [isRejectOpen, toggleRejectOpen] = useToggle();
-  // const [isRemoveOpen, toggleRemoveOpen] = useToggle();
-
   const isExpired = offer.expired <= blockNumber && offer.state.isWaiting;
 
   return (
@@ -58,7 +54,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
           info={<Icon name='calendar times outline' color='red' />}
           isInline
           isTooltip
-          type='online'
+          type='gray'
           />
         )}
         {!isExpired && offer.state.isWaiting && (
@@ -67,7 +63,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
           info={<Icon name='wait' color='orange' />}
           isInline
           isTooltip
-          type='online'
+          type='gray'
           />
         )}
         {offer.state.isAccept && (
@@ -76,7 +72,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
           info={<Icon name='check' color='green' />}
           isInline
           isTooltip
-          type='online'
+          type='gray'
           />
         )}
         {offer.state.isReject && (
@@ -85,7 +81,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
           info={<Icon name='times' color='red' />}
           isInline
           isTooltip
-          type='online'
+          type='gray'
           />
         )}
       </td>
@@ -99,9 +95,6 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
           value={offer.sender}
         />
       </td>
-      {/* <td className='number'>
-        {stakeOwn && <FormatBalance label={<label>{t('own stake')}</label>} value={stakeOwn} />}
-      </td> */}
       <td className={'toggle number'} colSpan={isExpanded ? 5 : 1} onClick={_toggleContracts}>
         {offer.contracts && (
           isExpanded
@@ -141,43 +134,37 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
       )}
       <td className='top number together'>
         <Button.Group>
-          {// TODOmspeify extrinsict.
-        }
-          {offer.state.isWaiting && !isExpired && (
-            <TxButton
-              accountId={offer.sender}
-              params={[offer.buyer]}
-              isPrimary
-              key='accept'
-              label={t('Accept')}
-              icon='check circle'
-              tx='trading.accept'
-            />
-          )}
+          <TxButton
+            accountId={offer.sender.toString()}
+            params={[offer.buyer]}
+            isPositive
+            key='accept'
+            label={t('Accept')}
+            icon='check circle'
+            tx='trading.accept'
+            isDisabled={!(offer.state.isWaiting && !isExpired)}
+          />
           <Button.Or />
-          {offer.state.isWaiting &&(
-            <TxButton
-              accountId={offer.sender}
-              params={[offer.buyer]}
-              isPrimary
-              key='reject'
-              label={t('Reject')}
-              icon='times circle'
-              tx='trading.reject'
-            />
-          )}
+          <TxButton
+            accountId={offer.sender.toString()}
+            params={[offer.buyer]}
+            isPrimary
+            key='reject'
+            label={t('Reject')}
+            icon='times circle'
+            tx='trading.reject'
+            isDisabled={!offer.state.isWaiting}
+          />
           <Button.Or />
-          {(offer.state.isReject || offer.state.isAccept || isExpired) && (
-            <TxButton
-              accountId={offer.sender}
-              params={[offer.buyer]}
-              isPrimary
-              key='remove'
-              label={t('Remove')}
-              icon='trash alternate'
-              tx='trading.remove'
-            />
-          )}
+          <TxButton
+            accountId={offer.buyer.toString()}
+            key='remove'
+            isNegative
+            label={t('Remove')}
+            icon='trash alternate'
+            tx='trading.remove'
+            isDisabled={!(offer.state.isReject || offer.state.isAccept || isExpired)}
+          />
         </Button.Group>
       </td>
 

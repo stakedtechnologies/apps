@@ -18,7 +18,7 @@ interface Props extends BareProps {
 export default function EstimateBlockNumber ({ later, children, className, label, style }: Props): React.ReactElement<Props> {
   const { api } = useApi();
   const expectedBlockTime = api.consts.babe.expectedBlockTime.toNumber();
-  const currentBlockNumber = useCall<BlockNumber>(api.query.system.number, []);
+  const currentBlockNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
   const estimatedNumber = (currentBlockNumber? currentBlockNumber.toNumber() : 0) + later / expectedBlockTime;
   return (
     <div
