@@ -6,7 +6,7 @@ import { I18nProps } from '@polkadot/react-components/types';
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AddressMulti, Button, InputAddress, Modal, TxButton } from '@polkadot/react-components';
+import { InputAddressMulti, Button, InputAddress, Modal, TxButton } from '@polkadot/react-components';
 import { useFavorites } from '@polkadot/react-hooks';
 
 import { STORE_FAVS_BASE } from '../../constants';
@@ -74,7 +74,7 @@ function Nominate ({ className, controllerId, nominees, onClose, allContracts, s
           isDisabled
           label={t('stash account')}
         />
-        <AddressMulti
+        <InputAddressMulti
           available={available}
           className='medium'
           help={t('Filter available candidates based on name, address or short account index.')}
@@ -84,7 +84,7 @@ function Nominate ({ className, controllerId, nominees, onClose, allContracts, s
           value={selection}
         />
       </Modal.Content>
-      <Modal.Actions>
+      <Modal.Actions onCancel={onClose}>
         <Button.Group>
           <Button
             isNegative

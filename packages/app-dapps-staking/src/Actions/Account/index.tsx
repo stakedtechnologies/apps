@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DerivedBalances } from '@polkadot/api-derive/types';
+import { DerivedBalancesAll } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId, Exposure, StakingLedger, ValidatorPrefs } from '@polkadot/types/interfaces';
 import { Parameters } from '@plasm/utils';
@@ -58,7 +58,7 @@ function getStakeState ({ controllerId, payee, ledger, nominations }: DerivedDap
 
 function Account ({ allContracts, className, onUpdateType, stashId, t }: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const balancesAll = useCall<DerivedBalances>(api.derive.balances.all as any, [stashId]);
+  const balancesAll = useCall<DerivedBalancesAll>(api.derive.balances.all as any, [stashId]);
   const stakingAccount = useCall<DerivedDappsStakingAccount>((api.derive as any).plasmStaking.account, [stashId]);
   const [{ controllerId, destination, isStashNominating, nominees }, setStakeState] = useState<StakeState>({ controllerId: null, destination: 0, isStashNominating: false });
   const [isBondExtraOpen, toggleBondExtra] = useToggle();

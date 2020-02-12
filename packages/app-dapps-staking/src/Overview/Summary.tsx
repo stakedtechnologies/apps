@@ -60,7 +60,7 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
   useEffect((): void => {
     if (totalInsurance) {
       setTotal(
-        `${formatBalance(totalInsurance, false)}${formatBalance.calcSi(totalInsurance.toString()).value}`
+        `${formatBalance(totalInsurance, { forceUnit: '-', withSi: false })}${formatBalance.calcSi(totalInsurance.toString()).value}`
       );
     }
   }, [totalInsurance]);
@@ -70,7 +70,7 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
     if (totalInsurance && totalStaked?.gtn(0)) {
       setStakeInfo({
         percentage: `${(totalStaked.muln(10000).div(totalInsurance).toNumber() / 100).toFixed(2)}%`,
-        staked: `${formatBalance(totalStaked, false)}${formatBalance.calcSi(totalStaked.toString()).value}`
+        staked: `${formatBalance(totalStaked, { forceUnit: '-', withSi: false })}${formatBalance.calcSi(totalStaked.toString()).value}`
       });
     }
   }, [totalInsurance, stakedExposures]);
@@ -103,7 +103,7 @@ function Summary ({ className, isVisible, allContracts, stakedContracts, stakedE
       <CardSummary label={t('last reward')}>
         {
           lastReward.gtn(0)
-            ? `${formatBalance(lastReward, false)}`
+            ? `${formatBalance(lastReward, { forceUnit: '-', withSi: false })}`
             : '-'
         }
       </CardSummary>

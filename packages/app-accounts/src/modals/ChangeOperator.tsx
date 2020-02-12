@@ -8,7 +8,7 @@ import { I18nProps } from '@polkadot/react-components/types';
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AddressMini, Button, Toggle, InputAddress, Modal, TxButton } from '@polkadot/react-components';
+import { AddressMini, Toggle, InputAddress, Modal, TxButton } from '@polkadot/react-components';
 import { useApi } from '@polkadot/react-hooks';
 import { registry } from '@polkadot/react-api';
 import { Available } from '@polkadot/react-query';
@@ -168,26 +168,17 @@ function ChangeOperator ({ className, onClose, recipientId: propRecipientId, sen
           />
         </div>
       </Modal.Content>
-      <Modal.Actions>
-        <Button.Group>
-          <Button
-            icon='cancel'
-            isNegative
-            label={t('Cancel')}
-            onClick={onClose}
-          />
-          <Button.Or />
-          <TxButton
-            accountId={senderId}
-            extrinsic={extrinsic}
-            icon='send'
-            isDisabled={!hasAvailable}
-            isPrimary
-            label={t('ChangeOperator')}
-            onStart={onClose}
-            withSpinner={false}
-          />
-        </Button.Group>
+      <Modal.Actions onCancel={onClose}>
+        <TxButton
+          accountId={senderId}
+          extrinsic={extrinsic}
+          icon='send'
+          isDisabled={!hasAvailable}
+          isPrimary
+          label={t('ChangeOperator')}
+          onStart={onClose}
+          withSpinner
+        />
       </Modal.Actions>
     </Modal>
   );

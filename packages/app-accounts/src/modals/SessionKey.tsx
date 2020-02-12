@@ -30,7 +30,7 @@ function SetSessionKey ({ className, senderId: propSenderId, onClose, t }: Props
   useEffect((): void => {
     if (!!keys && /^0x[0-9a-f]+$/i.test(keys)) {
       try {
-        setExtrinsic(api.tx.session.setKeys(keys, EMPTY_PROOF));
+        setExtrinsic(api.tx.session.setKeys(keys as any, EMPTY_PROOF as any));
         setHasError(false);
       } catch {
         setHasError(true);
@@ -67,7 +67,7 @@ function SetSessionKey ({ className, senderId: propSenderId, onClose, t }: Props
           />
         </div>
       </Modal.Content>
-      <Modal.Actions>
+      <Modal.Actions onCancel={onClose}>
         <Button.Group>
           <Button
             isNegative
