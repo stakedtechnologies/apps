@@ -3,11 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AppProps as Props } from '@polkadot/react-components/types';
-import { Exposure, AccountId } from '@polkadot/types/interfaces';
+import { AccountId } from '@polkadot/types/interfaces';
 
 import React, { useState } from 'react';
-// import { Route, Switch } from 'react-router';
-import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Vec } from '@polkadot/types';
 import { ITuple } from '@polkadot/types/types';
@@ -17,7 +15,6 @@ import { useCall, useAccounts, useApi } from '@polkadot/react-hooks';
 
 import basicMd from './md/basic.md';
 import Overview from './Overview';
-// import Targets from './Targets';
 import { useTranslation } from './translate';
 
 import Offer from '@polkadot/app-accounts/modals/Offer';
@@ -25,6 +22,7 @@ import { OfferOf } from '@plasm/utils';
 
 const EMPY_OFFERS: OfferOf[] = [];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transformOffers ([_, offers]: ITuple<[Vec<AccountId>, Vec<OfferOf>]>): OfferOf[] {
   return offers.map((offer): OfferOf => offer);
 }
@@ -35,7 +33,7 @@ function TradingApp ({ basePath, className }: Props): React.ReactElement<Props> 
   const { hasAccounts } = useAccounts();
   const allOffers = (useCall<OfferOf[]>(api.query.trading.offers, [], {
     defaultValue: EMPY_OFFERS,
-    transform: transformOffers,
+    transform: transformOffers
   }) as OfferOf[]);
   const hasQueries = hasAccounts && !!(api.query.imOnline?.authoredBlocks);
 

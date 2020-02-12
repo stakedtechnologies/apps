@@ -84,7 +84,7 @@ function Offer ({ className, onClose, senderId: propSenderId, buyerId: propBuyer
   const [senderId, setSenderId] = useState<string | null>(propSenderId || null);
 
   const [amount, setAmount] = useState<BN | undefined>(new BN(0));
-  const [expired, setExpired] = useState<BN | unndefined>();
+  const [expired, setExpired] = useState<BN | undefined>();
 
   const onOffer = (accountId: string | null): void => {
     setSenderId(accountId);

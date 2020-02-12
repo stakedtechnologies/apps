@@ -2,7 +2,7 @@
 // @ts-check
 // Import the API
 import { Struct, u128, bool, u32, Enum, Vec } from '@polkadot/types';
-import { AccountId, Balance, BlockNumber } from 'polkadot/types/interface';
+import { AccountId, Balance, BlockNumber } from 'polkadot/types/interfaces';
 import { registry } from '@polkadot/react-api';
 
 export class Parameters extends Struct {
@@ -54,7 +54,7 @@ export const types = {
     _enum: [
       'Waiting',
       'Reject',
-      'Accept'      
+      'Accept'
     ]
   },
   OfferOf: {

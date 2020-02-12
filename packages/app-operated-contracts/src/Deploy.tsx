@@ -260,11 +260,11 @@ class Deploy extends ContractModal<Props, State> {
 
   private constructCall = (): any[] => {
     const { codeHash, constructorIndex, contractAbi, endowment, gasLimit, params, operateParameters } = this.state;
-    
+
     if (!contractAbi || constructorIndex < 0) {
       return [];
     }
-    
+
     return [endowment, gasLimit, codeHash, contractAbi.constructors[constructorIndex](...params), operateParameters];
   }
 

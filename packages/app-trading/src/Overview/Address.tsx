@@ -9,7 +9,7 @@ import { AddressMini, AddressSmall, Badge, Button, Icon, TxButton } from '@polka
 import { useCall, useApi } from '@polkadot/react-hooks';
 import { formatBalance, formatNumber } from '@polkadot/util';
 
-import { BlockNumber, AccountId } from '@polkadot/types/interface';
+import { BlockNumber, AccountId } from '@polkadot/types/interfaces';
 import { useTranslation } from '../translate';
 
 interface Props {
@@ -25,7 +25,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
   const { t } = useTranslation();
   const { api } = useApi();
   const [isExpanded, setIsExpanded] = useState(false);
-  const blockNumber = useCall<BlockNumber>(api.query.system.number, []);
+  const blockNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
   const _onFavorite = (): void => toggleFavorite(offer.buyer);
   const _toggleContracts = (event: React.SyntheticEvent): void => {
     event.preventDefault();
@@ -34,7 +34,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
     setIsExpanded(!isExpanded);
   };
 
-  const isExpired = offer.expired <= blockNumber && offer.state.isWaiting;
+  const isExpired = offer.expired <= (blockNumber? blockNumber : 0) && offer.state.isWaiting;
 
   return (
     <tr className={`${className}`}>
@@ -50,38 +50,38 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
       <td className='together'>
         {isExpired && (
           <Badge
-          hover={t('Already expired offer.')}
-          info={<Icon name='calendar times outline' color='red' />}
-          isInline
-          isTooltip
-          type='gray'
+            hover={t('Already expired offer.')}
+            info={<Icon name='calendar times outline' color='red' />}
+            isInline
+            isTooltip
+            type='gray'
           />
         )}
         {!isExpired && offer.state.isWaiting && (
           <Badge
-          hover={t('Waiting offer.')}
-          info={<Icon name='wait' color='orange' />}
-          isInline
-          isTooltip
-          type='gray'
+            hover={t('Waiting offer.')}
+            info={<Icon name='wait' color='orange' />}
+            isInline
+            isTooltip
+            type='gray'
           />
         )}
         {offer.state.isAccept && (
           <Badge
-          hover={t('Already accepted this offer.')}
-          info={<Icon name='check' color='green' />}
-          isInline
-          isTooltip
-          type='gray'
+            hover={t('Already accepted this offer.')}
+            info={<Icon name='check' color='green' />}
+            isInline
+            isTooltip
+            type='gray'
           />
         )}
         {offer.state.isReject && (
           <Badge
-          hover={t('Already rejected this offer.')}
-          info={<Icon name='times' color='red' />}
-          isInline
-          isTooltip
-          type='gray'
+            hover={t('Already rejected this offer.')}
+            info={<Icon name='times' color='red' />}
+            isInline
+            isTooltip
+            type='gray'
           />
         )}
       </td>
@@ -103,19 +103,19 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
                 {offer.contracts.map((contract: AccountId): React.ReactNode =>
                   <AddressMini
                     label={t('contracts')}
-                    key={offer.buyer.toString()+contract.toString()}
+                    key={offer.buyer.toString() + contract.toString()}
                     value={contract}
                   />
                 )}
               </div>
             )
             : <AddressMini
-                label={t('contracts')}
-                key={offer.contracts[0].toString()}
-                value={offer.contracts[0]}
-                >
+              label={t('contracts')}
+              key={offer.contracts[0].toString()}
+              value={offer.contracts[0]}
+            >
                 &nbsp;({formatNumber(offer.contracts.length)})&nbsp;<Icon name='angle double right' />
-              </AddressMini>
+            </AddressMini>
         )}
       </td>
       {!isExpanded && (

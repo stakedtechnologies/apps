@@ -19,7 +19,7 @@ export default function Overview ({ className, allOffers }: Props): React.ReactE
     <div className={`staking--Overview ${className}`}>
       <Summary />
       <CurrentList
-        allOffers={allOffers}        
+        allOffers={allOffers}
       />
     </div>
   );

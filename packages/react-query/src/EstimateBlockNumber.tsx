@@ -19,7 +19,7 @@ export default function EstimateBlockNumber ({ later, children, className, label
   const { api } = useApi();
   const expectedBlockTime = api.consts.babe.expectedBlockTime.toNumber();
   const currentBlockNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
-  const estimatedNumber = (currentBlockNumber? currentBlockNumber.toNumber() : 0) + later / expectedBlockTime;
+  const estimatedNumber = (currentBlockNumber ? currentBlockNumber.toNumber() : 0) + later / expectedBlockTime;
   return (
     <div
       className={className}
