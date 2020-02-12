@@ -34,10 +34,10 @@ function filterOffers (allOffers: OfferOf[] = [], filter: OfferFilter, nameFilte
     .filter((a: OfferOf): boolean => isFiltered(a, filter, currentNumber))
     .filter((a: OfferOf): boolean => nameFilter === '' ? true
       : a.buyer.toString().includes(nameFilter) || a.sender.toString().includes(nameFilter))
-    .sort((a: OfferOf, b: OfferOf): number => a.expired - b.expired);
+    .sort((a: OfferOf, b: OfferOf): number => a.expired.toNumber() - b.expired.toNumber());
   return sortedOffers.sort((a, b): number => {
-    const isFavA = favorites.includes(a.buyer);
-    const isFavB = favorites.includes(b.buyer);
+    const isFavA = favorites.includes(a.buyer.toString());
+    const isFavB = favorites.includes(b.buyer.toString());
     return isFavA === isFavB ? 0 : (isFavA ? -1 : 1);
   });
 }
@@ -69,10 +69,10 @@ export default function CurrentList ({ allOffers }: Props): React.ReactElement<P
   const _renderRows = (offers: OfferOf[], defaultName: string): React.ReactNode =>
     offers.map((offer): React.ReactNode => (
       <Address
-        key={offer.buyer}
+        key={offer.buyer.toString()}
         offer={offer}
         defaultName={defaultName}
-        isFavorite={favorites.includes(offer.buyer)}
+        isFavorite={favorites.includes(offer.buyer.toString())}
         toggleFavorite={toggleFavorite}
       />
     ));

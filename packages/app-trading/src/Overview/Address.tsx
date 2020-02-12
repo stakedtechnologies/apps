@@ -26,7 +26,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
   const { api } = useApi();
   const [isExpanded, setIsExpanded] = useState(false);
   const blockNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
-  const _onFavorite = (): void => toggleFavorite(offer.buyer);
+  const _onFavorite = (): void => toggleFavorite(offer.buyer.toString());
   const _toggleContracts = (event: React.SyntheticEvent): void => {
     event.preventDefault();
     event.stopPropagation();
@@ -34,7 +34,7 @@ export default function Address ({ offer, className, isFavorite, toggleFavorite 
     setIsExpanded(!isExpanded);
   };
 
-  const isExpired = offer.expired <= (blockNumber? blockNumber : 0) && offer.state.isWaiting;
+  const isExpired = offer.expired <= (blockNumber || 0) && offer.state.isWaiting;
 
   return (
     <tr className={`${className}`}>
