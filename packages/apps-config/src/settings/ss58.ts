@@ -30,6 +30,11 @@ export default [
     value: 2
   },
   {
+    info: 'plasm',
+    text: 'Plasm Network',
+    value: 5
+  },
+  {
     info: 'edgeware',
     text: 'Edgeware (live)',
     value: 7

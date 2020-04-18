@@ -27,6 +27,7 @@ import techcomm from './techcomm';
 import toolbox from './toolbox';
 import transfer from './transfer';
 import treasury from './treasury';
+import session from './session';
 
 const setup: Routing = {
   default: 'explorer',
@@ -37,6 +38,7 @@ const setup: Routing = {
       accounts,
       claims,
       transfer,
+      session,
       genericAsset,
       null,
       staking,
@@ -52,6 +54,7 @@ const setup: Routing = {
       accounts,
       claims,
       transfer,
+      session,
       genericAsset,
       null,
       staking,

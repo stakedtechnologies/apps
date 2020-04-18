@@ -162,5 +162,11 @@
   "No matches found": "No matches found",
   "matches": "matches",
   "secret": "secret",
-  "parent": "parent"
+  "parent": "parent",
+  "balance": "balance",
+  "Set Session Key": "Set Session Key",
+  "The account you will set session keys.": "The account you will set session keys.",
+  "controller account": "controller account",
+  "Changing the key only takes effect at the start of the next session. The input here is generates from the author_rotateKeys command": "Changing the key only takes effect at the start of the next session. The input here is generates from the author_rotateKeys command",
+  "Keys from rotateKeys": "Keys from rotateKeys"
 }

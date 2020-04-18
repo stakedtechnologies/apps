@@ -11,6 +11,7 @@ import nodeEdgeware from './nodes/edgeware-circle.svg';
 import nodePolkadot from './nodes/polkadot-circle.svg';
 import nodePolkadotJs from './nodes/polkadot-js.svg';
 import nodeSubstrate from './nodes/substrate-hexagon.svg';
+import nodePlasm from './nodes/plasm.png';
 
 // last-resort fallback, just something empty
 import emptyLogo from './empty.svg';
@@ -33,7 +34,8 @@ const nodeLogos: Record<string, any> = [
   ['node-template', nodeSubstrate],
   ['parity-polkadot', nodePolkadot],
   ['polkadot-js', nodePolkadotJs],
-  ['substrate-node', nodeSubstrate]
+  ['substrate-node', nodeSubstrate],
+  ['Plasm Node', nodePlasm]
 ].reduce((logos, [node, logo]): Record<string, any> => ({
   ...logos,
   [node.toLowerCase().replace(/-/g, ' ')]: logo
@@ -46,6 +48,7 @@ const namedLogos: Record<string, any> = {
   edgeware: nodeEdgeware,
   empty: emptyLogo,
   kusama: chainKusama,
+  plasm: nodePlasm,
   polkadot: nodePolkadot,
   substrate: nodeSubstrate,
   westend: nodePolkadot
