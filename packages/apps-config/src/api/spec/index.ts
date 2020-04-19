@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import centrifugeChain from './centrifuge-chain';
+import dusty from './dusty';
 import edgeware from './edgeware';
 import encointerNode from './encointer-node';
 import kulupu from './kulupu';
@@ -10,6 +11,7 @@ import nodeTemplate from './node-template';
 
 export default {
   'centrifuge-chain': centrifugeChain,
+  dusty,
   edgeware,
   'encointer-node': encointerNode,
   kulupu,
