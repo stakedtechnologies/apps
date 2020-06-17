@@ -13,9 +13,7 @@ import { Badge, Icon, Menu, Tooltip } from '@polkadot/react-components';
 import { useAccounts, useApi, useCall } from '@polkadot/react-hooks';
 import { isFunction } from '@polkadot/util';
 
-import { useTranslation } from '../translate';
-
-const DUMMY_COUNTER = (): number => 0;
+const DUMMY_COUNTER = (): null => null;
 
 interface Props {
   isCollapsed: boolean;
@@ -23,7 +21,7 @@ interface Props {
   route: Route;
 }
 
-const disabledLog: Map<string, string> = new Map();
+const disabledLog = new Map<string, string>();
 const TOOLTIP_OFFSET = { right: -4 };
 
 function logDisabled (route: string, message: string): void {
@@ -38,6 +36,7 @@ function hasEndpoint (api: ApiPromise, endpoint: string): boolean {
   const [area, section, method] = endpoint.split('.');
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return isFunction((api as any)[area][section][method]);
   } catch (error) {
     return false;
@@ -68,14 +67,13 @@ function checkVisible (name: string, { api, isApiConnected, isApiReady }: ApiPro
   });
 
   if (notFound.length !== 0) {
-    logDisabled(name, `API not available: ${notFound}`);
+    logDisabled(name, `API not available: ${notFound.toString()}`);
   }
 
   return notFound.length === 0;
 }
 
 function Item ({ isCollapsed, onClick, route }: Props): React.ReactElement<Props> | null {
-  const { t } = useTranslation();
   const { allAccounts, hasAccounts } = useAccounts();
   const apiProps = useApi();
   const sudoKey = useCall<AccountId>(apiProps.isApiReady && apiProps.api.query.sudo?.key, []);
@@ -98,13 +96,13 @@ function Item ({ isCollapsed, onClick, route }: Props): React.ReactElement<Props
     return null;
   }
 
-  const { Modal, i18n, icon, name } = route;
+  const { Modal, icon, name, text } = route;
 
   const body = (
     <>
       <Icon name={icon} />
-      <span className='text'>{t(`sidebar.${name}`, i18n)}</span>
-      {count !== 0 && (
+      <span className='text'>{text}</span>
+      {!!count && (
         <Badge
           info={count}
           isInline
@@ -114,7 +112,7 @@ function Item ({ isCollapsed, onClick, route }: Props): React.ReactElement<Props
       <Tooltip
         offset={TOOLTIP_OFFSET}
         place='right'
-        text={t(`sidebar.${name}`, i18n)}
+        text={text}
         trigger={`nav-${name}`}
       />
     </>

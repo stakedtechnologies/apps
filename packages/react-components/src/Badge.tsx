@@ -21,12 +21,12 @@ interface Props {
 
 let badgeId = 0;
 
-function Badge ({ className, hover, info, isGray, isInline, isSmall, isTooltip, onClick, type }: Props): React.ReactElement<Props> | null {
+function Badge ({ className = '', hover, info, isGray, isInline, isSmall, isTooltip, onClick, type }: Props): React.ReactElement<Props> | null {
   const [trigger] = useState(`badge-hover-${Date.now()}-${badgeId++}`);
 
   return (
     <div
-      className={`ui--Badge ${isGray && 'isGray'} ${isInline && 'isInline'} ${isTooltip && 'isTooltip'} ${isSmall && 'isSmall'} ${onClick && 'isClickable'} ${type} ${className}`}
+      className={`ui--Badge ${isGray ? 'isGray' : ''} ${isInline ? 'isInline' : ''} ${isTooltip ? 'isTooltip' : ''} ${isSmall ? 'isSmall' : ''} ${onClick ? 'isClickable' : ''} ${type} ${className}`}
       data-for={trigger}
       data-tip={true}
       data-tip-disable={!isTooltip}
@@ -52,13 +52,16 @@ export default React.memo(styled(Badge)`
   border-radius: 16px;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
   color: #eee;
-  cursor: help;
   font-size: 12px;
   height: 22px;
   padding: 0 4px;
   text-align: center;
   width: 22px;
   min-width: 22px;
+
+  &.isTooltip {
+    cursor: help;
+  }
 
   i.icon {
     cursor: inherit !important;

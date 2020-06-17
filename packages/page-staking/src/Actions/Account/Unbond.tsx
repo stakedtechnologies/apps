@@ -6,11 +6,9 @@ import { AccountId, StakingLedger } from '@polkadot/types/interfaces';
 
 import BN from 'bn.js';
 import React, { useState } from 'react';
-import { Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { AddressInfo, InputAddress, InputBalance, Modal, TxButton } from '@polkadot/react-components';
+import { Bonded, InputAddress, InputBalance, Modal, Static, TxButton } from '@polkadot/react-components';
 import { BlockToTime } from '@polkadot/react-query';
-import { formatNumber } from '@polkadot/util';
 
 import { useTranslation } from '../../translate';
 import useUnbondDuration from '../useUnbondDuration';
@@ -23,47 +21,65 @@ interface Props {
   stashId: string;
 }
 
-function Unbond ({ className, controllerId, onClose, stakingLedger, stashId }: Props): React.ReactElement<Props> {
+function Unbond ({ className = '', controllerId, onClose, stakingLedger, stashId }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const duration = useUnbondDuration();
+  const bondedBlocks = useUnbondDuration();
   const [maxBalance] = useState<BN | null>(stakingLedger?.active.unwrap() || null);
   const [maxUnbond, setMaxUnbond] = useState<BN | null>(null);
 
   return (
     <Modal
       className={`staking--Unbond ${className}`}
-      header={t('Unbond funds')}
-      size='small'
+      header={t<string>('Unbond funds')}
+      size='large'
     >
       <Modal.Content className='ui--signer-Signer-Content'>
-        <InputAddress
-          className='medium'
-          defaultValue={controllerId}
-          isDisabled
-          label={t('controller account')}
-        />
-        <div className='staking--Unbond--max'>
-          <AddressInfo
-            accountId={stashId}
-            withBalance={{
-              bonded: true
-            }}
-          />
-        </div>
-        <InputBalance
-          autoFocus
-          className='medium'
-          help={t('The amount of funds to unbond, this is adjusted using the bonded funds on the stash account.')}
-          label={t('unbond amount')}
-          maxValue={maxBalance}
-          onChange={setMaxUnbond}
-          withMax
-        />
-        {duration?.gtn(0) && (
-          <article className='warning'>
-            <Trans key='unlockDuration'>Once unbonded, funds will only be available for withdrawal in <BlockToTime blocks={duration} /> ({formatNumber(duration)} blocks)</Trans>
-          </article>
-        )}
+        <Modal.Columns>
+          <Modal.Column>
+            <InputAddress
+              defaultValue={stashId}
+              isDisabled
+              label={t<string>('stash account')}
+            />
+            <InputAddress
+              defaultValue={controllerId}
+              isDisabled
+              label={t<string>('controller account')}
+            />
+          </Modal.Column>
+          <Modal.Column>
+            <p>{t<string>('The stash and controller pair, here the controller will be used to send the transaction.')}</p>
+          </Modal.Column>
+        </Modal.Columns>
+        <Modal.Columns>
+          <Modal.Column>
+            <InputBalance
+              autoFocus
+              help={t<string>('The amount of funds to unbond, this is adjusted using the bonded funds on the stash account.')}
+              label={t<string>('unbond amount')}
+              labelExtra={
+                <Bonded
+                  label={<span className='label'>{t<string>('bonded')}</span>}
+                  params={stashId}
+                />
+              }
+              maxValue={maxBalance}
+              onChange={setMaxUnbond}
+              withMax
+            />
+            {bondedBlocks?.gtn(0) && (
+              <Static
+                help={t<string>('The bonding duration for any staked funds. After this period needs to be withdrawn.')}
+                label={t<string>('on-chain bonding duration')}
+              >
+                <BlockToTime blocks={bondedBlocks} />
+              </Static>
+            )}
+          </Modal.Column>
+          <Modal.Column>
+            <p>{t<string>('The funds will only be available for withdrawal after the unbonding period, however will not be part of the staked amount after the next validator election. You can follow the unlock countdown in the UI.')}</p>
+          </Modal.Column>
+        </Modal.Columns>
       </Modal.Content>
       <Modal.Actions onCancel={onClose}>
         <TxButton
@@ -71,7 +87,7 @@ function Unbond ({ className, controllerId, onClose, stakingLedger, stashId }: P
           icon='sign-out'
           isDisabled={!maxUnbond?.gtn(0)}
           isPrimary
-          label={t('Unbond')}
+          label={t<string>('Unbond')}
           onStart={onClose}
           params={[maxUnbond]}
           tx='staking.unbond'
@@ -82,10 +98,6 @@ function Unbond ({ className, controllerId, onClose, stakingLedger, stashId }: P
 }
 
 export default React.memo(styled(Unbond)`
-  article.warning > div {
-    display: inline-block;
-  }
-
   .staking--Unbond--max > div {
     justify-content: flex-end;
 

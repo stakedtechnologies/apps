@@ -6,15 +6,13 @@ import { Route } from './types';
 
 import Settings, { useCounter } from '@polkadot/app-settings';
 
-const route: Route = {
-  Component: Settings,
-  display: {},
-  i18n: {
-    defaultValue: 'Settings'
-  },
-  icon: 'settings',
-  name: 'settings',
-  useCounter
-};
-
-export default route;
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
+    Component: Settings,
+    display: {},
+    icon: 'settings',
+    name: 'settings',
+    text: t<string>('nav.settings', 'Settings', { ns: 'apps-routing' }),
+    useCounter
+  };
+}

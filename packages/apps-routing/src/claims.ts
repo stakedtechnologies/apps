@@ -4,20 +4,20 @@
 
 import { Route } from './types';
 
-import Claims from '@polkadot/app-claims';
+import Claims, { useCounter } from '@polkadot/app-claims';
 
-const route: Route = {
-  Component: Claims,
-  display: {
-    needsApi: [
-      'query.claims.claims'
-    ]
-  },
-  i18n: {
-    defaultValue: 'Claim Tokens'
-  },
-  icon: 'star',
-  name: 'claims'
-};
-
-export default route;
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
+    Component: Claims,
+    display: {
+      needsAccounts: true,
+      needsApi: [
+        'query.claims.claims'
+      ]
+    },
+    icon: 'star',
+    name: 'claims',
+    text: t<string>('nav.claims', 'Claim Tokens', { ns: 'apps-routing' }),
+    useCounter
+  };
+}

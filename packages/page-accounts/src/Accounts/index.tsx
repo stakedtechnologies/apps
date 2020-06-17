@@ -1,4 +1,4 @@
-// Copyright 2017-2020 @polkadot/app-staking authors & contributors
+// Copyright 2017-2020 @polkadot/app-accounts authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -6,19 +6,30 @@ import { KeyringAddress } from '@polkadot/ui-keyring/types';
 import { ComponentProps as Props } from '../types';
 import { SortedAccount } from './types';
 
-import React, { useEffect, useState } from 'react';
+import BN from 'bn.js';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import keyring from '@polkadot/ui-keyring';
 import { getLedger, isLedger } from '@polkadot/react-api';
-import { useAccounts, useFavorites, useToggle } from '@polkadot/react-hooks';
+import { useApi, useAccounts, useFavorites, useIpfs, useToggle } from '@polkadot/react-hooks';
+import { FormatBalance } from '@polkadot/react-query';
 import { Button, Input, Table } from '@polkadot/react-components';
+import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 import CreateModal from './modals/Create';
 import ImportModal from './modals/Import';
-import QrModal from './modals/Qr';
+import Multisig from './modals/MultisigCreate';
+import Proxy from './modals/ProxyAdd';
+import Qr from './modals/Qr';
 import Account from './Account';
-import Banner from './Banner';
+import BannerClaims from './BannerClaims';
+import BannerExtension from './BannerExtension';
+
+interface Balances {
+  accounts: Record<string, BN>;
+  balanceTotal?: BN;
+}
 
 const STORE_FAVS = 'accounts:favorites';
 
@@ -82,15 +93,20 @@ function sortAccounts (addresses: string[], favorites: string[]): SortedAccount[
     );
 }
 
-function Overview ({ className, onStatusChange }: Props): React.ReactElement<Props> {
+function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const { api } = useApi();
   const { allAccounts } = useAccounts();
+  const { isIpfs } = useIpfs();
   const [isCreateOpen, toggleCreate] = useToggle();
   const [isImportOpen, toggleImport] = useToggle();
+  const [isMultisigOpen, toggleMultisig] = useToggle();
+  const [isProxyOpen, toggleProxy] = useToggle();
   const [isQrOpen, toggleQr] = useToggle();
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
+  const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [sortedAccounts, setSortedAccounts] = useState<SortedAccount[]>([]);
-  const [filter, setFilter] = useState<string>('');
+  const [filterOn, setFilter] = useState<string>('');
 
   useEffect((): void => {
     setSortedAccounts(
@@ -98,9 +114,56 @@ function Overview ({ className, onStatusChange }: Props): React.ReactElement<Pro
     );
   }, [allAccounts, favorites]);
 
+  const _setBalance = useCallback(
+    (account: string, balance: BN) =>
+      setBalances(({ accounts }: Balances): Balances => {
+        accounts[account] = balance;
+
+        return {
+          accounts,
+          balanceTotal: Object.values(accounts).reduce((total: BN, value: BN) => total.add(value), BN_ZERO)
+        };
+      }),
+    []
+  );
+
+  const header = useMemo(() => [
+    [t('accounts'), 'start', 3],
+    [t('parent'), 'address'],
+    [t('type')],
+    [t('tags'), 'start'],
+    [t('transactions'), 'ui--media-1500'],
+    [t('balances')],
+    [],
+    [undefined, 'mini ui--media-1400']
+  ], [t]);
+
+  const footer = useMemo(() => (
+    <tr>
+      <td colSpan={7} />
+      <td className='number'>
+        {balanceTotal && <FormatBalance value={balanceTotal} />}
+      </td>
+      <td colSpan={2} />
+    </tr>
+  ), [balanceTotal]);
+
+  const filter = useMemo(() => (
+    <div className='filter--tags'>
+      <Input
+        autoFocus
+        isFull
+        label={t<string>('filter by name or tags')}
+        onChange={setFilter}
+        value={filterOn}
+      />
+    </div>
+  ), [filterOn, t]);
+
   return (
     <div className={className}>
-      <Banner />
+      <BannerExtension />
+      <BannerClaims />
       {isCreateOpen && (
         <CreateModal
           onClose={toggleCreate}
@@ -113,8 +176,20 @@ function Overview ({ className, onStatusChange }: Props): React.ReactElement<Pro
           onStatusChange={onStatusChange}
         />
       )}
+      {isMultisigOpen && (
+        <Multisig
+          onClose={toggleMultisig}
+          onStatusChange={onStatusChange}
+        />
+      )}
+      {isProxyOpen && (
+        <Proxy
+          onClose={toggleProxy}
+          onStatusChange={onStatusChange}
+        />
+      )}
       {isQrOpen && (
-        <QrModal
+        <Qr
           onClose={toggleQr}
           onStatusChange={onStatusChange}
         />
@@ -122,61 +197,56 @@ function Overview ({ className, onStatusChange }: Props): React.ReactElement<Pro
       <Button.Group>
         <Button
           icon='add'
-          label={t('Add account')}
+          isDisabled={isIpfs}
+          label={t<string>('Add account')}
           onClick={toggleCreate}
         />
-        <Button.Or />
         <Button
           icon='sync'
-          label={t('Restore JSON')}
+          isDisabled={isIpfs}
+          label={t<string>('Restore JSON')}
           onClick={toggleImport}
         />
-        <Button.Or />
         <Button
           icon='qrcode'
-          label={t('Add via Qr')}
+          label={t<string>('Add via Qr')}
           onClick={toggleQr}
         />
         {isLedger() && (
           <>
-            <Button.Or />
             <Button
               icon='question'
-              label={t('Query Ledger')}
+              label={t<string>('Query Ledger')}
               onClick={queryLedger}
             />
           </>
         )}
+        <Button
+          icon='add'
+          isDisabled={!api.tx.multisig && api.tx.utility}
+          label={t<string>('Multisig')}
+          onClick={toggleMultisig}
+        />
+        <Button
+          icon='add'
+          isDisabled={!api.tx.proxy}
+          label={t<string>('Proxied')}
+          onClick={toggleProxy}
+        />
       </Button.Group>
       <Table
-        empty={t('no accounts yet, create or import an existing')}
-        filter={
-          <div className='filter--tags'>
-            <Input
-              autoFocus
-              isFull
-              label={t('filter by name or tags')}
-              onChange={setFilter}
-              value={filter}
-            />
-          </div>
-        }
-        header={[
-          [t('accounts'), 'start', 3],
-          [t('parent'), 'address'],
-          [t('type')],
-          [t('tags'), 'start'],
-          [t('transactions')],
-          [t('balances')],
-          [undefined, undefined, 2]
-        ]}
+        empty={t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
+        filter={filter}
+        footer={footer}
+        header={header}
       >
         {sortedAccounts.map(({ account, isFavorite }): React.ReactNode => (
           <Account
             account={account}
-            filter={filter}
+            filter={filterOn}
             isFavorite={isFavorite}
             key={account.address}
+            setBalance={_setBalance}
             toggleFavorite={toggleFavorite}
           />
         ))}

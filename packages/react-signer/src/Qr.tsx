@@ -6,35 +6,51 @@ import { BareProps } from '@polkadot/react-components/types';
 
 import React from 'react';
 import styled from 'styled-components';
+import { Columar } from '@polkadot/react-components';
 import { QrDisplayPayload, QrScanSignature } from '@polkadot/react-qr';
 
 interface Props extends BareProps {
   address: string;
   className?: string;
+  genesisHash: Uint8Array;
+  isHashed: boolean;
   isScanning: boolean;
   onSignature: (signature: { signature: string }) => void;
   payload: Uint8Array;
 }
 
+const CMD_HASH = 1;
 const CMD_MORTAL = 2;
 
-function Qr ({ address, className, isScanning, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr ({ address, className, genesisHash, isHashed, onSignature, payload }: Props): React.ReactElement<Props> {
   return (
-    <div className={className}>
-      {
-        isScanning
-          ? <QrScanSignature onScan={onSignature} />
-          : <QrDisplayPayload
+    <Columar className={className}>
+      <Columar.Column>
+        <div className='qrDisplay'>
+          <QrDisplayPayload
             address={address}
-            cmd={CMD_MORTAL}
+            cmd={
+              isHashed
+                ? CMD_HASH
+                : CMD_MORTAL
+            }
+            genesisHash={genesisHash}
             payload={payload}
           />
-      }
-    </div>
+        </div>
+      </Columar.Column>
+      <Columar.Column>
+        <div className='qrDisplay'>
+          <QrScanSignature onScan={onSignature} />
+        </div>
+      </Columar.Column>
+    </Columar>
   );
 }
 
 export default React.memo(styled(Qr)`
-  margin: 0 auto;
-  max-width: 30rem;
+  .qrDisplay {
+    margin: 0 auto;
+    max-width: 30rem;
+  }
 `);

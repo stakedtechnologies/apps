@@ -4,7 +4,7 @@
 
 import { DeriveSociety, DeriveSocietyMember } from '@polkadot/api-derive/types';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Table } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 
@@ -16,7 +16,7 @@ interface Props {
   info?: DeriveSociety;
 }
 
-function Members ({ className, info }: Props): React.ReactElement<Props> {
+function Members ({ className = '', info }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const members = useCall<DeriveSocietyMember[]>(api.derive.society.members, []);
@@ -28,14 +28,16 @@ function Members ({ className, info }: Props): React.ReactElement<Props> {
     );
   }, [info, members]);
 
+  const header = useMemo(() => [
+    [t('members'), 'start', 3],
+    [t('strikes')]
+  ], [t]);
+
   return (
     <Table
       className={className}
-      empty={info && t('No active members')}
-      header={[
-        [t('members'), 'start', 3],
-        [t('strikes')]
-      ]}
+      empty={info && t<string>('No active members')}
+      header={header}
     >
       {filtered.map((member): React.ReactNode => (
         <Member

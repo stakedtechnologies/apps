@@ -22,12 +22,14 @@ interface Props extends BareProps {
   value?: UInt | BN | number;
 }
 
-function Progress ({ className, color = 'blue', percent, style, total, value }: Props): React.ReactElement<Props> | null {
+function Progress ({ className = '', color = 'blue', percent, total, value }: Props): React.ReactElement<Props> | null {
   const _total = bnToBn(total);
   const _value = bnToBn(value);
   const calculated = _total.gtn(0)
-    ? 100.0 * _value.toNumber() / _total.toNumber()
-    : isBn(percent) ? percent.toNumber() : percent;
+    ? (100.0 * _value.toNumber() / _total.toNumber())
+    : isBn(percent)
+      ? percent.toNumber()
+      : percent;
 
   if (isUndefined(calculated) || calculated < 0) {
     return null;
@@ -51,7 +53,6 @@ function Progress ({ className, color = 'blue', percent, style, total, value }: 
       color={rainbow}
       percent={calculated}
       size='tiny'
-      style={style}
     />
   );
 }

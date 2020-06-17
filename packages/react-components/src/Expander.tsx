@@ -39,7 +39,7 @@ function formatMeta (meta?: Meta): React.ReactNode | null {
     : strings.slice(0, firstEmpty).join(' ');
 }
 
-function Expander ({ children, className, isOpen, summary, summaryMeta, summarySub, withDot, withHidden }: Props): React.ReactElement<Props> {
+function Expander ({ children, className = '', isOpen, summary, summaryMeta, summarySub, withDot, withHidden }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isExpanded, toggleExpanded] = useToggle(isOpen);
   const headerMain = useMemo(
@@ -56,7 +56,7 @@ function Expander ({ children, className, isOpen, summary, summaryMeta, summaryS
   );
 
   return (
-    <div className={`ui--Expander ${isExpanded && 'isExpanded'} ${hasContent && 'hasContent'} ${className}`}>
+    <div className={`ui--Expander ${isExpanded ? 'isExpanded' : ''} ${hasContent ? 'hasContent' : ''} ${className}`}>
       <div
         className='ui--Expander-summary'
         onClick={toggleExpanded}
@@ -67,7 +67,7 @@ function Expander ({ children, className, isOpen, summary, summaryMeta, summaryS
             : withDot
               ? <Icon name='circle outline' />
               : undefined
-          }{headerMain || t('Details')}
+          }{headerMain || t<string>('Details')}
         </div>
         {headerSub && (
           <div className='ui--Expander-summary-sub'>{headerSub}</div>
@@ -103,11 +103,11 @@ export default React.memo(styled(Expander)`
 
   .ui--Expander-summary {
     margin: 0;
-    min-width: 13.5rem;
+    min-width: 12.5rem;
     overflow: hidden;
 
     .ui--Expander-summary-header > .ui--FormatBalance {
-      min-width: 11rem;
+      min-width: 10rem;
     }
 
     > div {

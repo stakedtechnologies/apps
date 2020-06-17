@@ -6,19 +6,18 @@ import { Route } from './types';
 
 import TechComm, { useCounter } from '@polkadot/app-tech-comm';
 
-const route: Route = {
-  Component: TechComm,
-  display: {
-    needsApi: [
-      'query.technicalCommittee.members'
-    ]
-  },
-  i18n: {
-    defaultValue: 'Tech. comm.'
-  },
-  icon: 'microchip',
-  name: 'techcomm',
-  useCounter
-};
-
-export default route;
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
+    Component: TechComm,
+    display: {
+      needsAccounts: true,
+      needsApi: [
+        'query.technicalCommittee.members'
+      ]
+    },
+    icon: 'microchip',
+    name: 'techcomm',
+    text: t<string>('nav.tech-comm', 'Tech. comm.', { ns: 'apps-routing' }),
+    useCounter
+  };
+}

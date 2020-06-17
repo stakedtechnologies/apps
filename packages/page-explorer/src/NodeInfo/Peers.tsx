@@ -4,7 +4,8 @@
 
 import { PeerInfo } from '@polkadot/types/interfaces';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import styled from 'styled-components';
 import { formatNumber } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
@@ -15,19 +16,21 @@ interface Props {
   peers?: PeerInfo[] | null;
 }
 
-function Peers ({ className, peers }: Props): React.ReactElement<Props> {
+function Peers ({ className = '', peers }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+
+  const header = useMemo(() => [
+    [t('connected peers'), 'start'],
+    [t('role'), 'start'],
+    [t('best #'), 'number'],
+    [t('best hash'), 'hash']
+  ], [t]);
 
   return (
     <Table
       className={className}
-      empty={t('no peers connected')}
-      header={[
-        [t('connected peers'), 'start'],
-        [t('role'), 'start'],
-        [t('best #'), 'number'],
-        [t('best hash'), 'hash']
-      ]}
+      empty={t<string>('no peers connected')}
+      header={header}
     >
       {peers?.sort((a, b): number => b.bestNumber.cmp(a.bestNumber)).map((peer) => (
         <tr key={peer.peerId.toString()}>
@@ -41,4 +44,6 @@ function Peers ({ className, peers }: Props): React.ReactElement<Props> {
   );
 }
 
-export default React.memo(Peers);
+export default React.memo(styled(Peers)`
+  overflow-x: auto;
+`);

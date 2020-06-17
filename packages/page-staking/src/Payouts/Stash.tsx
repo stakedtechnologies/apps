@@ -9,18 +9,24 @@ import { PayoutStash } from './types';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import ApiPromise from '@polkadot/api/promise';
-import { AddressMini, Badge, TxButton } from '@polkadot/react-components';
+import { AddressMini, TxButton } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
-import { FormatBalance } from '@polkadot/react-query';
+import { BlockToTime, FormatBalance } from '@polkadot/react-query';
 
 import { useTranslation } from '../translate';
 import { createErasString } from './util';
+import useEraBlocks from './useEraBlocks';
 
 interface Props {
   className?: string;
   isDisabled?: boolean;
   payout: PayoutStash;
   stakerPayoutsAfter: BN;
+}
+
+interface EraInfo {
+  eraStr: React.ReactNode;
+  oldestEra?: BN;
 }
 
 function createPrevPayoutType (api: ApiPromise, { era, isValidator, nominating }: DeriveStakerReward): SubmittableExtrinsic<'promise'> {
@@ -37,17 +43,19 @@ function createPrevPayout (api: ApiPromise, payoutRewards: DeriveStakerReward[])
     : api.tx.utility.batch(payoutRewards.map((reward) => createPrevPayoutType(api, reward)));
 }
 
-function Stash ({ className, isDisabled, payout: { available, rewards, stashId }, stakerPayoutsAfter }: Props): React.ReactElement<Props> | null {
+function Stash ({ className = '', isDisabled, payout: { available, rewards, stashId }, stakerPayoutsAfter }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | null>(null);
-  const [eraStr, setEraStr] = useState('');
+  const [{ eraStr, oldestEra }, setEraInfo] = useState<EraInfo>({ eraStr: '' });
+  const eraBlocks = useEraBlocks(oldestEra);
   const stakingAccount = useCall<DeriveStakingAccount>(api.derive.staking.account, [stashId]);
 
   useEffect((): void => {
-    rewards && setEraStr(
-      createErasString(rewards.map(({ era }): BN => era))
-    );
+    rewards && setEraInfo({
+      eraStr: createErasString(rewards.map(({ era }): BN => era)),
+      oldestEra: rewards[0]?.era
+    });
   }, [rewards]);
 
   useEffect((): void => {
@@ -55,7 +63,7 @@ function Stash ({ className, isDisabled, payout: { available, rewards, stashId }
       const available = rewards.filter(({ era }) => era.lt(stakerPayoutsAfter));
 
       setExtrinsic(
-        available.length
+        api.tx.utility && available.length
           ? createPrevPayout(api, available)
           : null
       );
@@ -70,14 +78,10 @@ function Stash ({ className, isDisabled, payout: { available, rewards, stashId }
     <tr className={className}>
       <td className='address'><AddressMini value={stashId} /></td>
       <td className='start'>
-        <Badge
-          info={rewards.length}
-          isInline
-          type='counter'
-        />
         <span className='payout-eras'>{eraStr}</span>
       </td>
       <td className='number'><FormatBalance value={available} /></td>
+      <td className='number'>{eraBlocks && <BlockToTime blocks={eraBlocks} />}</td>
       <td
         className='button'
         colSpan={3}
@@ -89,7 +93,7 @@ function Stash ({ className, isDisabled, payout: { available, rewards, stashId }
             icon='credit card outline'
             isDisabled={!extrinsic || isDisabled}
             isPrimary={false}
-            label={t('Payout')}
+            label={t<string>('Payout')}
           />
         )}
       </td>

@@ -5,7 +5,7 @@
 import { DeriveSocietyCandidate } from '@polkadot/api-derive/types';
 import { OwnMembers } from '../types';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Table } from '@polkadot/react-components';
 import { useApi, useCall } from '@polkadot/react-hooks';
 
@@ -16,21 +16,23 @@ interface Props extends OwnMembers {
   className?: string;
 }
 
-function Candidates ({ allMembers, className, isMember, ownMembers }: Props): React.ReactElement<Props> {
+function Candidates ({ allMembers, className = '', isMember, ownMembers }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
   const candidates = useCall<DeriveSocietyCandidate[]>(api.derive.society.candidates, []);
 
+  const header = useMemo(() => [
+    [t('candidates'), 'start'],
+    [t('kind')],
+    [t('value')],
+    [t('votes'), 'start']
+  ], [t]);
+
   return (
     <Table
       className={className}
-      empty={candidates && t('No candidates')}
-      header={[
-        [t('candidates'), 'start'],
-        [t('kind')],
-        [t('value')],
-        [t('votes'), 'start']
-      ]}
+      empty={candidates && t<string>('No candidates')}
+      header={header}
     >
       {candidates?.map((candidate): React.ReactNode => (
         <Candidate

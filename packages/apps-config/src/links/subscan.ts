@@ -7,7 +7,8 @@ import BN from 'bn.js';
 export default {
   chains: {
     Kusama: 'kusama',
-    'Kusama CC3': 'kusama'
+    'Kusama CC3': 'kusama',
+    'Polkadot CC1': 'polkadot-cc1'
   },
   create: (chain: string, path: string, data: BN | number | string): string =>
     `https://${chain}.subscan.io/${path}/${data.toString()}`,
@@ -17,8 +18,10 @@ export default {
     block: 'block',
     council: 'council',
     extrinsic: 'extrinsic',
+    proposal: 'democracy_proposal',
     referendum: 'referenda',
     techcomm: 'tech',
     treasury: 'treasury'
-  }
+  },
+  url: 'https://subscan.io/'
 };

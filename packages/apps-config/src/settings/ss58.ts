@@ -8,40 +8,42 @@ import { Option } from './types';
 //   info: the name of a logo as defined in ../logos, specifically in namedLogos
 //   text: The text you wish to display in the dropdown
 //   value: The actual ss5Format value (as registered)
-export default [
-  {
-    info: 'default',
-    text: 'Default for the connected node',
-    value: -1
-  },
-  {
-    info: 'substrate',
-    text: 'Substrate (generic)',
-    value: 42
-  },
-  {
-    info: 'polkadot',
-    text: 'Polkadot (live)',
-    value: 0
-  },
-  {
-    info: 'kusama',
-    text: 'Kusama (canary)',
-    value: 2
-  },
-  {
-    info: 'plasm',
-    text: 'Plasm Network',
-    value: 5
-  },
-  {
-    info: 'edgeware',
-    text: 'Edgeware (live)',
-    value: 7
-  },
-  {
-    info: 'centrifuge',
-    text: 'Centrifuge (live)',
-    value: 36
-  }
-].map((option): Option => ({ ...option, withI18n: true }));
+export default function create (t: <T= string> (key: string, text: string, options: { ns: string }) => T): Option[] {
+  return [
+    {
+      info: 'default',
+      text: t<string>('ss58.default', 'Default for the connected node', { ns: 'apps-config' }),
+      value: -1
+    },
+    {
+      info: 'substrate',
+      text: t<string>('ss58.substrate', 'Substrate (generic)', { ns: 'apps-config' }),
+      value: 42
+    },
+    {
+      info: 'polkadot',
+      text: t<string>('ss58.polkadot', 'Polkadot (live)', { ns: 'apps-config' }),
+      value: 0
+    },
+    {
+      info: 'kusama',
+      text: t<string>('ss58.kusmaa', 'Kusama (canary)', { ns: 'apps-config' }),
+      value: 2
+    },
+    {
+      info: 'plasm',
+      text: t<string>('ss58.plasm', 'Plasm Network', { ns: 'apps-config' }),
+      value: 5
+    },
+    {
+      info: 'edgeware',
+      text: t<string>('ss58.edgeware', 'Edgeware (live)', { ns: 'apps-config' }),
+      value: 7
+    },
+    {
+      info: 'centrifuge',
+      text: t<string>('ss58.centrifuge', 'Centrifuge (live)', { ns: 'apps-config' }),
+      value: 36
+    }
+  ];
+}

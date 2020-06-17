@@ -3,17 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import centrifugeChain from './centrifuge-chain';
-import dusty from './dusty';
+import dusty2 from './dusty2';
 import edgeware from './edgeware';
 import encointerNode from './encointer-node';
 import kulupu from './kulupu';
 import nodeTemplate from './node-template';
+import plasm from './plasm';
+import stablePoc from './stable-poc';
 
 export default {
   'centrifuge-chain': centrifugeChain,
-  dusty,
+  dusty2,
   edgeware,
   'encointer-node': encointerNode,
   kulupu,
-  'node-template': nodeTemplate
+  'node-template': nodeTemplate,
+  plasm,
+  'stable-poc': stablePoc,
+  stable_poc: stablePoc
 };

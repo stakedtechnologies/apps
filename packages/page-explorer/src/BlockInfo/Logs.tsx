@@ -5,7 +5,7 @@
 import { DigestItem } from '@polkadot/types/interfaces';
 import { Codec, TypeDef } from '@polkadot/types/types';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Struct, Tuple, Raw, Vec, getTypeDef } from '@polkadot/types';
 import { Expander, Table } from '@polkadot/react-components';
 import Params from '@polkadot/react-params';
@@ -65,7 +65,7 @@ function formatTuple (tuple: Tuple): React.ReactNode {
   );
 }
 
-function formatVector (vector: Vec<any>): React.ReactNode {
+function formatVector (vector: Vec<Codec>): React.ReactNode {
   const type = getTypeDef(vector.Type);
   const values = vector.toArray().map((value): { isValid: boolean; value: Codec } => ({
     isValid: true,
@@ -103,10 +103,12 @@ function Logs (props: Props): React.ReactElement<Props> | null {
   const { value } = props;
   const { t } = useTranslation();
 
+  const header = useMemo(() => [[t('logs'), 'start']], [t]);
+
   return (
     <Table
-      empty={t('No logs available')}
-      header={[[t('logs'), 'start']]}
+      empty={t<string>('No logs available')}
+      header={header}
     >
       {value?.map((log, index) => (
         <tr key={`log:${index}`}>

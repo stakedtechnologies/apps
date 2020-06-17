@@ -17,7 +17,7 @@ interface Props {
   value: DeriveProposalExternal;
 }
 
-function External ({ className, value: { image, imageHash, threshold } }: Props): React.ReactElement<Props> | null {
+function External ({ className = '', value: { image, imageHash, threshold } }: Props): React.ReactElement<Props> | null {
   return (
     <tr className={className}>
       <ProposalCell
@@ -25,7 +25,9 @@ function External ({ className, value: { image, imageHash, threshold } }: Props)
         proposal={image?.proposal}
       />
       <td className='address'>
-        {image && <AddressMini value={image.proposer} />}
+        {image && (
+          <AddressMini value={image.proposer} />
+        )}
       </td>
       <td className='number'>
         {image && <FormatBalance value={image.balance} />}
@@ -33,21 +35,13 @@ function External ({ className, value: { image, imageHash, threshold } }: Props)
       <td className='button'>
         <Button.Group>
           {!image?.proposal && (
-            <PreImageButton
-              imageHash={imageHash}
-              withoutOr
-            />
+            <PreImageButton imageHash={imageHash} />
           )}
           {threshold && (
-            <>
-              {!image?.proposal && (
-                <Button.Or />
-              )}
-              <Fasttrack
-                imageHash={imageHash}
-                threshold={threshold}
-              />
-            </>
+            <Fasttrack
+              imageHash={imageHash}
+              threshold={threshold}
+            />
           )}
         </Button.Group>
       </td>

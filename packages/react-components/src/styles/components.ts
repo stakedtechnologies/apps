@@ -11,10 +11,9 @@ export default css`
     border: 1px dashed #eee;
     box-sizing: border-box;
     line-height: 1rem;
-    margin: 0.25rem;
     padding: .75rem 1rem;
     position: relative;
-    word-wrap: break-word;
+    word-break: break-all;
 
     &.error {
       background: #fff6f6;
@@ -80,6 +79,18 @@ export default css`
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+    }
+
+    &.inPlaceEditor {
+      margin: 0 !important;
+
+      input {
+        padding: 0 !important;
+        background: rgba(230, 230, 230, 0.8) !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: 0 3px 3px rgba(0,0,0,.2);
       }
     }
 

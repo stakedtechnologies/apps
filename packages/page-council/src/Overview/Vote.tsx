@@ -4,10 +4,10 @@
 
 import { DeriveElectionsInfo } from '@polkadot/api-derive/types';
 
-import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { Button, InputAddress, InputAddressMulti, Modal, TxButton, VoteValue } from '@polkadot/react-components';
 import { useApi, useToggle } from '@polkadot/react-hooks';
+import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 
@@ -26,7 +26,7 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
   const [available, setAvailable] = useState<string[]>([]);
   const [defaultVotes, setDefaultVotes] = useState<string[]>([]);
   const [votes, setVotes] = useState<string[]>([]);
-  const [voteValue, setVoteValue] = useState(new BN(0));
+  const [voteValue, setVoteValue] = useState(BN_ZERO);
 
   useEffect((): void => {
     if (electionsInfo) {
@@ -35,8 +35,8 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
       setAvailable(
         members
           .map(([accountId]): string => accountId.toString())
-          .concat(runnersUp.map(([accountId]): string => accountId.toString()))
-          .concat(candidates.map((accountId): string => accountId.toString()))
+          .concat(runnersUp.map(([accountId]) => accountId.toString()))
+          .concat(candidates.map((accountId) => accountId.toString()))
       );
     }
   }, [electionsInfo]);
@@ -56,31 +56,56 @@ function Vote ({ electionsInfo }: Props): React.ReactElement<Props> {
       <Button
         icon='check'
         isDisabled={available.length === 0}
-        label={t('Vote')}
+        label={t<string>('Vote')}
         onClick={toggleVisible}
       />
       {isVisible && (
-        <Modal header={t('Vote for current candidates')}>
+        <Modal
+          header={t<string>('Vote for current candidates')}
+          size='large'
+        >
           <Modal.Content>
-            <InputAddress
-              help={t('This account will be use to approve each candidate.')}
-              label={t('voting account')}
-              onChange={setAccountId}
-              type='account'
-            />
-            <VoteValue
-              accountId={accountId}
-              onChange={setVoteValue}
-            />
-            <InputAddressMulti
-              available={available}
-              availableLabel={t('council candidates')}
-              defaultValue={defaultVotes}
-              help={t('Select and order council candidates you wish to vote for.')}
-              maxCount={MAX_VOTES}
-              onChange={setVotes}
-              valueLabel={t('my ordered votes')}
-            />
+            <Modal.Columns>
+              <Modal.Column>
+                <InputAddress
+                  help={t<string>('This account will be use to approve each candidate.')}
+                  label={t<string>('voting account')}
+                  onChange={setAccountId}
+                  type='account'
+                />
+              </Modal.Column>
+              <Modal.Column>
+                <p>{t<string>('The vote will be recorded for the selected account.')}</p>
+              </Modal.Column>
+            </Modal.Columns>
+            <Modal.Columns>
+              <Modal.Column>
+                <VoteValue
+                  accountId={accountId}
+                  onChange={setVoteValue}
+                />
+              </Modal.Column>
+              <Modal.Column>
+                <p>{t<string>('The value associated with this vote. The amount will be locked (not available for transfer) and used in all subsequent elections.')}</p>
+              </Modal.Column>
+            </Modal.Columns>
+            <Modal.Columns>
+              <Modal.Column>
+                <InputAddressMulti
+                  available={available}
+                  availableLabel={t<string>('council candidates')}
+                  defaultValue={defaultVotes}
+                  help={t<string>('Select and order council candidates you wish to vote for.')}
+                  maxCount={MAX_VOTES}
+                  onChange={setVotes}
+                  valueLabel={t<string>('my ordered votes')}
+                />
+              </Modal.Column>
+              <Modal.Column>
+                <p>{t<string>('The votes for the members, runner-ups and candidates. These should be ordered based on your priority.')}</p>
+                <p>{t<string>('In calculating the election outcome, this prioritized vote ordering will be used to determine the final score for the candidates.')}</p>
+              </Modal.Column>
+            </Modal.Columns>
           </Modal.Content>
           <Modal.Actions onCancel={toggleVisible}>
             <TxButton

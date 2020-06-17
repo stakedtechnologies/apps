@@ -30,19 +30,18 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
         mountedRef.current && setHashes(
           keys.map((key) => key.args[0].toHex())
         )
-      );
+      ).catch(console.error);
     }
   }, [api, hashTrigger, mountedRef]);
 
   return (
     <div className={className}>
       <Summary
-        approvalCount={info?.proposals.length}
-        proposalCount={info?.approvals.length}
+        approvalCount={info?.approvals.length}
+        proposalCount={info?.proposals.length}
       />
       <Button.Group>
         <ProposalCreate />
-        <Button.Or />
         <TipCreate
           members={members}
           refresh={triggerHashes}
@@ -50,11 +49,13 @@ function Overview ({ className }: Props): React.ReactElement<Props> {
       </Button.Group>
       <Proposals
         isMember={isMember}
+        members={members}
         proposals={info?.proposals}
       />
       <Proposals
         isApprovals
         isMember={isMember}
+        members={members}
         proposals={info?.approvals}
       />
       <Tips

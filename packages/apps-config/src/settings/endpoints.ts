@@ -4,65 +4,47 @@
 
 import { Option } from './types';
 
-const DEV: Option[] = [
-  {
-    info: 'local',
-    text: 'Local Node (Own, 127.0.0.1:9944)',
-    value: 'ws://127.0.0.1:9944/'
-  }
-];
-
-const ENV: Option[] = [];
-
-if (process.env.WS_URL) {
-  ENV.push({
-    info: 'WS_URL',
-    text: 'WS_URL: ' + process.env.WS_URL,
-    value: process.env.WS_URL
-  });
+interface LinkOption extends Option {
+  dnslink?: string;
 }
 
-const LIVE: Option[] = [
-];
-
-const TEST: Option[] = [
-  {
-    info: 'dusty',
-    text: 'Dusty (Plasm Canary, hosted by Stake Technologies)',
-    value: 'wss://testnet.plasmnet.io/'
+interface EnvWindow {
+  // eslint-disable-next-line camelcase
+  process_env?: {
+    WS_URL: string;
   }
-];
+}
 
-let endpoints = [
-  {
-    isHeader: true,
-    text: 'Live networks',
-    value: ''
-  },
-  ...LIVE,
-  {
-    isHeader: true,
-    text: 'Test networks',
-    value: ''
-  },
-  ...TEST,
-  {
-    isHeader: true,
-    text: 'Development',
-    value: ''
-  },
-  ...DEV
-];
-
-if (ENV.length > 0) {
-  endpoints = [
+function createDev (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+  return [
     {
-      isHeader: true,
-      text: 'Custom ENV',
-      value: ''
-    },
-    ...ENV
-  ].concat(endpoints);
+      dnslink: 'local',
+      info: 'local',
+      text: t<string>('rpc.local', 'Local Node (Own, 127.0.0.1:9944)', { ns: 'apps-config' }),
+      value: 'ws://127.0.0.1:9944/'
+    }
+  ];
+}
+function createLive (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+  return [
+    {
+      dnslink: 'plasm',
+      info: 'plasm',
+      text: t<string>('rpc.plasm', 'Plasm Network (hosted by Stake Technologies)', { ns: 'apps-config' }),
+      value: 'wss://rpc.plasmnet.io/'
+    }
+  ];
+}
+
+function createTest (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+  return [
+    {
+      dnslink: 'dusty',
+      info: 'dusty',
+      text: t<string>('rpc.dusty', 'Dusty Network (hosted by Stake Technologies)', { ns: 'apps-config' }),
+      value: 'wss://rpc.dusty.plasmnet.io/'
+    }
+  ];
 }
 
 // The available endpoints that will show in the dropdown. For the most part (with the exception of
@@ -70,4 +52,44 @@ if (ENV.length > 0) {
 //   info: The chain logo name as defined in ../logos, specifically in namedLogos
 //   text: The text to display on teh dropdown
 //   value: The actual hosted secure websocket endpoint
-export default endpoints.map((option): Option => ({ ...option, withI18n: true }));
+export default function create (t: <T= string> (key: string, text: string, options: { ns: string, replace?: Record<string, string> }) => T): LinkOption[] {
+  const WS_URL = (
+    (typeof process !== 'undefined' ? process.env?.WS_URL : undefined) ||
+    (typeof window !== 'undefined' ? (window as EnvWindow).process_env?.WS_URL : undefined)
+  );
+  const endpoints = [
+    {
+      isHeader: true,
+      text: t<string>('rpc.header.live', 'Live networks', { ns: 'apps-config' }),
+      value: ''
+    },
+    ...createLive(t),
+    {
+      isHeader: true,
+      text: t<string>('rpc.header.test', 'Test networks', { ns: 'apps-config' }),
+      value: ''
+    },
+    ...createTest(t),
+    {
+      isHeader: true,
+      text: t<string>('rpc.header.dev', 'Development', { ns: 'apps-config' }),
+      value: ''
+    },
+    ...createDev(t)
+  ];
+
+  return WS_URL
+    ? ([
+      {
+        isHeader: true,
+        text: t<string>('rpc.custom', 'Custom environment', { ns: 'apps-config' }),
+        value: ''
+      },
+      {
+        info: 'WS_URL',
+        text: t<string>('rpc.custom.entry', 'Custom {{WS_URL}}', { ns: 'apps-config', replace: { WS_URL } }),
+        value: WS_URL
+      }
+    ] as LinkOption[]).concat(endpoints)
+    : endpoints;
+}

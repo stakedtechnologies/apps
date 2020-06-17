@@ -5,7 +5,7 @@
 import { AccountId } from '@polkadot/types/interfaces';
 import { ComponentProps } from './types';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Table } from '@polkadot/react-components';
 
 import { useTranslation } from '../translate';
@@ -17,17 +17,19 @@ interface Props extends ComponentProps {
   prime?: AccountId | null;
 }
 
-function Members ({ allVotes = {}, className, electionsInfo, prime }: Props): React.ReactElement<Props> {
+function Members ({ allVotes = {}, className = '', electionsInfo, prime }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+
+  const header = useMemo(() => [
+    [t('members'), 'start', 2],
+    [t('backing')]
+  ], [t]);
 
   return (
     <Table
       className={className}
-      empty={electionsInfo && t('No members found')}
-      header={[
-        [t('members'), 'start', 2],
-        [t('backing')]
-      ]}
+      empty={electionsInfo && t<string>('No members found')}
+      header={header}
     >
       {electionsInfo?.members.map(([accountId, balance]): React.ReactNode => (
         <Candidate

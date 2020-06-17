@@ -4,18 +4,17 @@
 
 import { Route } from './types';
 
-import Accounts from '@polkadot/app-accounts';
+import Accounts, { useCounter } from '@polkadot/app-accounts';
 
-const route: Route = {
-  Component: Accounts,
-  display: {
-    needsApi: []
-  },
-  i18n: {
-    defaultValue: 'Accounts'
-  },
-  icon: 'users',
-  name: 'accounts'
-};
-
-export default route;
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
+    Component: Accounts,
+    display: {
+      needsApi: []
+    },
+    icon: 'users',
+    name: 'accounts',
+    text: t<string>('nav.accounts', 'Accounts', { ns: 'apps-routing' }),
+    useCounter
+  };
+}

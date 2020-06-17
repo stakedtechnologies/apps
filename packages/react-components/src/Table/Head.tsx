@@ -12,7 +12,7 @@ interface Props {
   isEmpty: boolean;
 }
 
-function Head ({ className, filter, header, isEmpty }: Props): React.ReactElement<Props> {
+function Head ({ className = '', filter, header, isEmpty }: Props): React.ReactElement<Props> {
   return (
     <thead className={className}>
       {filter && (
@@ -64,6 +64,10 @@ export default React.memo(styled(Head)`
     &.isClickable {
       border-bottom: 2px solid transparent;
       cursor: pointer;
+    }
+
+    &.mini {
+      padding: 0 !important;
     }
 
     &.start {

@@ -4,7 +4,7 @@
 
 import { ComponentProps as Props } from '../types';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Input, Table } from '@polkadot/react-components';
 import { useAddresses, useFavorites, useToggle } from '@polkadot/react-hooks';
@@ -17,13 +17,13 @@ type SortedAddress = { address: string; isFavorite: boolean };
 
 const STORE_FAVS = 'accounts:favorites';
 
-function Overview ({ className, onStatusChange }: Props): React.ReactElement<Props> {
+function Overview ({ className = '', onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { allAddresses } = useAddresses();
   const [isCreateOpen, toggleCreate] = useToggle(false);
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [sortedAddresses, setSortedAddresses] = useState<SortedAddress[]>([]);
-  const [filter, setFilter] = useState<string>('');
+  const [filterOn, setFilter] = useState<string>('');
 
   useEffect((): void => {
     setSortedAddresses(
@@ -39,12 +39,33 @@ function Overview ({ className, onStatusChange }: Props): React.ReactElement<Pro
     );
   }, [allAddresses, favorites]);
 
+  const header = useMemo(() => [
+    [t('contacts'), 'start', 2],
+    [t('tags'), 'start'],
+    [t('transactions'), 'ui--media-1500'],
+    [t('balances')],
+    [],
+    [undefined, 'mini ui--media-1400']
+  ], [t]);
+
+  const filter = useMemo(() => (
+    <div className='filter--tags'>
+      <Input
+        autoFocus
+        isFull
+        label={t<string>('filter by name or tags')}
+        onChange={setFilter}
+        value={filterOn}
+      />
+    </div>
+  ), [filterOn, t]);
+
   return (
     <div className={className}>
       <Button.Group>
         <Button
           icon='add'
-          label={t('Add contact')}
+          label={t<string>('Add contact')}
           onClick={toggleCreate}
         />
       </Button.Group>
@@ -55,30 +76,14 @@ function Overview ({ className, onStatusChange }: Props): React.ReactElement<Pro
         />
       )}
       <Table
-        empty={t('no addresses saved yet, add any existing address')}
-        filter={
-          <div className='filter--tags'>
-            <Input
-              autoFocus
-              isFull
-              label={t('filter by name or tags')}
-              onChange={setFilter}
-              value={filter}
-            />
-          </div>
-        }
-        header={[
-          [t('contacts'), 'start', 2],
-          [t('tags'), 'start'],
-          [t('transactions')],
-          [t('balances')],
-          [undefined, undefined, 2]
-        ]}
+        empty={t<string>('no addresses saved yet, add any existing address')}
+        filter={filter}
+        header={header}
       >
         {sortedAddresses.map(({ address, isFavorite }): React.ReactNode => (
           <Address
             address={address}
-            filter={filter}
+            filter={filterOn}
             isFavorite={isFavorite}
             key={address}
             toggleFavorite={toggleFavorite}

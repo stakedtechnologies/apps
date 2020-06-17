@@ -8,22 +8,20 @@ import BN from 'bn.js';
 import React from 'react';
 import styled from 'styled-components';
 import { registry } from '@polkadot/react-api';
-import { Call, InputAddress, Expander, Modal } from '@polkadot/react-components';
+import { Call, Expander, Modal } from '@polkadot/react-components';
 
-import Checks from './Checks';
 import { useTranslation } from './translate';
+import PaymentInfo from './PaymentInfo';
 
 interface Props {
-  children?: React.ReactNode;
   className?: string;
-  hideDetails?: boolean;
+  currentItem: QueueTx;
   isSendable: boolean;
   onError: () => void;
   tip?: BN;
-  value: QueueTx;
 }
 
-function Transaction ({ children, className, hideDetails, isSendable, onError, tip, value: { accountId, extrinsic, isUnsigned } }: Props): React.ReactElement<Props> | null {
+function Transaction ({ className, currentItem: { accountId, extrinsic, isUnsigned, payload }, isSendable, onError, tip }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
 
   if (!extrinsic) {
@@ -31,61 +29,44 @@ function Transaction ({ children, className, hideDetails, isSendable, onError, t
   }
 
   const { meta, method, section } = registry.findMetaCall(extrinsic.callIndex);
+  const args = meta?.args.map(({ name }) => name).join(', ') || '';
 
   return (
-    <Modal.Content className={`ui--signer-Signer-Content ${className}`}>
-      {!hideDetails && (
-        <>
-          {!isUnsigned && accountId && (
-            <InputAddress
-              className='full'
-              defaultValue={accountId}
-              isDisabled
-              isInput
-              label={t('sending from my account')}
-              withLabel
-            />
-          )}
-          <Expander
-            className='tx-details'
-            summary={
-              <>
-                {t('Sending transaction')} <span className='highlight'>{section}.{method}({
-                  meta?.args.map(({ name }) => name).join(', ') || ''
-                })</span>
-              </>
-            }
-            summaryMeta={meta}
-          >
-            <Call
-              onError={onError}
-              value={extrinsic}
-              withBorder={false}
-            />
-          </Expander>
-        </>
-      )}
-      {!hideDetails && !isUnsigned && (
-        <Checks
-          accountId={accountId}
+    <Modal.Columns className={className}>
+      <Modal.Column>
+        <Expander
           className='tx-details'
-          extrinsic={extrinsic}
-          isSendable={isSendable}
-          tip={tip}
-        />
-      )}
-      {children}
-    </Modal.Content>
+          summary={<>{t<string>('Sending transaction')} <span className='highlight'>{section}.{method}({args})</span></>}
+          summaryMeta={meta}
+        >
+          <Call
+            onError={onError}
+            value={extrinsic}
+            withBorder={false}
+          />
+        </Expander>
+        {!isUnsigned && !payload && (
+          <PaymentInfo
+            accountId={accountId}
+            className='tx-details'
+            extrinsic={extrinsic}
+            isSendable={isSendable}
+            tip={tip}
+          />
+        )}
+      </Modal.Column>
+      <Modal.Column>
+        <p>{t<string>('The details of the transaction including the type, the description (as available from the chain metadata) as well as any parameters and fee estimations (as available) for the specific type of call.')}</p>
+      </Modal.Column>
+    </Modal.Columns>
   );
 }
 
 export default React.memo(styled(Transaction)`
   .tx-details {
-    margin-left: 2rem;
-
     .ui--Expander-summary {
       font-size: 1.1rem;
-      margin: 0.5rem 0;
+      margin: 0 0 0.5rem;
     }
 
     .highlight {

@@ -6,21 +6,19 @@ import { Route } from './types';
 
 import SessionKeyModal from '@polkadot/app-accounts/Accounts/modals/SessionKey';
 
-const route: Route = {
-  Component: SessionKeyModal,
-  Modal: SessionKeyModal,
-  display: {
-    isHidden: false,
-    needsAccounts: true,
-    needsApi: [
-      'tx.session.setKeys' // current set_keys API
-    ]
-  },
-  i18n: {
-    defaultValue: 'Session Key'
-  },
-  icon: 'certificate',
-  name: 'session'
-};
-
-export default route;
+export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Route {
+  return {
+    Component: SessionKeyModal,
+    Modal: SessionKeyModal,
+    display: {
+      isHidden: false,
+      needsAccounts: true,
+      needsApi: [
+        'tx.session.setKeys' // current set_keys API
+      ]
+    },
+    text: t<string>('nav.session', 'Session Key', { ns: 'apps-routing' }),
+    icon: 'certificate',
+    name: 'session'
+  };
+}

@@ -2,9 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { QueryableStorageEntry } from '@polkadot/api/types';
 import { RenderFn, DefaultProps, ComponentRenderer } from '@polkadot/react-api/hoc/types';
 import { ConstValue } from '@polkadot/react-components/InputConsts/types';
-import { QueryTypes, StorageEntryPromise, StorageModuleQuery } from './types';
+import { QueryTypes, StorageModuleQuery } from './types';
 
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -29,14 +30,14 @@ interface CacheInstance {
 
 const cache: CacheInstance[] = [];
 
-function keyToName (isConst: boolean, _key: Uint8Array | StorageEntryPromise | ConstValue): string {
+function keyToName (isConst: boolean, _key: Uint8Array | QueryableStorageEntry<'promise'> | ConstValue): string {
   if (isConst) {
     const key = _key as ConstValue;
 
     return `const ${key.section}.${key.method}`;
   }
 
-  const key = _key as Uint8Array | StorageEntryPromise;
+  const key = _key as Uint8Array | QueryableStorageEntry<'promise'>;
 
   if (isU8a(key)) {
     const u8a = Compact.stripLengthPrefix(key);
@@ -50,7 +51,7 @@ function keyToName (isConst: boolean, _key: Uint8Array | StorageEntryPromise | C
   return `${key.creator.section}.${key.creator.method}`;
 }
 
-function typeToString ({ creator: { meta: { modifier, type } } }: StorageEntryPromise): string {
+function typeToString ({ creator: { meta: { modifier, type } } }: QueryableStorageEntry<'promise'>): string {
   const _type = unwrapStorageType(type);
 
   return modifier.isOptional
@@ -103,6 +104,7 @@ function getCachedComponent (query: QueryTypes): CacheInstance {
         renderHelper = withCallDiv('subscribe', {
           paramName: 'params',
           paramValid: true,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           params: [key, ...values],
           withIndicator: true
         });
@@ -127,7 +129,7 @@ function getCachedComponent (query: QueryTypes): CacheInstance {
   return cache[id];
 }
 
-function Query ({ className, onRemove, value }: Props): React.ReactElement<Props> | null {
+function Query ({ className = '', onRemove, value }: Props): React.ReactElement<Props> | null {
   // const [inputs, setInputs] = useState<React.ReactNode[]>([]);
   const [{ Component }, setComponent] = useState<Partial<CacheInstance>>({});
   const [isSpreadable, setIsSpreadable] = useState(false);
@@ -136,9 +138,9 @@ function Query ({ className, onRemove, value }: Props): React.ReactElement<Props
   useEffect((): void => {
     setComponent(getCachedComponent(value));
     setIsSpreadable(
-      (value.key as StorageEntryPromise).creator &&
-      (value.key as StorageEntryPromise).creator.meta &&
-      ['Bytes', 'Raw'].includes((value.key as StorageEntryPromise).creator.meta.type.toString())
+      (value.key as QueryableStorageEntry<'promise'>).creator &&
+      (value.key as QueryableStorageEntry<'promise'>).creator.meta &&
+      ['Bytes', 'Raw'].includes((value.key as QueryableStorageEntry<'promise'>).creator.meta.type.toString())
     );
   }, [value]);
 
@@ -169,7 +171,7 @@ function Query ({ className, onRemove, value }: Props): React.ReactElement<Props
     ? (key as unknown as ConstValue).meta.type.toString()
     : isU8a(key)
       ? 'Raw'
-      : typeToString(key as StorageEntryPromise);
+      : typeToString(key as QueryableStorageEntry<'promise'>);
 
   if (!Component) {
     return null;
@@ -180,7 +182,7 @@ function Query ({ className, onRemove, value }: Props): React.ReactElement<Props
       <div className='storage--actionrow-value'>
         <Labelled
           label={
-            <div className='ui--Param-text'>
+            <div className='storage--actionrow-label'>
               {keyToName(isConst, key)}: {type}
             </div>
           }
@@ -228,5 +230,10 @@ export default React.memo(styled(Query)`
 
   pre {
     margin: 0;
+
+    .ui--Param-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 `);
