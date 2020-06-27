@@ -100,13 +100,13 @@ function Item ({ isCollapsed, onClick, route }: Props): React.ReactElement<Props
 
   const body = (
     <>
-      <Icon name={icon} />
+      <Icon icon={icon} />
       <span className='text'>{text}</span>
       {!!count && (
         <Badge
+          color='counter'
           info={count}
           isInline
-          type='counter'
         />
       )}
       <Tooltip

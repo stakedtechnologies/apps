@@ -15,11 +15,16 @@ function Selection (): React.ReactElement {
   const { t } = useTranslation();
   const { apiDefaultTxSudo } = useApi();
   const [accountId, setAccountId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [extrinsic, setExtrinsic] = useState<SubmittableExtrinsic<'promise'> | null>(null);
 
   const _onExtrinsicChange = useCallback(
-    (method?: SubmittableExtrinsic<'promise'>) =>
-      setExtrinsic(() => method || null),
+    (method?: SubmittableExtrinsic<'promise'>) => setExtrinsic(() => method || null),
+    []
+  );
+
+  const _onExtrinsicError = useCallback(
+    (error?: Error | null) => setError(error ? error.message : null),
     []
   );
 
@@ -40,11 +45,15 @@ function Selection (): React.ReactElement {
         defaultValue={apiDefaultTxSudo}
         label={t<string>('submit the following extrinsic')}
         onChange={_onExtrinsicChange}
+        onError={_onExtrinsicError}
       />
+      {error && (
+        <article className='error'>{error}</article>
+      )}
       <Button.Group>
         <TxButton
           extrinsic={extrinsic}
-          icon='sign-in'
+          icon='sign-in-alt'
           isBasic
           isDisabled={!extrinsic}
           isUnsigned
@@ -54,7 +63,7 @@ function Selection (): React.ReactElement {
         <TxButton
           accountId={accountId}
           extrinsic={extrinsic}
-          icon='sign-in'
+          icon='sign-in-alt'
           isDisabled={!extrinsic || !accountId}
           isPrimary={false}
           label={t<string>('Submit Transaction')}

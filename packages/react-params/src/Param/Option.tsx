@@ -12,9 +12,9 @@ import { Toggle } from '@polkadot/react-components';
 import { useTranslation } from '../translate';
 import Param from './index';
 
-function Option ({ className = '', defaultValue, isDisabled, name, onChange, onEnter, onEscape, type: { sub } }: Props): React.ReactElement<Props> {
+function Option ({ className = '', defaultValue, isDisabled, name, onChange, onEnter, onEscape, type: { sub, withOptionActive } }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(withOptionActive || false);
 
   useEffect((): void => {
     !isActive && onChange && onChange({
@@ -28,6 +28,7 @@ function Option ({ className = '', defaultValue, isDisabled, name, onChange, onE
       <Param
         defaultValue={defaultValue}
         isDisabled={isDisabled || !isActive}
+        isInOption
         isOptional={!isActive}
         name={name}
         onChange={onChange}
@@ -55,8 +56,8 @@ export default React.memo(styled(Option)`
   position: relative;
 
   .ui--Param-Option-toggle {
+    bottom: 1.375rem;
     position: absolute;
     right: 3.5rem;
-    top: 0.5rem;
   }
 `);

@@ -11,7 +11,8 @@ import chainKusama from './chains/kusama-128.gif';
 import nodeCentrifuge from './nodes/centrifuge.png';
 import nodeDusty from './nodes/dusty.png';
 import nodeEdgeware from './nodes/edgeware-circle.svg';
-import nodeEncointer from './nodes/encointer.svg';
+import nodeEncointerNotee from './nodes/encointer-notee.svg';
+import nodeEncointerTeeproxy from './nodes/encointer-teeproxy.svg';
 import nodeNodle from './nodes/nodle.svg';
 import nodePolkadot from './nodes/polkadot-circle.svg';
 import nodePolkadotJs from './nodes/polkadot-js.svg';
@@ -42,7 +43,9 @@ const nodeLogos: Record<string, any> = [
   ['centrifuge chain', nodeCentrifuge],
   ['Centrifuge Chain Node', nodeCentrifuge],
   ['Edgeware Node', nodeEdgeware],
-  ['Encointer Node', nodeEncointer],
+  ['Encointer Node', nodeEncointerNotee],
+  ['Encointer Node noTEE', nodeEncointerNotee],
+  ['Encointer Node TEE proxy', nodeEncointerTeeproxy],
   ['kulupu', nodeSubstrate],
   ['node-template', nodeSubstrate],
   ['Nodle Chain Node', nodeNodle],

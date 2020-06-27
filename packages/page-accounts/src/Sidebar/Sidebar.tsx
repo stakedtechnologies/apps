@@ -12,6 +12,7 @@ import { AccountName, Button, Icon, IdentityIcon, Input, LinkExternal, Tags } fr
 
 import Transfer from '../Accounts/modals/Transfer';
 import { useTranslation } from '../translate';
+import Balances from './Balances';
 import Flags from './Flags';
 import Identity from './Identity';
 import Multisig from './Multisig';
@@ -48,7 +49,7 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
     <div className={className}>
       <Button
         className='ui--AddressMenu-close'
-        icon='close'
+        icon='times'
         isBasic
         isCircular
         onClick={onClose}
@@ -85,7 +86,7 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
           {(!isEditingName && flags.isEditable) && (
             <Icon
               className='inline-icon'
-              name='edit'
+              icon='edit'
             />
           )}
         </AccountName>
@@ -104,7 +105,7 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
         <div className='ui-AddressMenu--button'>
           <Button.Group>
             <Button
-              icon='send'
+              icon='paper-plane'
               label={t<string>('Deposit')}
               onClick={toggleIsTransferOpen}
             />
@@ -121,7 +122,7 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
             )}
             {!flags.isOwned && !flags.isInContacts && (
               <Button
-                icon='add'
+                icon='plus'
                 isPositive
                 label={t<string>('Save')}
                 onClick={_onUpdateName}
@@ -142,12 +143,12 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
                 size='tiny'
               >
                 <Button.Content visible>
-                  <Icon name='check' />
+                  <Icon icon='check' />
                   &nbsp;
                   {t<string>('Saved')}
                 </Button.Content>
                 <Button.Content hidden>
-                  <Icon name='ban' />
+                  <Icon icon='ban' />
                   &nbsp;
                   {t<string>('Remove')}
                 </Button.Content>
@@ -163,6 +164,7 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
           )}
         </div>
       </div>
+      <Balances address={address} />
       <Identity
         address={address}
         identity={identity}
@@ -255,7 +257,7 @@ export default React.memo(styled(Sidebar)`
 
   .ui--AddressMenu-identity {
     .ui--AddressMenu-identityTable {
-      font-size: 13px;
+      font-size: 0.93rem;
       margin-top: 0.3rem;
 
       .tr {
@@ -326,7 +328,7 @@ export default React.memo(styled(Sidebar)`
 
   .inline-icon {
     cursor: pointer;
-    margin: 0 0 0 0.6rem;
+    margin: 0 0 0 0.5rem;
     color:  ${colorLink};
   }
 

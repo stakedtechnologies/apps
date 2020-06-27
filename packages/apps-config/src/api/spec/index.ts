@@ -5,7 +5,8 @@
 import centrifugeChain from './centrifuge-chain';
 import dusty2 from './dusty2';
 import edgeware from './edgeware';
-import encointerNode from './encointer-node';
+import encointerNodeNotee from './encointer-node-notee';
+import encointerNodeTeeproxy from './encointer-node-teeproxy';
 import kulupu from './kulupu';
 import nodeTemplate from './node-template';
 import plasm from './plasm';
@@ -15,7 +16,9 @@ export default {
   'centrifuge-chain': centrifugeChain,
   dusty2,
   edgeware,
-  'encointer-node': encointerNode,
+  'encointer-node': encointerNodeNotee,
+  'encointer-node-notee': encointerNodeNotee,
+  'encointer-node-teeproxy': encointerNodeTeeproxy,
   kulupu,
   'node-template': nodeTemplate,
   plasm,

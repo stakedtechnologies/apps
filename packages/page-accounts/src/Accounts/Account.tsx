@@ -177,14 +177,15 @@ function Account ({ account: { address, meta }, className = '', filter, isFavori
     <tr className={className}>
       <td className='favorite'>
         <Icon
-          className={`${isFavorite ? 'isSelected isColorHighlight' : ''}`}
-          name={isFavorite ? 'star' : 'star outline'}
+          color={isFavorite ? 'orange' : 'gray'}
+          icon='star'
           onClick={_onFavorite}
         />
       </td>
       <td className='together'>
         {recoveryInfo && (
           <Badge
+            color='green'
             hover={
               <div>
                 <p>{t<string>('This account is recoverable, with the following friends:')}</p>
@@ -214,28 +215,27 @@ function Account ({ account: { address, meta }, className = '', filter, isFavori
                 </table>
               </div>
             }
-            info={<Icon name='shield' />}
+            info={<Icon icon='shield' />}
             isInline
             isTooltip
-            type='online'
           />
         )}
         {multiInfos && multiInfos.length !== 0 && (
           <Badge
+            color='red'
             hover={t<string>('Multisig approvals pending')}
             info={multiInfos.length}
             isInline
             isTooltip
-            type='brown'
           />
         )}
         {isProxied && !proxyInfo.hasOwned && (
           <Badge
+            color='red'
             hover={t<string>('Proxied account has no owned proxies')}
             info='0'
             isInline
             isTooltip
-            type='brown'
           />
         )}
       </td>
@@ -335,7 +335,7 @@ function Account ({ account: { address, meta }, className = '', filter, isFavori
       </td>
       <td className='button'>
         <Button
-          icon='paper plane'
+          icon='paper-plane'
           label={t<string>('send')}
           onClick={toggleTransfer}
         />
@@ -345,7 +345,7 @@ function Account ({ account: { address, meta }, className = '', filter, isFavori
           onClose={toggleSettings}
           trigger={
             <Button
-              icon='ellipsis vertical'
+              icon='ellipsis-v'
               onClick={toggleSettings}
             />
           }

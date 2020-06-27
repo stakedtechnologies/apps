@@ -51,7 +51,7 @@ export default React.memo(styled(Body)`
       white-space: nowrap;
     }
 
-    i.icon {
+    .ui--Icon {
       cursor: pointer;
     }
 
@@ -70,6 +70,7 @@ export default React.memo(styled(Body)`
 
     &.address {
       min-width: 11rem;
+      overflow-x: hidden;
     }
 
     &.badge {
@@ -77,7 +78,7 @@ export default React.memo(styled(Body)`
     }
 
     &.button {
-      padding: 0.5rem 0.75rem;
+      padding: 0.5rem 0.25rem;
       text-align: right;
       white-space: nowrap;
 
@@ -136,7 +137,7 @@ export default React.memo(styled(Body)`
       }
     }
 
-    &.favorite i.icon.isSelected {
+    &.favorite .ui--Icon.isSelected {
       color: darkorange;
     }
   }

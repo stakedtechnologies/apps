@@ -65,9 +65,8 @@ function MessageSignature ({ className, message: { args, mutates, name, returnTy
         <>
           <Icon
             className='ui--MessageSignature-mutates'
-            data-for={`mutates-${name}`}
-            data-tip
-            name='database'
+            icon='database'
+            tooltip={`mutates-${name}`}
           />
           {withTooltip && (
             <Tooltip
@@ -95,7 +94,7 @@ export default React.memo(
 
     .ui--MessageSignature-name {
       color: #2f8ddb;
-      font-weight: bold;  
+      font-weight: bold;
     }
 
     .ui--MessageSignature-type {

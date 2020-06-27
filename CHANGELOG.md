@@ -1,9 +1,45 @@
 # CHANGELOG
 
+## 0.47.0-beta.x
+
+- Default (via toggle) to only last 25% of eras for payouts
+- Allow retracting of tips by proposer
+- Enable the full retrieval of all Map/Doublemap entries
+
+## 0.46.1 Jun 22, 2020
+
+- I18n for es (thanks to https://github.com/wimel)
+- Support for importing mini secrets via QR (Thanks to https://github.com/hanwencheng)
+- Update SubstrateTEE types (thanks to https://github.com/brenzi)
+- Support for multisig calls with new weight parameters
+- Split sign and send updates in the signer modal for better UI tracking
+- Hide zero nonce of accounts/contracts pages
+- Display API extrinsic construction errors in the extrinsics app
+- Do not display signer proxies when there are none matching against accounts
+- Sort recovery addresses to align with the Substrate implementation
+- Check for funded controller on bonding
+- Suggest max values for bonding (& bonding extra), adjusting checks
+- Handle isForceEra to adjust era displays
+- Display candidacy bond on council submission
+- Adjust AddressMni & AddressSmall components to take advantage of bigger screens
+- Display referendum & treasury tips voting status
+- Add tips close buttons & countdown timer
+- Disabled nominations via targets when in election
+- Expand targets page to include waiting validators (full overview of all)
+- Apply shared filters (name, toggles) on all validator lists
+- Display balances in account view sidebar
+- Adjust signer dialog ith split sign/send (better status displays)
+- Adjust proxy checks for sudo calls to closer align with Polkadot
+- Apply i18n caching, with no reload on translation page
+- Add "Apply" i18n button to reflect editing changes in the UI
+- Support Tuple inputs (params/extrinsics) for custom names
+- `@polkadot/api` 1.20.1
+- `@polkadot/util` 2.15.1
+
 ## 0.45.2 Jun 16, 2020
 
 - I18n for ja (Thanks to https://github.com/SotaWatanabe)
-- Ia8n for pt (thanks to https://github.com/laurogripa)
+- I18n for pt (thanks to https://github.com/laurogripa)
 - I18n for ru (Thanks to https://github.com/illlefr4u)
 - Update Encointer types (thanks to https://github.com/brenzi)
 - Improve Electron app security settings (Thanks to https://github.com/EthWorks)

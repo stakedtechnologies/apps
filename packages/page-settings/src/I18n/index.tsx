@@ -33,10 +33,19 @@ type Progress = [[number, number, number], Record<string, [number, number, numbe
 type Strings = Record<string, string>;
 type StringsMod = Record<string, Strings>;
 
-async function retrieveJson (url: string): Promise<any> {
-  const response = await fetch(`locales/${url}`);
+const cache = new Map<string, unknown>();
 
-  return response.json();
+async function retrieveJson (url: string): Promise<any> {
+  if (cache.has(url)) {
+    return cache.get(url);
+  }
+
+  const response = await fetch(`locales/${url}`);
+  const json = await response.json() as unknown;
+
+  cache.set(url, json);
+
+  return json;
 }
 
 async function retrieveEnglish (): Promise<StringsMod> {
@@ -251,7 +260,7 @@ function Translate ({ className }: Props): React.ReactElement<Props> {
       </div>
       <Button.Group>
         <Button
-          icon='refresh'
+          icon='sync'
           label={t<string>('Apply to UI')}
           onClick={_doApply}
         />

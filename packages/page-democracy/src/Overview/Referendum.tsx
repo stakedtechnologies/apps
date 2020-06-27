@@ -9,7 +9,7 @@ import BN from 'bn.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Badge, Button, Icon, LinkExternal } from '@polkadot/react-components';
-import { useApi, useCall } from '@polkadot/react-hooks';
+import { useAccounts, useApi, useCall } from '@polkadot/react-hooks';
 import { BlockToTime } from '@polkadot/react-query';
 import { formatNumber, isBoolean } from '@polkadot/util';
 
@@ -31,12 +31,19 @@ interface Percentages {
   turnout: string;
 }
 
+interface VoteType {
+  hasVoted: boolean;
+  hasVotedAye: boolean;
+}
+
 function Referendum ({ className = '', value: { allAye, allNay, image, imageHash, index, isPassing, status, voteCountAye, voteCountNay, votedAye, votedNay, votedTotal } }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const { api } = useApi();
+  const { allAccounts } = useAccounts();
   const bestNumber = useCall<BlockNumber>(api.derive.chain.bestNumber, []);
   const totalIssuance = useCall<Balance>(api.query.balances.totalIssuance, []);
   const [percentages, setPercentages] = useState<Percentages | null>(null);
+  const [{ hasVoted, hasVotedAye }, setHasVoted] = useState<VoteType>({ hasVoted: false, hasVotedAye: false });
   const { changeAye, changeNay } = useChangeCalc(status.threshold, votedAye, votedNay, votedTotal);
   const threshold = useMemo(
     () => status.threshold.type.toString().replace('majority', ' majority '),
@@ -47,6 +54,8 @@ function Referendum ({ className = '', value: { allAye, allNay, image, imageHash
     if (totalIssuance) {
       const aye = allAye.reduce((total: BN, { balance }) => total.add(balance), new BN(0));
       const nay = allNay.reduce((total: BN, { balance }) => total.add(balance), new BN(0));
+      const hasVotedAye = allAye.some(({ accountId }) => allAccounts.includes(accountId.toString()));
+      const hasVoted = hasVotedAye || allNay.some(({ accountId }) => allAccounts.includes(accountId.toString()));
 
       setPercentages({
         aye: votedTotal.isZero()
@@ -57,8 +66,9 @@ function Referendum ({ className = '', value: { allAye, allNay, image, imageHash
           : `${(nay.muln(10000).div(votedTotal).toNumber() / 100).toFixed(2)}%`,
         turnout: `${((votedTotal.muln(10000).div(totalIssuance).toNumber()) / 100).toFixed(2)}%`
       });
+      setHasVoted({ hasVoted, hasVotedAye });
     }
-  }, [allAye, allNay, totalIssuance, votedTotal]);
+  }, [allAccounts, allAye, allNay, totalIssuance, votedTotal]);
 
   if (!bestNumber || status.end.sub(bestNumber).lten(0)) {
     return null;
@@ -112,27 +122,34 @@ function Referendum ({ className = '', value: { allAye, allNay, image, imageHash
       <td className='badge'>
         {isBoolean(isPassing) && (
           <Badge
+            color={isPassing ? 'green' : 'red'}
             hover={
               isPassing
                 ? t<string>('{{threshold}}, passing', { replace: { threshold } })
                 : t<string>('{{threshold}}, not passing', { replace: { threshold } })
             }
-            info={<Icon name={isPassing ? 'check' : 'cancel'} />}
+            info={<Icon icon={isPassing ? 'check' : 'times'} />}
+            isInline
             isTooltip
-            type={isPassing ? 'green' : 'brown'}
           />
         )}
       </td>
       <td className='button'>
         <Button.Group>
+          {!image?.proposal && (
+            <PreImageButton imageHash={imageHash} />
+          )}
           <Voting
             proposal={image?.proposal}
             referendumId={index}
           />
-          {!image?.proposal && (
-            <PreImageButton imageHash={imageHash} />
-          )}
         </Button.Group>
+      </td>
+      <td className='badge'>
+        <Icon
+          color={hasVoted ? (hasVotedAye ? 'green' : 'red') : 'gray'}
+          icon='asterisk'
+        />
       </td>
       <td className='mini ui--media-1000'>
         <LinkExternal

@@ -31,9 +31,9 @@ interface Selected {
 }
 
 function autoPick (targets: SortedTargets): string[] {
-  return (targets.validators || []).reduce((result: string[], { key, numNominators }): string[] => {
+  return (targets.validators || []).reduce((result: string[], { isElected, isFavorite, key, numNominators, rewardPayout }): string[] => {
     if (result.length < MAX_NOMINATIONS) {
-      if (numNominators && (numNominators < MAX_PAYOUTS)) {
+      if (numNominators && (numNominators < MAX_PAYOUTS) && (isElected || isFavorite) && !rewardPayout.isZero()) {
         result.push(key);
       }
     }
@@ -137,6 +137,8 @@ function Nominate ({ className = '', controllerId, next, nominating, onChange, s
                   value={
                     selected.map((validatorId) => (
                       <AddressMini
+                        className='addressStatic'
+                        isHighlight={favorites.includes(validatorId)}
                         key={validatorId}
                         value={validatorId}
                       />
@@ -192,8 +194,13 @@ export default React.memo(styled(Nominate)`
     width: 100%;
   }
 
-  .ui--Static .ui--AddressMini.padded {
+  .ui--Static .ui--AddressMini.padded.addressStatic {
     padding-top: 0.5rem;
+
+    .ui--AddressMini-address {
+      min-width: 10rem;
+      max-width: 10rem;
+    }
   }
 
   .shortlist {

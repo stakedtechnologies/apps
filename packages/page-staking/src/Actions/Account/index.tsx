@@ -55,7 +55,9 @@ function Account ({ className = '', info: { controllerId, destination, destinati
         <AddressSmall value={stashId} />
         {isBondExtraOpen && (
           <BondExtra
+            controllerId={controllerId}
             onClose={toggleBondExtra}
+            stakingInfo={stakingAccount}
             stashId={stashId}
           />
         )}
@@ -164,7 +166,7 @@ function Account ({ className = '', info: { controllerId, destination, destinati
                     {(!sessionIds.length || hexSessionIdNext === '0x')
                       ? (
                         <Button
-                          icon='sign-in'
+                          icon='sign-in-alt'
                           isDisabled={!isOwnController || isDisabled}
                           key='set'
                           label={t<string>('Session Key')}
@@ -173,7 +175,7 @@ function Account ({ className = '', info: { controllerId, destination, destinati
                       )
                       : (
                         <Button
-                          icon='check circle outline'
+                          icon='certificate'
                           isDisabled={!isOwnController || isDisabled}
                           key='validate'
                           label={t<string>('Validate')}
@@ -182,7 +184,7 @@ function Account ({ className = '', info: { controllerId, destination, destinati
                       )
                     }
                     <Button
-                      icon='hand paper outline'
+                      icon='hand-paper'
                       isDisabled={!isOwnController || isDisabled}
                       key='nominate'
                       label={t<string>('Nominate')}
@@ -197,7 +199,7 @@ function Account ({ className = '', info: { controllerId, destination, destinati
                 onClose={toggleSettings}
                 trigger={
                   <Button
-                    icon='ellipsis vertical'
+                    icon='ellipsis-v'
                     isDisabled={isDisabled}
                     onClick={toggleSettings}
                   />

@@ -251,7 +251,7 @@ class InputAddress extends React.PureComponent<Props, State> {
 
     const lastValue = getLastValue(type);
 
-    this.setState({ lastValue });
+    this.setState(() => ({ lastValue }));
 
     return lastValue;
   }
@@ -319,7 +319,7 @@ const ExportedComponent = withMulti(
       }
     }
 
-    &.hideAddress .ui--KeyPair .address {
+    &.hideAddress .ui.search.selection.dropdown > .text > .ui--KeyPair .address {
       flex: 0;
       max-width: 0;
     }

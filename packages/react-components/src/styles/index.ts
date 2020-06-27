@@ -49,14 +49,8 @@ export default createGlobalStyle<Props>`
   }
 
   .ui--highlight--icon {
-    i.icon {
+    .ui--Icon {
       color: ${getHighlight} !important;
-    }
-  }
-
-  .ui--highlight--spinner {
-    &:after {
-      border-color: ${getHighlight} transparent transparent !important;
     }
   }
 

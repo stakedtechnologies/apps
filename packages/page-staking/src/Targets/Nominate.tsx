@@ -13,6 +13,7 @@ import { useTranslation } from '../translate';
 
 interface Props {
   className?: string;
+  isDisabled: boolean;
   ownNominators?: StakerState[];
   targets: string[];
 }
@@ -22,7 +23,7 @@ interface IdState {
   stashId: string;
 }
 
-function Nominate ({ className = '', ownNominators, targets }: Props): React.ReactElement<Props> {
+function Nominate ({ className = '', isDisabled, ownNominators, targets }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [ids, setIds] = useState<IdState | null>(null);
   const [filter, setFilter] = useState<string[]>([]);
@@ -50,8 +51,8 @@ function Nominate ({ className = '', ownNominators, targets }: Props): React.Rea
   return (
     <>
       <Button
-        icon='hand paper outline'
-        isDisabled={!filter.length || !targets.length}
+        icon='hand-paper'
+        isDisabled={isDisabled || !filter.length || !targets.length}
         label={t<string>('Nominate selected')}
         onClick={toggleOpen}
       />
@@ -88,6 +89,7 @@ function Nominate ({ className = '', ownNominators, targets }: Props): React.Rea
                   value={
                     targets.map((validatorId) => (
                       <AddressMini
+                        className='addressStatic'
                         key={validatorId}
                         value={validatorId}
                       />
@@ -117,7 +119,12 @@ function Nominate ({ className = '', ownNominators, targets }: Props): React.Rea
 }
 
 export default React.memo(styled(Nominate)`
-  .ui--AddressMini.padded {
+  .ui--AddressMini.padded.addressStatic {
     padding-top: 0.5rem;
+
+    .ui--AddressMini-address {
+      min-width: 10rem;
+      max-width: 10rem;
+    }
   }
 `);

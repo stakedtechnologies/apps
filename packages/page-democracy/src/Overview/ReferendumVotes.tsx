@@ -59,9 +59,8 @@ function ReferendumVotes ({ change, className = '', count, index, isWinning, tot
               <>
                 <Icon
                   className='double-icon'
-                  data-for={trigger}
-                  data-tip
-                  name={isWinning ? 'arrow alternate circle down' : 'arrow alternate circle up'}
+                  icon={isWinning ? 'arrow-circle-down' : 'arrow-circle-up'}
+                  tooltip={trigger}
                 />
                 <FormatBalance value={change} />
                 <Tooltip
@@ -89,8 +88,14 @@ function ReferendumVotes ({ change, className = '', count, index, isWinning, tot
 }
 
 export default React.memo(styled(ReferendumVotes)`
+  .ui--Expander .ui--Expander-summary .double-icon {
+    margin-bottom: -0.125rem;
+    margin-right: 0.375rem;
+    margin-top: 0.125rem;
+  }
+
   .ui--Expander-summary {
-    i.icon+i.icon {
+    .ui--Icon+.ui--Icon {
       margin-left: -0.375rem;
     }
   }
