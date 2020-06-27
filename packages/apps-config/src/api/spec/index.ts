@@ -4,7 +4,6 @@
 
 import centrifugeChain from './centrifuge-chain';
 import dusty2 from './dusty2';
-import edgeware from './edgeware';
 import encointerNodeNotee from './encointer-node-notee';
 import encointerNodeTeeproxy from './encointer-node-teeproxy';
 import kulupu from './kulupu';
@@ -15,7 +14,6 @@ import stablePoc from './stable-poc';
 export default {
   'centrifuge-chain': centrifugeChain,
   dusty2,
-  edgeware,
   'encointer-node': encointerNodeNotee,
   'encointer-node-notee': encointerNodeNotee,
   'encointer-node-teeproxy': encointerNodeTeeproxy,
