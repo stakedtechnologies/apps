@@ -57,7 +57,7 @@ function SetSessionKey ({ className, onClose, senderId: propSenderId }: Props): 
       <Modal.Actions onCancel={onClose}>
         <TxButton
           accountId={senderId}
-          icon='send'
+          icon='paper-plane'
           isDisabled={!keys || !senderId}
           isPrimary
           label={t('Set Session Key')}
