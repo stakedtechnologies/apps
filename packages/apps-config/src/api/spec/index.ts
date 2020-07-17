@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import centrifugeChain from './centrifuge-chain';
-import dusty2 from './dusty2';
+import dusty3 from './dusty3';
 import encointerNodeNotee from './encointer-node-notee';
 import encointerNodeTeeproxy from './encointer-node-teeproxy';
 import kulupu from './kulupu';
@@ -13,7 +13,7 @@ import stablePoc from './stable-poc';
 
 export default {
   'centrifuge-chain': centrifugeChain,
-  dusty2,
+  dusty3,
   'encointer-node': encointerNodeNotee,
   'encointer-node-notee': encointerNodeNotee,
   'encointer-node-teeproxy': encointerNodeTeeproxy,
