@@ -1,4 +1,4 @@
-// Copyright 2017-2020 @polkadot/react-components authors & contributors
+// Copyright 2017-2020 @polkadot/react-params authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
@@ -116,23 +116,28 @@ export default function getInitValue (def: TypeDef): unknown {
       return null;
 
     default: {
+      let error: string | null = null;
+
       try {
         const instance = createType(registry, type as 'u32');
         const raw = getTypeDef(instance.toRawType());
 
         if (isBn(instance)) {
           return BN_ZERO;
-        } else if ([TypeDefInfo.Enum, TypeDefInfo.Struct, TypeDefInfo.Tuple].includes(raw.info)) {
+        } else if ([TypeDefInfo.Struct].includes(raw.info)) {
+          return undefined;
+        } else if ([TypeDefInfo.Enum, TypeDefInfo.Tuple].includes(raw.info)) {
           return getInitValue(raw);
         }
-      } catch (error) {
-        // console.error((error as Error).message);
+      } catch (e) {
+        error = (e as Error).message;
       }
 
       // we only want to want once, not spam
       if (!warnList.includes(type)) {
         warnList.push(type);
-        console.info(`params: No default value for type ${type} from ${JSON.stringify(def)}, using defaults`);
+        error && console.error(`params: initValue: ${error}`);
+        console.info(`params: initValue: No default value for type ${type} from ${JSON.stringify(def)}, using defaults`);
       }
 
       return '0x';

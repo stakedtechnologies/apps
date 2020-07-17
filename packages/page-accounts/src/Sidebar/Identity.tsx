@@ -69,7 +69,10 @@ function Identity ({ address, identity }: Props): React.ReactElement<Props> | nu
               //   ? <img src={identity.image} />
               //   : <i className='icon user ui--AddressMenu-identityIcon' />
               //
-              <i className='icon user ui--AddressMenu-identityIcon' />
+              <Icon
+                className='ui--AddressMenu-identityIcon'
+                icon='user'
+              />
             }
             subtitle={identity.legal}
             title={identity.display}
@@ -131,7 +134,11 @@ function Identity ({ address, identity }: Props): React.ReactElement<Props> | nu
                     ? identity.twitter
                     : (
                       <a
-                        href={`https://twitter.com/${identity.twitter as string}`}
+                        href={
+                          (identity.twitter as string).startsWith('https://twitter.com/')
+                            ? (identity.twitter as string)
+                            : `https://twitter.com/${identity.twitter as string}`
+                        }
                         rel='noopener noreferrer'
                         target='_blank'
                       >

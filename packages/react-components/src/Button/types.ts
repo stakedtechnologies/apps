@@ -8,46 +8,35 @@ import { BareProps } from '../types';
 
 export type Button$Callback = () => void | Promise<void>;
 
-export interface ButtonProps extends BareProps {
-  floated?: 'left' | 'right';
+export interface ButtonProps {
+  children?: React.ReactNode;
+  className?: string;
   icon?: IconName;
   isAnimated?: SUIButtonProps['animated'];
   isBasic?: boolean;
   isCircular?: boolean;
   isDisabled?: boolean;
-  isFluid?: boolean;
+  isFull?: boolean;
   isIcon?: boolean;
-  isLoading?: boolean;
   isNegative?: boolean;
   isPositive?: boolean;
   isPrimary?: boolean;
   label?: React.ReactNode;
-  labelPosition?: 'left' | 'right';
   onClick?: Button$Callback;
   onMouseEnter?: Button$Callback;
   onMouseLeave?: Button$Callback;
-  ref?: any;
-  size?: SUIButtonProps['size'];
   tabIndex?: number;
   tooltip?: React.ReactNode;
 }
 
 export type DividerProps = BareProps;
 
-export interface ContentProps extends BareProps {
+export interface GroupProps {
   children?: React.ReactNode;
-  hidden?: boolean;
-  visible?: boolean;
-}
-
-export interface GroupProps extends BareProps {
-  children?: React.ReactNode;
-  isBasic?: boolean;
+  className?: string;
   isCentered?: boolean;
 }
 
 export type ButtonType = React.ComponentType<ButtonProps> & {
-  Content: React.ComponentType<ContentProps>;
   Group: React.ComponentType<GroupProps>;
-  Or: React.ComponentType<BareProps>;
 };

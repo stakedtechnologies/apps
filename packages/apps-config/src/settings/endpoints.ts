@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { TFunction } from 'i18next';
 import { Option } from './types';
 
 interface LinkOption extends Option {
@@ -15,7 +16,7 @@ interface EnvWindow {
   }
 }
 
-function createDev (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+function createDev (t: TFunction): LinkOption[] {
   return [
     {
       dnslink: 'local',
@@ -25,7 +26,7 @@ function createDev (t: <T= string> (key: string, text: string, options: { ns: st
     }
   ];
 }
-function createLive (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+function createLive (t: TFunction): LinkOption[] {
   return [
     {
       dnslink: 'plasm',
@@ -36,7 +37,7 @@ function createLive (t: <T= string> (key: string, text: string, options: { ns: s
   ];
 }
 
-function createTest (t: <T= string> (key: string, text: string, options: { ns: string }) => T): LinkOption[] {
+function createTest (t: TFunction): LinkOption[] {
   return [
     {
       dnslink: 'dusty',
@@ -47,17 +48,36 @@ function createTest (t: <T= string> (key: string, text: string, options: { ns: s
   ];
 }
 
+function createCustom (t: TFunction): LinkOption[] {
+  const WS_URL = (
+    (typeof process !== 'undefined' ? process.env?.WS_URL : undefined) ||
+    (typeof window !== 'undefined' ? (window as EnvWindow).process_env?.WS_URL : undefined)
+  );
+
+  return WS_URL
+    ? [
+      {
+        isHeader: true,
+        text: t<string>('rpc.custom', 'Custom environment', { ns: 'apps-config' }),
+        value: ''
+      },
+      {
+        info: 'WS_URL',
+        text: t<string>('rpc.custom.entry', 'Custom {{WS_URL}}', { ns: 'apps-config', replace: { WS_URL } }),
+        value: WS_URL
+      }
+    ]
+    : [];
+}
+
 // The available endpoints that will show in the dropdown. For the most part (with the exception of
 // Polkadot) we try to keep this to live chains only, with RPCs hosted by the community/chain vendor
 //   info: The chain logo name as defined in ../logos, specifically in namedLogos
 //   text: The text to display on teh dropdown
 //   value: The actual hosted secure websocket endpoint
-export default function create (t: <T= string> (key: string, text: string, options: { ns: string, replace?: Record<string, string> }) => T): LinkOption[] {
-  const WS_URL = (
-    (typeof process !== 'undefined' ? process.env?.WS_URL : undefined) ||
-    (typeof window !== 'undefined' ? (window as EnvWindow).process_env?.WS_URL : undefined)
-  );
-  const endpoints = [
+export default function create (t: TFunction): LinkOption[] {
+  return [
+    ...createCustom(t),
     {
       isHeader: true,
       text: t<string>('rpc.header.live', 'Live networks', { ns: 'apps-config' }),
@@ -76,20 +96,5 @@ export default function create (t: <T= string> (key: string, text: string, optio
       value: ''
     },
     ...createDev(t)
-  ];
-
-  return WS_URL
-    ? ([
-      {
-        isHeader: true,
-        text: t<string>('rpc.custom', 'Custom environment', { ns: 'apps-config' }),
-        value: ''
-      },
-      {
-        info: 'WS_URL',
-        text: t<string>('rpc.custom.entry', 'Custom {{WS_URL}}', { ns: 'apps-config', replace: { WS_URL } }),
-        value: WS_URL
-      }
-    ] as LinkOption[]).concat(endpoints)
-    : endpoints;
+  ].filter(({ isDisabled }) => !isDisabled);
 }

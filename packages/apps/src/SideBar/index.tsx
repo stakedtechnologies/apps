@@ -6,7 +6,7 @@ import { Routes } from '@polkadot/apps-routing/types';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Responsive } from 'semantic-ui-react';
+import Responsive from 'semantic-ui-react/dist/commonjs/addons/Responsive';
 import createRoutes from '@polkadot/apps-routing';
 import { Button, ChainImg, Icon, Menu, media } from '@polkadot/react-components';
 
@@ -239,10 +239,9 @@ export default React.memo(styled(SideBar)`
       text-align: left;
       width: 100%;
 
-      .ui.circular.button {
-        background: white !important;
-        color: #3f3f3f !important;
-        box-shadow: 0 0 0 1px #eee inset !important;
+      .ui--Button {
+        background: white;
+        color: #3f3f3f;
         margin: 0;
         transition: transform 0.15s;
       }

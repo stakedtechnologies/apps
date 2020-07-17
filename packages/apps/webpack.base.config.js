@@ -123,23 +123,47 @@ function createWebpack (ENV, context) {
       runtimeChunk: 'single',
       splitChunks: {
         cacheGroups: {
-          polkadotJs: {
+          polkadotJsApi: {
             chunks: 'initial',
             enforce: true,
-            name: 'polkadotjs',
-            test: /node_modules\/@polkadot\/(api|api-derive|extension-dapp|keyring|metadata|react-identicon|react-qr|rpc-core|rpc-provider|types|ui-keyring|ui-settings|ui-shared|util|util-crypto|vanitygen|wasm-crypto)/
+            name: 'polkadotjs.libs',
+            test: /node_modules\/(@ledgerhq|@zondax|edgeware|@polkadot\/(api|extension|keyring|metadata|react|rpc|types|ui|util|vanitygen))/
           },
-          vendorOther: {
+          polkadotJsWasm: {
             chunks: 'initial',
             enforce: true,
-            name: 'vendor',
-            test: /node_modules\/(asn1|bn\.js|buffer|cuint|elliptic|lodash|moment|readable-stream|rxjs|secp256k1|webrtc-adapter|remark-parse)/
+            name: 'polkadotjs.wasm',
+            test: /node_modules\/@polkadot\/(wasm)/
           },
-          vendorReact: {
+          reactIcons: {
             chunks: 'initial',
             enforce: true,
-            name: 'react',
-            test: /node_modules\/(@semantic-ui-react|chart|i18next|jidenticon|qrcode-generator|react|react-dom|semantic-ui-css|semantic-ui-react|styled-components)/
+            name: 'react.fa',
+            test: /node_modules\/(@fortawesome)/
+          },
+          reactSUI: {
+            chunks: 'initial',
+            enforce: true,
+            name: 'react.sui',
+            test: /node_modules\/(@semantic-ui-react|@stardust|classnames|keyboard-key|prop-types|semantic-ui-react|semantic-ui-css)/
+          },
+          reactUI: {
+            chunks: 'initial',
+            enforce: true,
+            name: 'react.ui',
+            test: /node_modules\/(@emotion|chart\.js|codeflask|copy-to-clipboard|create-react|file-selector|file-saver|hoist-non-react|i18next|jdenticon|mini-create-react|popper\.js|qrcode-generator|react|react-|remark-parse|styled-components)/
+          },
+          vendor01: {
+            chunks: 'initial',
+            enforce: true,
+            name: 'other.01',
+            test: /node_modules\/(@babel|ansi-styles|asn1|browserify-|chalk|color|color-|crypto-browserify|des\.js|diffie-hellman|elliptic|event-emitter|events|eventemitter3|hash|hmac-drbg|js-sha3|lodash|md5|memoizee|miller-rabin|object-|path-|parse-asn1|pbkdf2|process|public-encrypt|query-string|ripemd160|readable-stream|regenerator-runtime|rtcpeerconnection-shim|stream-browserify|store|timers-browserify|tslib|unified|unist-util|util|vfile|vm-browserify|webrtc-adapter|whatwg-fetch|xxhashjs)/
+          },
+          vendor02: {
+            chunks: 'initial',
+            enforce: true,
+            name: 'other.02',
+            test: /node_modules\/(attr-accept|base-x|base64-js|blakejs|bip39|bip66|bn\.js|brorand|buffer|camelcase|cipher-base|core-js|core-util|create-|cuint|decode-uri|deep-equal|define-properties|detect-browser|es-abstract|es5-ext|es6-symbol|extend|function-bind|has-symbols|history|html-parse|ieee754|ip-|is-|minimalistic-crypto-utils|moment|next-tick|node-libs-browser|randombytes|randomfill|regexp|rxjs|safe-buffer|scheduler|sdp|secp256k1|setimmediate|sha\.js|through)/
           }
         }
       }

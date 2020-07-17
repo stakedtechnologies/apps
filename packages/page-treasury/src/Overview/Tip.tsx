@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AccountId, Balance, BlockNumber, OpenTip } from '@polkadot/types/interfaces';
+import { AccountId, Balance, BlockNumber, OpenTip, OpenTipTo225 } from '@polkadot/types/interfaces';
 
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { AddressSmall, AddressMini, Expander, Icon, TxButton } from '@polkadot/react-components';
-import { useAccounts, useApi, useCall } from '@polkadot/react-hooks';
+import { useAccounts } from '@polkadot/react-hooks';
 import { BlockToTime, FormatBalance } from '@polkadot/react-query';
-import { Option } from '@polkadot/types';
-import { formatNumber } from '@polkadot/util';
+import { formatNumber, isBoolean } from '@polkadot/util';
 
 import { useTranslation } from '../translate';
 import TipClose from './TipClose';
@@ -22,43 +22,49 @@ interface Props {
   hash: string;
   isMember: boolean;
   members: string[];
+  tip: OpenTip | OpenTipTo225;
 }
 
 interface TipState {
   closesAt: BlockNumber | null;
+  deposit: Balance | null;
   finder: AccountId | null;
-  findersFee: Balance | null;
   isFinder: boolean;
   isTipper: boolean;
 }
 
-function Tip ({ bestNumber, className = '', hash, isMember, members }: Props): React.ReactElement<Props> | null {
+function isCurrentTip (tip: OpenTip | OpenTipTo225): tip is OpenTip {
+  return isBoolean((tip as OpenTip).findersFee);
+}
+
+function Tip ({ bestNumber, className = '', hash, isMember, members, tip }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
-  const { api } = useApi();
   const { allAccounts } = useAccounts();
-  const [{ closesAt, finder, findersFee, isFinder, isTipper }, setTipState] = useState<TipState>({ closesAt: null, finder: null, findersFee: null, isFinder: false, isTipper: false });
-  const tip = useCall<OpenTip | null>(api.query.treasury.tips, [hash], {
-    transform: (optTip: Option<OpenTip>) => optTip.unwrapOr(null)
-  });
+  const [{ closesAt, deposit, finder, isFinder, isTipper }, setTipState] = useState<TipState>({ closesAt: null, deposit: null, finder: null, isFinder: false, isTipper: false });
 
   useEffect((): void => {
-    if (tip) {
-      const finderInfo = tip.finder.unwrapOr(null);
-      const finder = (finderInfo && finderInfo[0]) || null;
+    const closesAt = tip.closes.unwrapOr(null);
+    let finder: AccountId | null = null;
+    let deposit: Balance | null = null;
 
-      setTipState({
-        closesAt: tip.closes.unwrapOr(null),
-        finder,
-        findersFee: (finderInfo && finderInfo[1]) || null,
-        isFinder: !!finder && allAccounts.includes(finder.toString()),
-        isTipper: tip.tips.some(([address]) => allAccounts.includes(address.toString()))
-      });
+    if (isCurrentTip(tip)) {
+      finder = tip.finder;
+      deposit = tip.deposit;
+    } else if (tip.finder.isSome) {
+      const finderInfo = tip.finder.unwrap();
+
+      finder = finderInfo[0];
+      deposit = finderInfo[1];
     }
-  }, [allAccounts, tip]);
 
-  if (!tip) {
-    return null;
-  }
+    setTipState({
+      closesAt,
+      deposit,
+      finder,
+      isFinder: !!finder && allAccounts.includes(finder.toString()),
+      isTipper: tip.tips.some(([address]) => allAccounts.includes(address.toString()))
+    });
+  }, [allAccounts, hash, tip]);
 
   const { reason, tips, who } = tip;
 
@@ -73,8 +79,8 @@ function Tip ({ bestNumber, className = '', hash, isMember, members }: Props): R
         )}
       </td>
       <td className='number'>
-        {findersFee && (
-          <FormatBalance value={findersFee} />
+        {deposit && !deposit.isEmpty && (
+          <FormatBalance value={deposit} />
         )}
       </td>
       <TipReason hash={reason} />
@@ -92,55 +98,57 @@ function Tip ({ bestNumber, className = '', hash, isMember, members }: Props): R
           </Expander>
         )}
       </td>
-      <td className='button'>
+      <td className='button together'>
         {closesAt
-          ? bestNumber && (
-            closesAt.gt(bestNumber)
-              ? (
-                <>
-                  <BlockToTime blocks={closesAt.sub(bestNumber)} />
-                  #{formatNumber(closesAt)}
-                </>
-              )
-              : (
-                <TipClose
-                  hash={hash}
-                  isMember={isMember}
-                  members={members}
-                />
-              )
+          ? (bestNumber && closesAt.gt(bestNumber)) && (
+            <div className='closingTimer'>
+              <BlockToTime blocks={closesAt.sub(bestNumber)} />
+              #{formatNumber(closesAt)}
+            </div>
+          )
+          : finder && (
+            <TxButton
+              accountId={finder}
+              icon='times'
+              isDisabled={!isFinder}
+              label={t('Cancel')}
+              params={[hash]}
+              tx='treasury.retractTip'
+            />
+          )
+        }
+        {(!closesAt || !bestNumber || closesAt.gt(bestNumber))
+          ? (
+            <TipEndorse
+              hash={hash}
+              isMember={isMember}
+              members={members}
+            />
           )
           : (
-            <>
-              {finder && (
-                <TxButton
-                  accountId={finder}
-                  icon='times'
-                  isDisabled={!isFinder}
-                  label={t('Cancel')}
-                  params={[hash]}
-                  tx='treasury.retractTip'
-                />
-              )}
-              <TipEndorse
-                hash={hash}
-                isMember={isMember}
-                members={members}
-              />
-            </>
+            <TipClose
+              hash={hash}
+              isMember={isMember}
+              members={members}
+            />
           )
         }
       </td>
-      {isMember && (
-        <td className='badge'>
+      <td className='badge'>
+        {isMember && (
           <Icon
             color={isTipper ? 'green' : 'gray'}
             icon='asterisk'
           />
-        </td>
-      )}
+        )}
+      </td>
     </tr>
   );
 }
 
-export default React.memo(Tip);
+export default React.memo(styled(Tip)`
+  .closingTimer {
+    display: inline-block;
+    padding: 0 0.5rem;
+  }
+`);

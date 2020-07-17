@@ -1,16 +1,71 @@
 # CHANGELOG
 
-## 0.47.0-beta.x
+## 0.49.1 Jul 13, 2020
 
+- Update Subscan links with supported chains (https://github.com/carumusan)
+- Enhance Electron desktop with CSP & best practices (Thanks to https://github.com/EthWorks)
+- Activate Electron update feature by default (Thanks to https://github.com/EthWorks)
+- Use external browser for embedded links in Electron (Thanks to https://github.com/EthWorks)
+- Add testing around Electron features (Thanks to https://github.com/EthWorks)
+- Support democracy account delegation (Thanks to https://github.com/Tbaut)
+- Don't filter selected on multi account selector (Thanks to https://github.com/Tbaut)
+- Add support for Polkadot denomination poll
+- Allow input & display of OpaqueCall type from multisig
+- Indicate own nominees on targets page (re-added with badges)
+- Re-add indicator for own nominators in staking targets
+- Add `?filter=<string>` query param support on staking URLs
+- Add generator for Kusama society designs
+- Handle OpaqueCall in inputs and well as displays (multisig)
+- Small layout adjustments for address display components
+- Performance improvements on wrapped styles, component libraries
+- Add support for display detected ASCII bytes as text
+- Adjust type injection to override on-connect API defaults
+- Adjust attestation display with no-balance filters
+
+## 0.48.1 Jul 6, 2020
+
+- Fix for electron package build (Thanks to https://github.com/EthWorks)
+- Allow for setting of sub identities via account action
+- Adjust known account icons (Society & Treasury)
+- Add Westend chain to Subscan link generator
+- Display a warning with extensions and no injected accounts
+- Retrieve all tips at once and sort by closing
+- Fix identity set dialogs to never pass empty fields
+- Optimize favorites retrieval & selection for staking (shared between)
+- Support new registrar ProxyType in the signer
+- Hide funds unbonding when non bonded
+- Add withdraw action to staking menu (as available)
+- Fix InputAddress component with state change warnings
+- Bump to latest API and utilities
+
+## 0.47.1 Jul 1, 2020
+
+- Update zh translation (Thanks to https://github.com/dushaobindoudou)
+- Add DataHighway Harbour testnet endpoint (Thanks to https://github.com/ltfschoen)
+- Small I18N key fix (Thanks to https://github.com/ltfschoen)
+- Allow for Electron auto-update on Mac (Thanks to https://github.com/EthWorks)
+- Swap to default conviction of 1x (Thanks to https://github.com/Tbaut)
+- Make preimage hash selectable on FF (Thanks to https://github.com/Tbaut)
+- show unbonding value in staking actions (Thanks to https://github.com/Tbaut)
 - Default (via toggle) to only last 25% of eras for payouts
 - Allow retracting of tips by proposer
+- Allow tipping with new Substrate types (dual old/new support)
 - Enable the full retrieval of all Map/Doublemap entries
+- Support correct display of vesting with locks (& unlock via account)
+- Adjust on-chain identity inputs with field validation
+- Enable grouping of democracy locks by type
+- Resolve identity links starting with https://twitter
+- Display voted & unvoted council motions, referendums & tips
+- Adjust toggles for file/bytes uploads
+- Correct handling of recursive param structures in extrinsics
+- Swap icons to use font-awesome directly, including official components
+- Additional small UI cleanups and fixes
 
 ## 0.46.1 Jun 22, 2020
 
-- I18n for es (thanks to https://github.com/wimel)
+- I18n for es (Thanks to https://github.com/wimel)
 - Support for importing mini secrets via QR (Thanks to https://github.com/hanwencheng)
-- Update SubstrateTEE types (thanks to https://github.com/brenzi)
+- Update SubstrateTEE types (Thanks to https://github.com/brenzi)
 - Support for multisig calls with new weight parameters
 - Split sign and send updates in the signer modal for better UI tracking
 - Hide zero nonce of accounts/contracts pages

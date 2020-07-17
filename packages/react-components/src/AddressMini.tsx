@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
-import { BareProps } from './types';
 
 import BN from 'bn.js';
 import React from 'react';
@@ -17,10 +16,11 @@ import BondedDisplay from './Bonded';
 import IdentityIcon from './IdentityIcon';
 import LockedVote from './LockedVote';
 
-interface Props extends BareProps {
+interface Props {
   balance?: BN | BN[];
   bonded?: BN | BN[];
   children?: React.ReactNode;
+  className?: string;
   iconInfo?: React.ReactNode;
   isHighlight?: boolean;
   isPadded?: boolean;
@@ -117,12 +117,9 @@ export default React.memo(styled(AddressMini)`
     top: -0.2rem;
   }
 
-  .ui--AddressMini-address {
+  .ui--AddressMini-info {
     max-width: 12rem;
     min-width: 12rem;
-    overflow: hidden;
-    text-align: left;
-    text-overflow: ellipsis;
 
     @media only screen and (max-width: 1800px) {
       max-width: 11.5rem;
@@ -153,6 +150,14 @@ export default React.memo(styled(AddressMini)`
       max-width: 9rem;
       min-width: 9rem;
     }
+  }
+
+  .ui--AddressMini-address {
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    width: fit-content;
+    max-width: inherit;
 
     > div {
       overflow: hidden;
@@ -208,8 +213,9 @@ export default React.memo(styled(AddressMini)`
 
   .ui--AddressMini-summary {
     font-size: 0.75rem;
+    line-height: 1.2;
     margin-left: 2.25rem;
-    margin-top: -0.5rem;
+    margin-top: -0.2rem;
     text-align: left;
   }
 `);

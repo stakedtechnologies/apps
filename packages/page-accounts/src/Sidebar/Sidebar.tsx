@@ -2,8 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { BareProps } from '@polkadot/react-components/types';
-
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useAccountInfo, useToggle } from '@polkadot/react-hooks';
@@ -17,15 +15,16 @@ import Flags from './Flags';
 import Identity from './Identity';
 import Multisig from './Multisig';
 
-interface Props extends BareProps {
+interface Props {
   address: string;
+  className?: string;
   onClose: () => void;
   onUpdateName: () => void;
 }
 
 function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { flags, identity, isEditingName, isEditingTags, meta, name, onForgetAddress, onSaveName, onSaveTags, setName, setTags, tags, toggleIsEditingName, toggleIsEditingTags } = useAccountInfo(address);
+  const { accountIndex, flags, identity, isEditingName, isEditingTags, meta, name, onForgetAddress, onSaveName, onSaveTags, setName, setTags, tags, toggleIsEditingName, toggleIsEditingTags } = useAccountInfo(address);
   const [isHoveringButton, toggleIsHoveringButton] = useToggle();
   const [isTransferOpen, toggleIsTransferOpen] = useToggle();
 
@@ -62,6 +61,11 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
         <div className='ui--AddressMenu-addr'>
           {address}
         </div>
+        {accountIndex && (
+          <div className='ui--AddressMenu-addr'>
+            {accountIndex}
+          </div>
+        )}
         <AccountName
           onClick={(flags.isEditable && !isEditingName) ? toggleIsEditingName : undefined}
           override={
@@ -111,13 +115,11 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
             />
             {flags.isOwned && (
               <Button
-                className='basic'
                 icon='check'
-                isPrimary
+                isBasic
                 label={t<string>('Owned')}
                 onMouseEnter={toggleIsHoveringButton}
                 onMouseLeave={toggleIsHoveringButton}
-                size='tiny'
               />
             )}
             {!flags.isOwned && !flags.isInContacts && (
@@ -128,31 +130,20 @@ function Sidebar ({ address, className = '', onClose, onUpdateName }: Props): Re
                 onClick={_onUpdateName}
                 onMouseEnter={toggleIsHoveringButton}
                 onMouseLeave={toggleIsHoveringButton}
-                size='tiny'
               />
             )}
             {!flags.isOwned && flags.isInContacts && (
               <Button
-                className={`ui--AddressMenu-button icon ${isHoveringButton ? '' : 'basic'}`}
+                className='ui--AddressMenu-button'
+                icon='ban'
                 isAnimated
                 isNegative={isHoveringButton}
                 isPositive={!isHoveringButton}
+                label={t<string>('Remove')}
                 onClick={_onForgetAddress}
                 onMouseEnter={toggleIsHoveringButton}
                 onMouseLeave={toggleIsHoveringButton}
-                size='tiny'
-              >
-                <Button.Content visible>
-                  <Icon icon='check' />
-                  &nbsp;
-                  {t<string>('Saved')}
-                </Button.Content>
-                <Button.Content hidden>
-                  <Icon icon='ban' />
-                  &nbsp;
-                  {t<string>('Remove')}
-                </Button.Content>
-              </Button>
+              />
             )}
           </Button.Group>
           {isTransferOpen && (
@@ -203,8 +194,6 @@ export default React.memo(styled(Sidebar)`
     position: absolute;
     right: 0.5rem;
     top: 0.5rem;
-    font-size: 1.2rem;
-    padding: 0.6rem !important;
   }
 
   .ui--AddressMenu-header {
@@ -217,16 +206,8 @@ export default React.memo(styled(Sidebar)`
     margin: -1rem -1rem 1rem -1rem;
     padding: 1rem;
 
-    .ui.button {
+    .ui--Button {
       transition: 0.5s all;
-
-      &.secondary {
-        background-color: #666;
-      }
-    }
-
-    .ui.button+.ui.button {
-      margin-left: 0.5rem !important;
     }
   }
 
@@ -234,8 +215,13 @@ export default React.memo(styled(Sidebar)`
     font-family: monospace;
     margin: 0.5rem 0;
     overflow: hidden;
+    text-align: center;
     text-overflow: ellipsis;
     width: 100%;
+  }
+
+  .ui--AddressMenu-addr+.ui--AddressMenu-addr {
+    margin-top: -0.25rem;
   }
 
   section {

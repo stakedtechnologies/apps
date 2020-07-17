@@ -26,6 +26,7 @@ interface Props {
   ownStashes?: StakerState[];
   stakingOverview?: DeriveStakingOverview;
   targets: SortedTargets;
+  toggleFavorite: (address: string) => void;
 }
 
 interface SortState {
@@ -47,11 +48,12 @@ function sort (sortBy: TargetSortBy, sortFromMax: boolean, validators: Validator
     );
 }
 
-function Targets ({ className = '', isInElection, ownStashes, targets: { calcWith, lastReward, nominators, setCalcWith, toggleFavorite, totalStaked, validators } }: Props): React.ReactElement<Props> {
+function Targets ({ className = '', isInElection, ownStashes, targets: { calcWith, lastReward, nominators, setCalcWith, totalStaked, validators }, toggleFavorite }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const ownNominators = useOwnNominators(ownStashes);
   const [selected, setSelected] = useState<string[]>([]);
   const [sorted, setSorted] = useState<number[] | undefined>();
+  const [myNominees, setMyNominees] = useState<string[]>([]);
   const [nameFilter, setNameFilter] = useState<string>('');
   const [withElected, setWithElected] = useState(false);
   const [withIdentity, setWithIdentity] = useState(false);
@@ -62,6 +64,17 @@ function Targets ({ className = '', isInElection, ownStashes, targets: { calcWit
       sort(sortBy, sortFromMax, validators)
     );
   }, [sortBy, sortFromMax, validators]);
+
+  useEffect((): void => {
+    ownNominators && setMyNominees(
+      ownNominators.reduce((myNominees: string[], nominator): string[] =>
+        (nominator.nominating || []).reduce((myNominees: string[], nominee): string[] => {
+          !myNominees.includes(nominee) && myNominees.push(nominee);
+
+          return myNominees;
+        }, myNominees), [])
+    );
+  }, [ownNominators]);
 
   const _sort = useCallback(
     (newSortBy: TargetSortBy) => setSortBy(({ sortBy, sortFromMax }) => ({
@@ -116,7 +129,7 @@ function Targets ({ className = '', isInElection, ownStashes, targets: { calcWit
   );
 
   const header = useMemo(() => [
-    [t('validators'), 'start', 4],
+    [t('validators'), 'start', 3],
     ...['rankNumNominators', 'rankComm', 'rankBondTotal', 'rankBondOwn', 'rankBondOther', 'rankOverall'].map((header) => [
       <>{labels[header]}<Icon icon={sortBy === header ? (sortFromMax ? 'chevron-down' : 'chevron-up') : 'minus'} /></>,
       `${sorted ? `isClickable ${sortBy === header ? 'ui--highlight--border' : ''} number` : 'number'} ${classes[header] || ''}`,
@@ -187,6 +200,7 @@ function Targets ({ className = '', isInElection, ownStashes, targets: { calcWit
             canSelect={selected.length < MAX_NOMINATIONS}
             filterName={nameFilter}
             info={validators[index]}
+            isNominated={myNominees.includes(validators[index].key)}
             isSelected={selected.includes(validators[index].key)}
             key={validators[index].key}
             toggleFavorite={toggleFavorite}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { BareProps, BitLength } from './types';
+import { BitLength } from './types';
 
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
@@ -11,8 +11,10 @@ import { BitLengthOption } from '@polkadot/react-components/constants';
 import { BN_TEN, BN_THOUSAND, formatBalance, isBn } from '@polkadot/util';
 import InputNumber from './InputNumber';
 
-interface Props extends BareProps {
+interface Props {
   autoFocus?: boolean;
+  children?: React.ReactNode;
+  className?: string;
   defaultValue?: BN | string;
   help?: React.ReactNode;
   isDisabled?: boolean;
@@ -99,8 +101,12 @@ export default React.memo(styled(InputBalance)`
     right: 6.5rem;
   }
 
-  .ui.action.input.ui--Input .ui.primary.buttons .ui.disabled.button.compact.floating.selection.dropdown.ui--SiDropdown {
-    border-style: solid;
-    opacity: 1 !important;
+  .ui.action.input.ui--Input > .buttons {
+    align-items: stretch;
+
+    .ui.disabled.button.compact.floating.selection.dropdown.ui--SiDropdown {
+      border-style: solid;
+      opacity: 1 !important;
+    }
   }
 `);
