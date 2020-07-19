@@ -18,6 +18,8 @@ export default {
     eth: 'u128'
   },
   AuthorityId: 'AccountId',
+  AuthorityVote: 'u32',
+  DollarRate: 'u128',
   ClaimVote: {
     claim_id: 'ClaimId',
     approve: 'bool',

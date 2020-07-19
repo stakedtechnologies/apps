@@ -7,7 +7,7 @@ import typesSpec from './spec';
 
 export function getChainTypes (specName: string, chainName: string): Record<string, string | Record<string, unknown>> {
   return {
-    ...(typesSpec[specName as 'dusty2'] || {}),
+    ...(typesSpec[specName as 'dusty3'] || {}),
     ...(typesChain[chainName as 'Arcadia Nodle Network'] || {})
   };
 }
