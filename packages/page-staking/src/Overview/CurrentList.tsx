@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DeriveHeartbeats, DeriveStakingOverview } from '@polkadot/api-derive/types';
-import { AccountId, Nominations } from '@polkadot/types/interfaces';
+import { AccountId, EraIndex, Nominations } from '@polkadot/types/interfaces';
 import { Authors } from '@polkadot/react-query/BlockAuthors';
 
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Table } from '@polkadot/react-components';
-import { useApi, useCall } from '@polkadot/react-hooks';
+import { useApi, useCall, useLoadingDelay } from '@polkadot/react-hooks';
 import { BlockAuthorsContext } from '@polkadot/react-query';
 import { Option, StorageKey } from '@polkadot/types';
 
@@ -69,14 +69,15 @@ function getFiltered (stakingOverview: DeriveStakingOverview, favorites: string[
   };
 }
 
-function extractNominators (nominations: [StorageKey, Option<Nominations>][]): Record<string, [string, number][]> {
-  return nominations.reduce((mapped: Record<string, [string, number][]>, [key, optNoms]) => {
+function extractNominators (nominations: [StorageKey, Option<Nominations>][]): Record<string, [string, EraIndex, number][]> {
+  return nominations.reduce((mapped: Record<string, [string, EraIndex, number][]>, [key, optNoms]) => {
     if (optNoms.isSome) {
       const nominatorId = key.args[0].toString();
+      const { submittedIn, targets } = optNoms.unwrap();
 
-      optNoms.unwrap().targets.forEach((_validatorId, index): void => {
+      targets.forEach((_validatorId, index): void => {
         const validatorId = _validatorId.toString();
-        const info: [string, number] = [nominatorId, index + 1];
+        const info: [string, EraIndex, number] = [nominatorId, submittedIn, index + 1];
 
         if (!mapped[validatorId]) {
           mapped[validatorId] = [info];
@@ -98,8 +99,11 @@ function CurrentList ({ favorites, hasQueries, isIntentions, next, stakingOvervi
   const nominators = useCall<[StorageKey, Option<Nominations>][]>(isIntentions && api.query.staking.nominators.entries as any, []);
   const [{ elected, validators, waiting }, setFiltered] = useState<Filtered>({});
   const [nameFilter, setNameFilter] = useState<string>('');
-  const [nominatedBy, setNominatedBy] = useState<Record<string, [string, number][]> | null>();
+  const [nominatedBy, setNominatedBy] = useState<Record<string, [string, EraIndex, number][]> | null>();
   const [withIdentity, setWithIdentity] = useState(false);
+
+  // we have a very large list, so we use a loading delay
+  const isLoading = useLoadingDelay();
 
   useEffect((): void => {
     stakingOverview && setFiltered(
@@ -156,7 +160,7 @@ function CurrentList ({ favorites, hasQueries, isIntentions, next, stakingOvervi
   return isIntentions
     ? (
       <Table
-        empty={waiting && t<string>('No waiting validators found')}
+        empty={!isLoading && waiting && t<string>('No waiting validators found')}
         filter={
           <Filtering
             nameFilter={nameFilter}
@@ -167,12 +171,12 @@ function CurrentList ({ favorites, hasQueries, isIntentions, next, stakingOvervi
         }
         header={headerWaiting}
       >
-        {_renderRows(elected, false).concat(_renderRows(waiting, false))}
+        {isLoading ? undefined : _renderRows(elected, false).concat(_renderRows(waiting, false))}
       </Table>
     )
     : (
       <Table
-        empty={validators && t<string>('No active validators found')}
+        empty={!isLoading && validators && t<string>('No active validators found')}
         filter={
           <Filtering
             nameFilter={nameFilter}
@@ -183,7 +187,7 @@ function CurrentList ({ favorites, hasQueries, isIntentions, next, stakingOvervi
         }
         header={headerActive}
       >
-        {_renderRows(validators, true)}
+        {isLoading ? undefined : _renderRows(validators, true)}
       </Table>
     );
 }

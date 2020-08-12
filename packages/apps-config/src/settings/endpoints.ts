@@ -5,8 +5,9 @@
 import { TFunction } from 'i18next';
 import { Option } from './types';
 
-interface LinkOption extends Option {
+export interface LinkOption extends Option {
   dnslink?: string;
+  isChild?: boolean;
 }
 
 interface EnvWindow {
@@ -22,12 +23,13 @@ function createDev (t: TFunction): LinkOption[] {
       dnslink: 'local',
       info: 'local',
       text: t<string>('rpc.local', 'Local Node (Own, 127.0.0.1:9944)', { ns: 'apps-config' }),
-      value: 'ws://127.0.0.1:9944/'
+      value: 'ws://127.0.0.1:9944'
     }
   ];
 }
 function createLive (t: TFunction): LinkOption[] {
   return [
+    // fixed, polkadot
     {
       dnslink: 'plasm',
       info: 'plasm',

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ActionStatus } from '@polkadot/react-components/Status/types';
-import { Voting } from '@polkadot/types/interfaces';
+import { AccountId, ProxyDefinition, ProxyType, Voting } from '@polkadot/types/interfaces';
 import { Delegation, SortedAccount } from '../types';
 
 import BN from 'bn.js';
@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import keyring from '@polkadot/ui-keyring';
 import { getLedger, isLedger } from '@polkadot/react-api';
-import { useApi, useAccounts, useCall, useFavorites, useIpfs, useToggle } from '@polkadot/react-hooks';
+import { useApi, useAccounts, useCall, useFavorites, useIpfs, useLoadingDelay, useToggle } from '@polkadot/react-hooks';
 import { FormatBalance } from '@polkadot/react-query';
 import { Button, Input, Table } from '@polkadot/react-components';
 import { BN_ZERO } from '@polkadot/util';
@@ -20,10 +20,11 @@ import { useTranslation } from '../translate';
 import CreateModal from './modals/Create';
 import ImportModal from './modals/Import';
 import Multisig from './modals/MultisigCreate';
-import Proxy from './modals/ProxyAdd';
+import Proxy from './modals/ProxiedAdd';
 import Qr from './modals/Qr';
 import Account from './Account';
 import BannerClaims from './BannerClaims';
+import BannerDOT from './BannerDOT';
 import BannerExtension from './BannerExtension';
 import { sortAccounts } from '../util';
 
@@ -70,9 +71,18 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const [favorites, toggleFavorite] = useFavorites(STORE_FAVS);
   const [{ balanceTotal }, setBalances] = useState<Balances>({ accounts: {} });
   const [filterOn, setFilter] = useState<string>('');
-  const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[]>([]);
+  const [sortedAccountsWithDelegation, setSortedAccountsWithDelegation] = useState<SortedAccount[] | undefined>();
   const [{ sortedAccounts, sortedAddresses }, setSorted] = useState<Sorted>({ sortedAccounts: [], sortedAddresses: [] });
   const delegations = useCall<Voting[]>(api.query.democracy?.votingOf?.multi, [sortedAddresses]);
+  const proxies = useCall<[ProxyDefinition[], BN][]>(api.query.proxy?.proxies.multi, [sortedAddresses], {
+    transform: (result: [([AccountId, ProxyType] | ProxyDefinition)[], BN][]): [ProxyDefinition[], BN][] =>
+      api.tx.proxy.addProxy.meta.args.length === 4
+        ? result as [ProxyDefinition[], BN][]
+        : (result as [[AccountId, ProxyType][], BN][]).map(([arr, bn]): [ProxyDefinition[], BN] =>
+          [arr.map(([delegate, proxyType]): ProxyDefinition => api.createType('ProxyDefinition', { delegate, proxyType })), bn]
+        )
+  });
+  const isLoading = useLoadingDelay();
 
   useEffect((): void => {
     const sortedAccounts = sortAccounts(allAccounts, favorites);
@@ -123,7 +133,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   const header = useMemo(() => [
     [t('accounts'), 'start', 3],
-    [t('parent'), 'address ui--media-1200'],
+    [t('parent'), 'address ui--media-1400'],
     [t('type')],
     [t('tags'), 'start'],
     [t('transactions'), 'ui--media-1500'],
@@ -135,7 +145,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
   const footer = useMemo(() => (
     <tr>
       <td colSpan={3} />
-      <td className='ui--media-1200' />
+      <td className='ui--media-1400' />
       <td colSpan={2} />
       <td className='ui--media-1500' />
       <td className='number'>
@@ -160,6 +170,7 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
 
   return (
     <div className={className}>
+      <BannerDOT />
       <BannerExtension />
       <BannerClaims />
       {isCreateOpen && (
@@ -233,18 +244,19 @@ function Overview ({ className = '', onStatusChange }: Props): React.ReactElemen
         />
       </Button.Group>
       <Table
-        empty={t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
+        empty={!isLoading && sortedAccountsWithDelegation && t<string>("You don't have any accounts. Some features are currently hidden and will only become available once you have accounts.")}
         filter={filter}
         footer={footer}
         header={header}
       >
-        {sortedAccountsWithDelegation.map(({ account, delegation, isFavorite }): React.ReactNode => (
+        {isLoading ? undefined : sortedAccountsWithDelegation?.map(({ account, delegation, isFavorite }, index): React.ReactNode => (
           <Account
             account={account}
             delegation={delegation}
             filter={filterOn}
             isFavorite={isFavorite}
             key={account.address}
+            proxy={proxies?.[index]}
             setBalance={_setBalance}
             toggleFavorite={toggleFavorite}
           />

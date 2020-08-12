@@ -29,6 +29,7 @@ interface Props {
   isHidden?: boolean;
   isInPlaceEditor?: boolean;
   isReadOnly?: boolean;
+  isSmall?: boolean;
   isWarning?: boolean;
   label?: React.ReactNode;
   labelExtra?: React.ReactNode;
@@ -52,10 +53,10 @@ interface Props {
   withEllipsis?: boolean;
 }
 
-// Find decimal separator used in current locale
-const getDecimalSeparator = (): string => 1.1
-  .toLocaleString()
-  .replace(/\d/g, '');
+// // Find decimal separator used in current locale
+// const getDecimalSeparator = (): string => 1.1
+//   .toLocaleString()
+//   .replace(/\d/g, '');
 
 // note: KeyboardEvent.keyCode and KeyboardEvent.which are deprecated
 const KEYS = {
@@ -67,7 +68,7 @@ const KEYS = {
   C: 'c',
   CMD: 'Meta',
   CTRL: 'Control',
-  DECIMAL: getDecimalSeparator(),
+  // DECIMAL: getDecimalSeparator(),
   ENTER: 'Enter',
   ESCAPE: 'Escape',
   TAB: 'Tab',

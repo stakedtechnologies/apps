@@ -2,7 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import BN from 'bn.js';
 import React, { useState, useMemo } from 'react';
+import { POLKADOT_GENESIS } from '@polkadot/apps-config/api/constants';
 import { useApi } from '@polkadot/react-hooks';
 
 import Dropdown from './Dropdown';
@@ -17,12 +19,18 @@ export interface Props {
 }
 
 const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
+const SEC_DAY = 60 * 60 * 24;
+
+// REMOVE once Polkadot is upgraded with the correct conviction
+const PERIODS: Record<string, BN> = {
+  [POLKADOT_GENESIS]: new BN(403200)
+};
 
 function AvailableDisplay ({ className = '', help, label, onChange, value }: Props): React.ReactElement<Props> | null {
   const { api } = useApi();
   const { t } = useTranslation();
   const [enact] = useState(
-    (api.consts.democracy.enactmentPeriod.toNumber() * api.consts.timestamp.minimumPeriod.toNumber() / 1000 * 2) / 60 / 60 / 24
+    ((PERIODS[api.genesisHash.toHex()] || api.consts.democracy.enactmentPeriod).toNumber() * api.consts.timestamp.minimumPeriod.toNumber() / 1000 * 2) / SEC_DAY
   );
 
   const convictionOpts = useMemo(() => [

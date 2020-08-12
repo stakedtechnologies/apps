@@ -5,5 +5,5 @@
 import Arcadia from './arcadia';
 
 export default {
-  'Arcadia Nodle Network': Arcadia,
+  'Arcadia Nodle Network': Arcadia
 };

@@ -57,10 +57,9 @@ export interface TxButtonProps extends TxProps {
   className?: string;
   icon?: IconName;
   isBasic?: boolean;
+  isBusy?: boolean;
   isDisabled?: boolean;
   isIcon?: boolean;
-  isNegative?: boolean;
-  isPrimary?: boolean;
   isUnsigned?: boolean;
   label?: React.ReactNode;
   onClick?: VoidFn;
@@ -70,6 +69,7 @@ export interface TxButtonProps extends TxProps {
   onSuccess?: TxCallback;
   onUpdate?: TxCallback;
   tooltip?: string;
+  withoutLink?: boolean;
   withSpinner?: boolean;
 }
 

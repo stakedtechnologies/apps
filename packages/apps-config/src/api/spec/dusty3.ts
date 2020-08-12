@@ -5,6 +5,7 @@
 export default {
   Keys: 'SessionKeys2',
   ClaimId: 'H256',
+  PredicateHash: 'H256',
   Lockdrop: {
     type: 'u8',
     transaction_hash: 'H256',

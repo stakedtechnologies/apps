@@ -59,7 +59,6 @@ function SetSessionKey ({ className, onClose, senderId: propSenderId }: Props): 
           accountId={senderId}
           icon='paper-plane'
           isDisabled={!keys || !senderId}
-          isPrimary
           label={t('Set Session Key')}
           onStart={onClose}
           params={[keys, EMPTY_PROOF]}

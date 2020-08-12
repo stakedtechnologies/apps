@@ -15,7 +15,7 @@ interface Props {
 
 function ListNominees ({ nominating, stashId }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-  const { nomsActive, nomsInactive, nomsWaiting } = useInactives(stashId, nominating);
+  const { nomsActive, nomsChilled, nomsInactive, nomsWaiting } = useInactives(stashId, nominating);
 
   return (
     <>
@@ -33,6 +33,17 @@ function ListNominees ({ nominating, stashId }: Props): React.ReactElement<Props
       {nomsInactive && nomsInactive.length !== 0 && (
         <Expander summary={t<string>('Inactive nominations ({{count}})', { replace: { count: nomsInactive.length } })}>
           {nomsInactive.map((nomineeId, index): React.ReactNode => (
+            <AddressMini
+              key={index}
+              value={nomineeId}
+              withBalance={false}
+            />
+          ))}
+        </Expander>
+      )}
+      {nomsChilled && nomsChilled.length !== 0 && (
+        <Expander summary={t<string>('Renomination required ({{count}})', { replace: { count: nomsChilled.length } })}>
+          {nomsChilled.map((nomineeId, index): React.ReactNode => (
             <AddressMini
               key={index}
               value={nomineeId}
