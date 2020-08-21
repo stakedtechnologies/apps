@@ -7,7 +7,6 @@ import { AppProps as Props } from '@polkadot/react-components/types';
 import React, { useMemo } from 'react';
 import { Route, Switch } from 'react-router';
 import { HelpOverlay, Tabs } from '@polkadot/react-components';
-import uiSettings from '@polkadot/ui-settings';
 
 import md from './md/basics.md';
 import { useTranslation } from './translate';
@@ -19,10 +18,6 @@ import useCounter from './useCounter';
 
 export { useCounter };
 
-const hidden = uiSettings.uiMode === 'full'
-  ? []
-  : ['developer'];
-
 function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const numExtensions = useCounter();
@@ -33,12 +28,9 @@ function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       text: t<string>('General')
     },
     {
+      count: numExtensions,
       name: 'metadata',
-      text: t<string>('Metadata {{count}}', {
-        replace: {
-          count: numExtensions ? `(${numExtensions})` : ''
-        }
-      })
+      text: t<string>('Metadata')
     },
     {
       name: 'developer',
@@ -56,7 +48,6 @@ function SettingsApp ({ basePath, onStatusChange }: Props): React.ReactElement<P
       <header>
         <Tabs
           basePath={basePath}
-          hidden={hidden}
           items={items}
         />
       </header>

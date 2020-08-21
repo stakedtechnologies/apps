@@ -7,73 +7,78 @@ import { RuntimeVersion } from '@polkadot/types/interfaces';
 import React from 'react';
 import styled from 'styled-components';
 import { ChainImg, Icon } from '@polkadot/react-components';
-import { useCall, useApi } from '@polkadot/react-hooks';
+import { useApi, useCall, useIpfs, useToggle } from '@polkadot/react-hooks';
 import { BestNumber, Chain } from '@polkadot/react-query';
 
+import Endpoints from '../Endpoints';
 import { useTranslation } from '../translate';
 
 interface Props {
   className?: string;
-  isToggled?: boolean;
-  onClick?: () => void;
 }
 
-function ChainInfo ({ className = '', isToggled, onClick }: Props): React.ReactElement<Props> {
+function ChainInfo ({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api } = useApi();
-  const runtimeVersion = useCall<RuntimeVersion>(api.rpc.state.subscribeRuntimeVersion, []);
+  const runtimeVersion = useCall<RuntimeVersion>(api.rpc.state.subscribeRuntimeVersion);
+  const { ipnsChain } = useIpfs();
+  const [isEndpointsVisible, toggleEndpoints] = useToggle();
+  const canToggle = !ipnsChain;
 
   return (
-    <div
-      className={`apps--SideBar-logo${onClick ? ' isClickable' : ''} ${className} ui--highlight--border`}
-      onClick={onClick}
-    >
-      <div className='apps--SideBar-logo-inner'>
+    <div className={className}>
+      <div
+        className={`apps--SideBar-logo-inner${canToggle ? ' isClickable  ui--highlight--hover-color' : ''}`}
+        onClick={toggleEndpoints}
+      >
         <ChainImg />
-        <div className='info'>
+        <div className='info ui--media-1000'>
           <Chain className='chain' />
           {runtimeVersion && (
             <div className='runtimeVersion'>{t<string>('version {{version}}', { replace: { version: runtimeVersion.specVersion.toNumber() } })}</div>
           )}
-          <BestNumber label='#' />
+          <BestNumber
+            className='bestNumber'
+            label='#'
+          />
         </div>
-        {onClick && (
+        {canToggle && (
           <Icon
             className='dropdown'
-            icon={isToggled ? 'caret-right' : 'caret-down'}
+            icon={isEndpointsVisible ? 'caret-right' : 'caret-down'}
           />
         )}
       </div>
+      {isEndpointsVisible && (
+        <Endpoints onClose={toggleEndpoints} />
+      )}
     </div>
   );
 }
 
 export default React.memo(styled(ChainInfo)`
-  border-top: 0.5rem solid transparent;
   box-sizing: border-box;
-  padding: 0.75rem;
-  margin: 0 0 0.5rem -1rem;
-
-  &.isClickable {
-    cursor: pointer;
-  }
+  padding: 0.75rem 1rem 0.75rem 1.5rem;
+  margin: 0;
 
   .apps--SideBar-logo-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 10.5rem;
+
+    &.isClickable {
+      cursor: pointer;
+    }
 
     img {
       flex: 0;
-      height: 2.75rem;
-      width: 2.75rem;
+      height: 3rem;
+      margin-right: 0.5rem;
+      width: 3rem;
     }
 
     .ui--Icon.dropdown,
     > div.info {
-      color: white;
-      opacity: 0.75;
       text-align: right;
       vertical-align: middle;
     }
@@ -84,18 +89,19 @@ export default React.memo(styled(ChainInfo)`
       width: 1rem;
     }
 
-    > div.info {
+    .info {
       flex: 1;
       padding-right: 0.5rem;
 
-      > div.chain {
+      .bestNumber,
+      .chain {
         font-size: 0.9rem;
-        line-height: 1rem;
+        line-height: 1.2;
       }
 
-      > div.runtimeVersion {
+      .runtimeVersion {
         font-size: 0.75rem;
-        line-height: 1rem;
+        line-height: 1.2;
       }
     }
   }

@@ -4,10 +4,6 @@
 
 import { Routes } from './types';
 
-import appSettings from '@polkadot/ui-settings';
-
-// When adding here, also ensure to add to Dummy.tsx
-
 import accounts from './accounts';
 import claims from './claims';
 import contracts from './contracts';
@@ -20,6 +16,7 @@ import genericAsset from './generic-asset';
 import js from './js';
 import parachains from './parachains';
 import poll from './poll';
+import session from './session';
 import settings from './settings';
 import society from './society';
 import staking from './staking';
@@ -29,52 +26,30 @@ import techcomm from './techcomm';
 import toolbox from './toolbox';
 import transfer from './transfer';
 import treasury from './treasury';
-import session from './session';
 
 export default function create (t: <T = string> (key: string, text: string, options: { ns: string }) => T): Routes {
-  return appSettings.uiMode === 'light'
-    ? [
-      // dashboard,
-      explorer(t),
-      accounts(t),
-      claims(t),
-      poll(t),
-      transfer(t),
-      session(t),
-      genericAsset(t),
-      null,
-      staking(t),
-      democracy(t),
-      council(t),
-      // TODO Not sure about the inclusion of treasury, parachains & society here
-      null,
-      settings(t)
-    ]
-    : [
-      // dashboard(t),
-      explorer(t),
-      accounts(t),
-      claims(t),
-      poll(t),
-      transfer(t),
-      session(t),
-      genericAsset(t),
-      null,
-      staking(t),
-      democracy(t),
-      council(t),
-      treasury(t),
-      techcomm(t),
-      parachains(t),
-      society(t),
-      null,
-      contracts(t),
-      storage(t),
-      extrinsics(t),
-      sudo(t),
-      null,
-      settings(t),
-      toolbox(t),
-      js(t)
-    ];
+  return [
+    // dashboard(t),
+    accounts(t),
+    explorer(t),
+    claims(t),
+    poll(t),
+    transfer(t),
+    genericAsset(t),
+    staking(t),
+    session(t),
+    democracy(t),
+    council(t),
+    treasury(t),
+    techcomm(t),
+    parachains(t),
+    society(t),
+    contracts(t),
+    storage(t),
+    extrinsics(t),
+    sudo(t),
+    settings(t),
+    toolbox(t),
+    js(t)
+  ];
 }

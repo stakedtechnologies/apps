@@ -5,6 +5,7 @@
 const defaultColor = undefined; // '#f19135'
 const emptyColor = '#999';
 
+const chainCrab = '#7C30DD';
 const chainKulupu = '#003366';
 const chainPolkadot = '#e6007a';
 const chainKusama = '#000'; // '#d32e79';
@@ -17,9 +18,11 @@ const chainWestend = '#da68a7';
 const nodeCentrifuge = '#fcc367';
 const nodeEdgeware = '#0a95df';
 const nodeNodle = '#1ab394';
+const nodeKilt = '#eb5b2a';
 
 // overrides based on the actual matched chain name
 const chainColors: Record<string, any> = [
+  ['Crab', chainCrab],
   ['Kulupu', chainKulupu],
   ['Kusama', chainKusama],
   ['Kusama CC1', chainKusama],
@@ -41,6 +44,7 @@ const chainColors: Record<string, any> = [
 const nodeColors: Record<string, any> = [
   ['centrifuge chain', nodeCentrifuge],
   ['edgeware node', nodeEdgeware],
+  ['kilt node', nodeKilt],
   ['nodle chain node', nodeNodle]
   // ['node template', emptyColor],
   // ['parity polkadot', emptyColor],

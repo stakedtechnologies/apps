@@ -5,15 +5,20 @@
 import acala from './acala';
 import centrifugeChain from './centrifuge-chain';
 import dusty3 from './dusty3';
+import crab from './crab';
 import testPara from './cumulus-test-parachain';
 import encointerNodeNotee from './encointer-node-notee';
 import encointerNodeTeeproxy from './encointer-node-teeproxy';
+import kilt from './kilt';
 import kulupu from './kulupu';
 import nodeTemplate from './node-template';
 import plasm from './plasm';
+import nodle from './nodle';
 import stablePoc from './stable-poc';
 
 export default {
+  Crab: crab,
+  'Nodle Chain Node': nodle,
   acala,
   'centrifuge-chain': centrifugeChain,
   dusty3,
@@ -22,6 +27,7 @@ export default {
   'encointer-node-notee': encointerNodeNotee,
   'encointer-node-teeproxy': encointerNodeTeeproxy,
   kulupu,
+  'mashnet-node': kilt,
   'node-template': nodeTemplate,
   plasm,
   'stable-poc': stablePoc,

@@ -5,9 +5,12 @@
 import { TFunction } from 'i18next';
 import { Option } from './types';
 
+import { CUSTOM_ENDPOINT_KEY } from './constants';
+
 export interface LinkOption extends Option {
   dnslink?: string;
   isChild?: boolean;
+  isDevelopment?: boolean;
 }
 
 interface EnvWindow {
@@ -15,6 +18,26 @@ interface EnvWindow {
   process_env?: {
     WS_URL: string;
   }
+}
+
+function createOwn (t: TFunction): LinkOption[] {
+  try {
+    const storedItems = localStorage.getItem(CUSTOM_ENDPOINT_KEY);
+
+    if (storedItems) {
+      const items = JSON.parse(storedItems) as string[];
+
+      return items.map((item) => ({
+        info: 'local',
+        text: t<string>('rpc.custom.entry', 'Custom (custom, {{WS_URL}})', { ns: 'apps-config', replace: { WS_URL: item } }),
+        value: item
+      }));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return [];
 }
 
 function createDev (t: TFunction): LinkOption[] {
@@ -41,6 +64,18 @@ function createLive (t: TFunction): LinkOption[] {
 
 function createTest (t: TFunction): LinkOption[] {
   return [
+    {
+      dnslink: 'rococo',
+      info: 'rococo',
+      text: t<string>('rpc.rococo', 'Rococo (Polkadot Testnet, hosted by Parity)', { ns: 'apps-config' }),
+      value: 'wss://rococo-rpc.polkadot.io'
+    },
+    {
+      info: 'rococoPlasm',
+      isChild: true,
+      text: t<string>('rpc.rococo.plasm', 'Plasm Test Parachain (hosted by Stake Technologies)', { ns: 'apps-config' }),
+      value: 'wss://rpc.parachain.plasmnet.io'
+    },
     {
       dnslink: 'dusty',
       info: 'dusty',
@@ -75,7 +110,7 @@ function createCustom (t: TFunction): LinkOption[] {
 // The available endpoints that will show in the dropdown. For the most part (with the exception of
 // Polkadot) we try to keep this to live chains only, with RPCs hosted by the community/chain vendor
 //   info: The chain logo name as defined in ../logos, specifically in namedLogos
-//   text: The text to display on teh dropdown
+//   text: The text to display on the dropdown
 //   value: The actual hosted secure websocket endpoint
 export default function create (t: TFunction): LinkOption[] {
   return [
@@ -93,10 +128,12 @@ export default function create (t: TFunction): LinkOption[] {
     },
     ...createTest(t),
     {
+      isDevelopment: true,
       isHeader: true,
       text: t<string>('rpc.header.dev', 'Development', { ns: 'apps-config' }),
       value: ''
     },
-    ...createDev(t)
+    ...createDev(t),
+    ...createOwn(t)
   ].filter(({ isDisabled }) => !isDisabled);
 }

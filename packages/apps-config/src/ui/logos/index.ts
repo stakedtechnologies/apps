@@ -15,14 +15,17 @@ import chainRococoTrick from './chains/rococo-trick.svg';
 import nodeAcala from './nodes/acala-circle.svg';
 import nodeCentrifuge from './nodes/centrifuge.png';
 import nodeDusty from './nodes/dusty.png';
+import nodeCrab from './nodes/crab.svg';
 import nodeEdgeware from './nodes/edgeware-circle.svg';
 import nodeEncointerNotee from './nodes/encointer-notee.svg';
 import nodeEncointerTeeproxy from './nodes/encointer-teeproxy.svg';
 import nodeNodle from './nodes/nodle.svg';
+import nodeKilt from './nodes/kilt.svg';
 import nodePolkadot from './nodes/polkadot-circle.svg';
 import nodePolkadotJs from './nodes/polkadot-js.svg';
 import nodeSubstrate from './nodes/substrate-hexagon.svg';
 import nodePlasm from './nodes/plasm.png';
+import nodeKulupu from './nodes/kulupu.svg';
 
 // extensions
 import extensionPolkadotJs from './extensions/polkadot-js.svg';
@@ -51,11 +54,13 @@ const chainLogos: Record<string, any> = [
 const nodeLogos: Record<string, any> = [
   ['centrifuge chain', nodeCentrifuge],
   ['Centrifuge Chain Node', nodeCentrifuge],
+  ['crab', nodeCrab],
   ['Edgeware Node', nodeEdgeware],
   ['Encointer Node', nodeEncointerNotee],
   ['Encointer Node noTEE', nodeEncointerNotee],
   ['Encointer Node TEE proxy', nodeEncointerTeeproxy],
-  ['kulupu', nodeSubstrate],
+  ['KILT Node', nodeKilt],
+  ['kulupu', nodeKulupu],
   ['node-template', nodeSubstrate],
   ['Nodle Chain Node', nodeNodle],
   ['parity-polkadot', nodePolkadot],
@@ -72,9 +77,12 @@ const namedLogos: Record<string, any> = {
   acala: nodeAcala,
   alexander: nodePolkadot,
   centrifuge: nodeCentrifuge,
+  crab: nodeCrab,
   dusty: nodeDusty,
   edgeware: nodeEdgeware,
   empty: emptyLogo,
+  kilt: nodeKilt,
+  kulupu: nodeKulupu,
   kusama: chainKusama,
   plasm: nodePlasm,
   nodle: nodeNodle,
