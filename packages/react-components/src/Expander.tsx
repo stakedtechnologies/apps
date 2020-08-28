@@ -20,6 +20,7 @@ export interface Props {
   className?: string;
   help?: string;
   isOpen?: boolean;
+  isPadded?: boolean;
   summary?: React.ReactNode;
   summaryMeta?: Meta;
   summarySub?: React.ReactNode;
@@ -42,7 +43,7 @@ function formatMeta (meta?: Meta): React.ReactNode | null {
   ).join(' ');
 }
 
-function Expander ({ children, className = '', help, isOpen, summary, summaryMeta, summarySub, withDot, withHidden }: Props): React.ReactElement<Props> {
+function Expander ({ children, className = '', help, isOpen, isPadded, summary, summaryMeta, summarySub, withDot, withHidden }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isExpanded, toggleExpanded] = useToggle(isOpen);
   const headerMain = useMemo(
@@ -59,7 +60,7 @@ function Expander ({ children, className = '', help, isOpen, summary, summaryMet
   );
 
   return (
-    <div className={`ui--Expander ${isExpanded ? 'isExpanded' : ''} ${hasContent ? 'hasContent' : ''} ${className}`}>
+    <div className={`ui--Expander${isExpanded ? ' isExpanded' : ''}${isPadded ? ' isPadded' : ''}${hasContent ? ' hasContent' : ''} ${className}`}>
       <div
         className='ui--Expander-summary'
         onClick={toggleExpanded}
@@ -105,13 +106,19 @@ export default React.memo(styled(Expander)`
     cursor: pointer;
   }
 
+  &.isPadded {
+    .ui--Expander-summary {
+      margin-left: 2.25rem;
+    }
+  }
+
   .ui--Expander-summary {
     margin: 0;
-    min-width: 12.5rem;
+    min-width: 13.5rem;
     overflow: hidden;
 
     .ui--Expander-summary-header > .ui--FormatBalance {
-      min-width: 10rem;
+      min-width: 11rem;
     }
 
     > div {
@@ -126,7 +133,6 @@ export default React.memo(styled(Expander)`
     .ui--Expander-summary-sub {
       font-size: 1rem;
       opacity: 0.6;
-      padding-left: 1.75rem;
     }
   }
 `);

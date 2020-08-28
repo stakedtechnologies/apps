@@ -21,14 +21,17 @@ function Item ({ className = '', route: { Modal, href, icon, name, text, useCoun
   const count = useCounter();
 
   return (
-    <li className={`${className}${count ? ' withCounter' : ''} ui--highlight--hover-color`}>
+    <li className={`${className}${count ? ' withCounter' : ''} highlight--hover-color`}>
       <a
         href={Modal ? undefined : (href || `#/${name}`)}
         onClick={Modal ? toggleModal : undefined}
         rel='noopener noreferrer'
         target={href ? '_blank' : undefined}
       >
-        <Icon icon={icon} />
+        <Icon
+          className='highlight--color'
+          icon={icon}
+        />
         {text}
         {!!count && (
           <Badge
@@ -55,6 +58,10 @@ export default React.memo(styled(Item)`
     a {
       padding: 1rem 1.5rem;
     }
+
+    .ui--Badge {
+      top: 0.95rem;
+    }
   }
 
   &.withCounter a {
@@ -71,7 +78,7 @@ export default React.memo(styled(Item)`
   .ui--Badge {
     position: absolute;
     right: 0.25rem;
-    top: 0.65rem;
+    top: 0.7rem;
   }
 
   .ui--Icon {

@@ -21,55 +21,76 @@ const getHighlight = (props: Props): string =>
   (props.uiHighlight || defaultHighlight);
 
 export default createGlobalStyle<Props>`
-  .ui--highlight--all {
+  .highlight--all {
     background: ${getHighlight} !important;
     border-color: ${getHighlight} !important;
     color: ${getHighlight} !important;
   }
 
-  .ui--highlight--before:before {
+  .highlight--before:before {
     background: ${getHighlight} !important;
   }
 
-  .ui--highlight--before-border:before {
+  .highlight--before-border:before {
     border-color: ${getHighlight} !important;
   }
 
-  .ui--highlight--bg {
+  .highlight--bg {
     background: ${getHighlight} !important;
   }
 
-  .ui--highlight--border {
+  .highlight--bg-light {
+    background: white;
+    position: relative;
+
+    &:before {
+      background: ${getHighlight};
+      bottom: 0;
+      content: ' ';
+      left: 0;
+      opacity: 0.09;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: -1;
+    }
+  }
+
+  .highlight--border {
     border-color: ${getHighlight} !important;
   }
 
-  .ui--highlight--color {
+  .highlight--color {
     color: ${getHighlight} !important;
   }
 
-  .ui--highlight--fill {
+  .highlight--fill {
     fill: ${getHighlight} !important;
   }
 
-  .ui--highlight--gradient {
+  .highlight--gradient {
     background: ${(props: Props) => `linear-gradient(90deg, ${props.uiHighlight || defaultHighlight}, transparent)`};
   }
 
-  .ui--highlight--hover-color:hover {
+  .highlight--hover-bg:hover {
+    background: ${getHighlight} !important;
+  }
+
+  .highlight--hover-color:hover {
     color: ${getHighlight} !important;
   }
 
-  .ui--highlight--icon {
+  .highlight--icon {
     .ui--Icon {
       color: ${getHighlight} !important;
     }
   }
 
-  .ui--highlight--shadow {
+  .highlight--shadow {
     box-shadow: 0 0 1px ${getHighlight} !important;
   }
 
-  .ui--highlight--stroke {
+  .highlight--stroke {
     stroke: ${getHighlight} !important;
   }
 
@@ -202,8 +223,17 @@ export default createGlobalStyle<Props>`
       }
     }
 
+    &.extraMargin {
+      margin: 2rem auto;
+    }
+
     &.nomargin {
-      margin-left: 0;
+      margin: 0.5rem auto;
+      max-width: 75rem;
+
+      &+.ui--Button-Group {
+        margin-top: 2rem;
+      }
     }
 
     &.error {

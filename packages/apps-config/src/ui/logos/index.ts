@@ -16,6 +16,7 @@ import nodeAcala from './nodes/acala-circle.svg';
 import nodeCentrifuge from './nodes/centrifuge.png';
 import nodeDusty from './nodes/dusty.png';
 import nodeCrab from './nodes/crab.svg';
+import nodeDarwinia from './nodes/darwinia.png';
 import nodeEdgeware from './nodes/edgeware-circle.svg';
 import nodeEncointerNotee from './nodes/encointer-notee.svg';
 import nodeEncointerTeeproxy from './nodes/encointer-teeproxy.svg';
@@ -23,12 +24,22 @@ import nodeNodle from './nodes/nodle.svg';
 import nodeKilt from './nodes/kilt.svg';
 import nodePolkadot from './nodes/polkadot-circle.svg';
 import nodePolkadotJs from './nodes/polkadot-js.svg';
+import nodeSubsocial from './nodes/subsocial.svg';
 import nodeSubstrate from './nodes/substrate-hexagon.svg';
 import nodePlasm from './nodes/plasm.png';
 import nodeKulupu from './nodes/kulupu.svg';
+import nodeLaminar from './nodes/laminar-circle.svg';
+import nodePhala from './nodes/phala.svg';
 
 // extensions
 import extensionPolkadotJs from './extensions/polkadot-js.svg';
+
+// external links
+import externalCommonwealth from './external/commonwealth.png';
+import externalPolkascan from './external/polkascan.png';
+import externalPolkassembly from './external/polkassembly.png';
+import externalPolkastats from './external/polkastats.png';
+import externalSubscan from './external/subscan.png';
 
 // last-resort fallback, just something empty
 import emptyLogo from './empty.svg';
@@ -55,6 +66,7 @@ const nodeLogos: Record<string, any> = [
   ['centrifuge chain', nodeCentrifuge],
   ['Centrifuge Chain Node', nodeCentrifuge],
   ['crab', nodeCrab],
+  ['darwinia parachain', nodeDarwinia],
   ['Edgeware Node', nodeEdgeware],
   ['Encointer Node', nodeEncointerNotee],
   ['Encointer Node noTEE', nodeEncointerNotee],
@@ -65,7 +77,9 @@ const nodeLogos: Record<string, any> = [
   ['Nodle Chain Node', nodeNodle],
   ['parity-polkadot', nodePolkadot],
   ['polkadot-js', nodePolkadotJs],
+  ['subsocial-node', nodeSubsocial],
   ['substrate-node', nodeSubstrate],
+  ['phala-substrate-node', nodePhala],
   ['Plasm Node', nodePlasm]
 ].reduce((logos, [node, logo]): Record<string, any> => ({
   ...logos,
@@ -84,13 +98,19 @@ const namedLogos: Record<string, any> = {
   kilt: nodeKilt,
   kulupu: nodeKulupu,
   kusama: chainKusama,
-  plasm: nodePlasm,
+  laminar: nodeLaminar,
   nodle: nodeNodle,
+  phala: nodePhala,
+  plasm: nodePlasm,
   polkadot: nodePolkadot,
   rococo: chainRococo,
+  rococoAcala: nodeAcala,
+  rococoDarwinia: nodeDarwinia,
+  rococoLaminar: nodeLaminar,
   rococoTick: chainRococoTick,
   rococoTrack: chainRococoTrack,
   rococoTrick: chainRococoTrick,
+  subsocial: nodeSubsocial,
   substrate: nodeSubstrate,
   westend: nodePolkadot
 };
@@ -100,10 +120,32 @@ const extensionLogos: Record<string, any> = {
   'polkadot-js': extensionPolkadotJs
 };
 
+// external logos
+const externalLogos: Record<string, any> = {
+  commonwealth: externalCommonwealth,
+  polkascan: externalPolkascan,
+  polkassembly: externalPolkassembly,
+  polkastats: externalPolkastats,
+  subscan: externalSubscan
+};
+
+// empty logos
+const emptyLogos: Record<string, any> = {
+  empty: emptyLogo
+};
+
+// preload all
+[chainLogos, extensionLogos, externalLogos, namedLogos, nodeLogos, emptyLogos].map((imageSet): void => {
+  Object.values(imageSet).forEach((src): void => {
+    new Image().src = src as string;
+  });
+});
+
 export {
   chainLogos,
   emptyLogo,
   extensionLogos,
+  externalLogos,
   namedLogos,
   nodeLogos
 };

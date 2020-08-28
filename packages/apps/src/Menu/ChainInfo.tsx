@@ -28,11 +28,11 @@ function ChainInfo ({ className }: Props): React.ReactElement<Props> {
   return (
     <div className={className}>
       <div
-        className={`apps--SideBar-logo-inner${canToggle ? ' isClickable  ui--highlight--hover-color' : ''}`}
+        className={`apps--SideBar-logo-inner${canToggle ? ' isClickable  highlight--hover-color' : ''}`}
         onClick={toggleEndpoints}
       >
         <ChainImg />
-        <div className='info ui--media-1000'>
+        <div className='info media--1000'>
           <Chain className='chain' />
           {runtimeVersion && (
             <div className='runtimeVersion'>{t<string>('version {{version}}', { replace: { version: runtimeVersion.specVersion.toNumber() } })}</div>
@@ -44,7 +44,7 @@ function ChainInfo ({ className }: Props): React.ReactElement<Props> {
         </div>
         {canToggle && (
           <Icon
-            className='dropdown'
+            className='dropdown highlight--color'
             icon={isEndpointsVisible ? 'caret-right' : 'caret-down'}
           />
         )}

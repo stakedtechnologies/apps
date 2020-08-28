@@ -60,13 +60,14 @@ function Tabs ({ basePath, className = '', hidden, isSequence, items }: Props): 
 
 export default React.memo(styled(Tabs)`
   align-items: flex-end;
-  background: #fefcfa;
-  border-bottom: 1px solid #e6e6e6;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
   display: flex;
   margin: 0 -3rem;
   overflow-x: scroll;
   padding: 1.5rem 3rem 0;
   text-align: left;
+  z-index: 1;
 
   &::-webkit-scrollbar {
     display: none;

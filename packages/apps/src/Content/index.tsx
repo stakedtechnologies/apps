@@ -37,6 +37,7 @@ function Content ({ className }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { api, isApiConnected, isApiReady } = useApi();
   const { queueAction } = useContext(StatusContext);
+
   const { Component, display: { needsApi }, name } = useMemo(
     (): Route => {
       const app = location.pathname.slice(1) || '';
@@ -45,6 +46,8 @@ function Content ({ className }: Props): React.ReactElement<Props> {
     },
     [location, t]
   );
+
+  const missingApis = findMissingApis(api, needsApi);
 
   return (
     <div className={className}>
@@ -57,18 +60,25 @@ function Content ({ className }: Props): React.ReactElement<Props> {
         : (
           <>
             <Suspense fallback='...'>
-              {findMissingApis(api, needsApi).length
-                ? <NotFound />
-                : (
-                  <ErrorBoundary trigger={name}>
+              <ErrorBoundary trigger={name}>
+                {missingApis.length
+                  ? (
+                    <NotFound
+                      basePath={`/${name}`}
+                      location={location}
+                      missingApis={missingApis}
+                      onStatusChange={queueAction}
+                    />
+                  )
+                  : (
                     <Component
                       basePath={`/${name}`}
                       location={location}
                       onStatusChange={queueAction}
                     />
-                  </ErrorBoundary>
-                )
-              }
+                  )
+                }
+              </ErrorBoundary>
             </Suspense>
             <Status />
           </>
@@ -82,7 +92,7 @@ export default React.memo(styled(Content)`
   flex-grow: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0 2.5rem 1rem;
+  padding: 0 2rem 1rem;
   position: relative;
   width: 100%;
 

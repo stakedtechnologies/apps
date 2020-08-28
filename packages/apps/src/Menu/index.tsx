@@ -124,11 +124,11 @@ function Menu ({ className = '' }: Props): React.ReactElement<Props> {
   const isLoading = !apiProps.isApiReady || !apiProps.isApiConnected;
 
   return (
-    <div className={`${className} menuBg ui--highlight--before ui--highlight--border`}>
+    <div className={`${className}${isLoading ? ' isLoading' : ''} highlight--bg-light highlight--border`}>
       <div className='menuSection'>
         <ChainInfo />
         {activeRoute && (
-          <div className={`menuActive${isLoading ? ' isLoading' : ''}`}>
+          <div className='menuActive'>
             <Icon icon={activeRoute.icon} />
             <span>{activeRoute.text}</span>
           </div>
@@ -143,7 +143,7 @@ function Menu ({ className = '' }: Props): React.ReactElement<Props> {
           ))}
         </ul>
       </div>
-      <div className='menuSection ui--media-1200'>
+      <div className='menuSection media--1200'>
         <ul className='menuItems'>
           {externalRef.current.map((route): React.ReactNode => (
             <Item
@@ -165,43 +165,21 @@ export default React.memo(styled(Menu)`
   display: flex;
   justify-content: space-between;
   padding: 0;
-  position: relative;
   z-index: 220;
 
-  &.menuBg,
-  .menuBg {
-    &:after {
-      background: #fff;
-      bottom: 0;
-      content: ' ';
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: -2;
-    }
+  &.isLoading {
+    background: #eee;
 
     &:before {
-      background; #fff;
-      bottom: 0;
-      content: ' ';
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: -2;
+      filter: grayscale(1);
     }
 
-    &:before {
-      bottom: 0;
-      content: ' ';
-      filter: invert(0.2) brightness(1.2);
-      left: 0;
-      opacity: 0.15;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: -1;
+    .menuActive {
+      background: #f5f3f1;
+    }
+
+    .menuItems {
+      filter: grayscale(1);
     }
   }
 
@@ -212,14 +190,12 @@ export default React.memo(styled(Menu)`
   }
 
   .menuActive {
-    background: #fefcfa;
+    background: #fff;
+    border-bottom: none;
     border-radius: 0.25rem 0.25rem 0 0;
     padding: 1rem 1.5rem;
-    margin: 0 1rem;
-
-    &.isLoading {
-      background: #f5f3f1;
-    }
+    margin: 0 1rem -1px;
+    z-index: 1;
 
     .ui--Icon {
       margin-right: 0.5rem;
